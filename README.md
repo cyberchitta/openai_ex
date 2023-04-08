@@ -1,6 +1,6 @@
 # OpenaiEx
 
-Elixir client for OpenAI API
+Community maintained Elixir client for OpenAI API
 
 ## Installation
 

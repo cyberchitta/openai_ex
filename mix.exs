@@ -1,11 +1,14 @@
 defmodule OpenaiEx.MixProject do
   use Mix.Project
 
+  @version "0.0.1"
+  @source_url "https://github.com/restlessronin/openai_ex"
+
   def project do
     [
       app: :openai_ex,
-      version: "0.0.1",
-      elixir: "~> 1.14",
+      version: @version,
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -21,7 +24,8 @@ defmodule OpenaiEx.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:req, "~> 0.3"},
+      {:req, "~> 0.3"},
+      {:ex_doc, ">= 0.0.0", only: :docs}
     ]
   end
 end
