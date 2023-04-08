@@ -1,0 +1,28 @@
+version: '3'
+services:
+  web:
+    build:
+      context: ../
+      dockerfile: .devcontainer/Dockerfile
+    command: sleep infinity
+    volumes:
+      # Mounts the project folder to '/workspace'. The target path inside the container
+      # should match should match what your application expects. In this case, the
+      # compose file is in a sub-folder, so we will mount '..'. We'll then reference this
+      # as the workspaceFolder in '.devcontainer/devcontainer.json' so VS Code starts here.
+      - ..:/app:cached
+    ports:
+      - 4000:4000
+
+  livebook:
+    image: ghcr.io/livebook-dev/livebook:0.9.1
+    environment:
+      # use password instead of token
+      LIVEBOOK_PASSWORD: mypasswordisgood
+    # UID (id -u) and GID (id -g) need to be exported in .bashrc (or equivalent)
+    user: "${UID}:${GID}"
+    volumes:
+      - ../livebooks:/data
+    ports:
+      - 8080:8080
+      - 8081:8081
