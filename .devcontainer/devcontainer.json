@@ -1,15 +1,13 @@
 {
     "name": "OpenaiEx",
     "dockerComposeFile": "docker-compose.yml",
-    "service": "web",
-    "workspaceFolder": "/app",
+    "service": "livebook",
+    "workspaceFolder": "/data",
     "shutdownAction": "stopCompose",
     "customizations": {
         "vscode": {
             "extensions": [
-                "jakebecker.elixir-ls",
-                "mtxr.sqltools",
-                "mtxr.sqltools-driver-pg"
+                "jakebecker.elixir-ls"
             ]
         }
     }
