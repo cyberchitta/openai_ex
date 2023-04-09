@@ -3,10 +3,11 @@ services:
   livebook:
     image: ghcr.io/livebook-dev/livebook:0.9.1
     environment:
-      # use password instead of token
-      LIVEBOOK_PASSWORD: openaiexlivebook
-    # UID (id -u) and GID (id -g) need to be exported in .bash_profile (or equivalent)
-    user: "${UID}:${GID}"
+      # secrets - values are set in '.env'. It's not in version control, but look at 'env'
+      LIVEBOOK_PASSWORD: ${LIVEBOOK_PASSWORD}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    # UID (id -u) and GID (id -g) need to be exported in .bashrc (or equivalent)
+    user: ${UID}:${GID}
     volumes:
       - ..:/data
     ports:

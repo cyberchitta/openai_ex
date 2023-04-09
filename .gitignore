@@ -24,3 +24,9 @@ openai_ex-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Directory used by the VS Code elixir-ls extension
+/.elixir_ls/
+
+# secrets used by .devcontainer docker compose
+/.devcontainer/.env

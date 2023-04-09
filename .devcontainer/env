@@ -1,0 +1,3 @@
+# copy this file to `.env` and set these VARS to the actual vals 
+OPENAI_API_KEY=pasteYourActualApiKeyHere
+LIVEBOOK_PASSWORD=pasteSuperSecretPasswordHere
