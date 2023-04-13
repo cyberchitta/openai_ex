@@ -8,7 +8,8 @@
         "vscode": {
             "extensions": [
                 "jakebecker.elixir-ls",
-                "eamodio.gitlens"
+                "eamodio.gitlens",
+                "github.copilot-nightly"
             ]
         }
     }
