@@ -1,18 +1,14 @@
 defmodule OpenaiEx do
-  @moduledoc """
-  Documentation for `OpenaiEx`.
-  """
+  defstruct organization: nil, token: nil
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> OpenaiEx.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def new(
+        organization \\ System.fetch_env!("OPENAI_ORGANIZATION"),
+        token \\ System.get_env("OPENAI_API_KEY", "")
+      ) do
+    %OpenaiEx{
+      organization: organization,
+      token: token
+    }
   end
+
 end

@@ -6,6 +6,7 @@ services:
       # secrets - values are set in '.env'. It's not in version control, but look at 'env'
       LIVEBOOK_PASSWORD: ${LIVEBOOK_PASSWORD}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_ORGANIZATION: ${OPENAI_ORGANIZATION}
     # UID (id -u) and GID (id -g) need to be exported in .bashrc (or equivalent)
     user: ${UID}:${GID}
     volumes:
