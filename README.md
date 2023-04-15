@@ -10,7 +10,7 @@ by adding `openai_ex` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.0.1"}
+    {:openai_ex, "~> 0.1.0"}
   ]
 end
 ```
