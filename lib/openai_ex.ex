@@ -1,18 +1,22 @@
 defmodule OpenaiEx do
-  @moduledoc """
-  Documentation for `OpenaiEx`.
-  """
+  @enforce_keys [:token]
+  defstruct token: nil, organization: nil
 
-  @doc """
-  Hello world.
+  def new(token, organization \\ nil) do
+    %OpenaiEx{
+      token: token,
+      organization: organization
+    }
+  end
 
-  ## Examples
+  def req(openai = %OpenaiEx{}) do
+    options = [base_url: "https://api.openai.com/v1", auth: {:bearer, openai.token}]
 
-      iex> OpenaiEx.hello()
-      :world
-
-  """
-  def hello do
-    :world
+    if is_nil(openai.organization) do
+      options
+    else
+      options ++ [headers: ["OpenAI-Organization", openai.organization]]
+    end
+    |> Req.new()
   end
 end
