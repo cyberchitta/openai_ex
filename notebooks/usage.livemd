@@ -69,3 +69,25 @@ then call the endpoint
 ```elixir
 openai |> OpenaiEx.Completion.create(completion)
 ```
+
+### [Chat Completion](https://platform.openai.com/docs/api-reference/chat/completions)
+
+We begin by defining the messages needed for the chat
+
+```elixir
+alias OpenaiEx.ChatMessage
+
+messages = [ChatMessage.user("Hello")]
+```
+
+Next we define the request structure
+
+```elixir
+chat_completion = OpenaiEx.ChatCompletion.new("gpt-3.5-turbo", messages)
+```
+
+Finally we call the [endpoint](https://platform.openai.com/docs/api-reference/chat/completions/create)
+
+```elixir
+openai |> OpenaiEx.ChatCompletion.create(chat_completion)
+```
