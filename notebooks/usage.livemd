@@ -13,19 +13,40 @@ Mix.install(
 
 ## Usage
 
-### Authentication
+This library is a thin wrapper around the OpenAI API client. It mirrors the API structure of the existing official clients in Python and JS.
+
+Instead of repeating the documentation from that API, I have provided links to the actual API reference.
+
+<!-- livebook:{"break_markdown":true} -->
+
+### [Authentication](https://platform.openai.com/docs/api-reference/authentication)
+
+Following API best practices, the tokens are stored in environment variables.
+
+Default organization.
 
 ```elixir
-apikey = System.fetch_env!("LB_OPENAI_API_KEY")
+apikey = System.fetch_env!("OPENAI_API_KEY")
 openai = OpenaiEx.new(apikey)
+```
 
-# organization = System.fetch_env!("LB_OPENAI_ORGANIZATION")
+Specified organization (uncomment to run)
+
+```elixir
+# organization = System.fetch_env!("OPENAI_ORGANIZATION")
 # openai = OpenAIEx.new(apikey, organization)
 ```
 
-### Model
+### [Model](https://platform.openai.com/docs/api-reference/models)
 
-```
+To [list](https://platform.openai.com/docs/api-reference/models/list) all models
+
+```elixir
 openai |> OpenaiEx.Model.list()
+```
+
+To [retrieve](https://platform.openai.com/docs/api-reference/models/retrieve) a specific model
+
+```elixir
 openai |> OpenaiEx.Model.retrieve("text-davinci-003")
 ```
