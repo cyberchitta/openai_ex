@@ -1,14 +1,22 @@
 defmodule OpenaiEx do
-  defstruct organization: nil, token: nil
+  @enforce_keys [:token]
+  defstruct token: nil, organization: nil
 
-  def new(
-        organization \\ System.fetch_env!("OPENAI_ORGANIZATION"),
-        token \\ System.get_env("OPENAI_API_KEY", "")
-      ) do
+  def new(token, organization \\ nil) do
     %OpenaiEx{
-      organization: organization,
-      token: token
+      token: token,
+      organization: organization
     }
   end
 
+  def req(openai = %OpenaiEx{}) do
+    options = [base_url: "https://api.openai.com/v1", auth: {:bearer, openai.token}]
+
+    if is_nil(openai.organization) do
+      options
+    else
+      options ++ [headers: ["OpenAI-Organization", openai.organization]]
+    end
+    |> Req.new()
+  end
 end
