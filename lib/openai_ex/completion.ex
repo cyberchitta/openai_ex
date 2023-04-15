@@ -22,12 +22,10 @@ defmodule OpenaiEx.Completion do
     :user
   ]
 
-  def new(model, prompt, max_tokens \\ 100, temperature \\ 0, opts \\ %{}) do
+  def new(model, prompt, opts \\ %{}) do
     %{
       model: model,
-      prompt: prompt,
-      max_tokens: max_tokens,
-      temperature: temperature
+      prompt: prompt
     }
     |> Map.merge(opts)
     |> Map.take(@api_fields)
@@ -39,7 +37,7 @@ defmodule OpenaiEx.Completion do
   def create(openai = %OpenaiEx{}, completion = %{}) do
     openai
     |> OpenaiEx.req()
-    |> Req.post!(url: "/completions", json: completion)
+    |> Req.post!(url: "/completions", json: completion |> Map.take(@api_fields))
     |> Map.get(:body)
   end
 end
