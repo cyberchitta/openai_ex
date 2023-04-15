@@ -27,12 +27,7 @@ defmodule OpenaiEx.Completion do
   end
 
   def new(opts = %{}) do
-    %{
-      model: opts |> Map.get(:model),
-      prompt: opts |> Map.get(:prompt)
-    }
-    |> Map.merge(opts |> Map.drop([:model, :prompt]))
-    |> Map.take(@api_fields)
+    opts |> Map.take(@api_fields)
   end
 
   @doc """

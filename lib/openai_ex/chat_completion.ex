@@ -22,12 +22,7 @@ defmodule OpenaiEx.ChatCompletion do
   end
 
   def new(opts = %{}) do
-    %{
-      model: opts |> Map.get(:model),
-      messages: opts |> Map.get(:messages)
-    }
-    |> Map.merge(opts |> Map.drop([:model, :messages]))
-    |> Map.take(@api_fields)
+    opts |> Map.take(@api_fields)
   end
 
   @doc """
