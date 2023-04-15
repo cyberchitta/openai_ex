@@ -22,17 +22,16 @@ defmodule OpenaiEx.Completion do
     :user
   ]
 
-  def new(opts \\ []) do
-    map = opts |> Enum.into(%{})
-    new(map |> Map.get(:model), map |> Map.get(:prompt), map |> Map.drop([:model, :prompt]))
+  def new(opts = [_ | _]) do
+    opts |> Enum.into(%{}) |> new()
   end
 
-  def new(model, prompt, opts \\ %{}) do
+  def new(opts = %{}) do
     %{
-      model: model,
-      prompt: prompt
+      model: opts |> Map.get(:model),
+      prompt: opts |> Map.get(:prompt)
     }
-    |> Map.merge(opts)
+    |> Map.merge(opts |> Map.drop([:model, :prompt]))
     |> Map.take(@api_fields)
   end
 
