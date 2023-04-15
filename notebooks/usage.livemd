@@ -57,7 +57,11 @@ openai |> OpenaiEx.Model.retrieve("text-davinci-003")
 To [create](https://platform.openai.com/docs/api-reference/completions/create) a completion, first define the structure.
 
 ```elixir
-completion = OpenaiEx.Completion.new("text-davinci-003", "Say this is a test", 7, 0)
+completion =
+  OpenaiEx.Completion.new("text-davinci-003", "Say this is a test", %{
+    max_tokens: 100,
+    temperature: 0
+  })
 ```
 
 then call the endpoint
