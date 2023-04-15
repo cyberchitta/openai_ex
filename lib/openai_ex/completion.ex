@@ -22,6 +22,11 @@ defmodule OpenaiEx.Completion do
     :user
   ]
 
+  def new(opts \\ []) do
+    map = opts |> Enum.into(%{})
+    new(map |> Map.get(:model), map |> Map.get(:prompt), map |> Map.drop([:model, :prompt]))
+  end
+
   def new(model, prompt, opts \\ %{}) do
     %{
       model: model,

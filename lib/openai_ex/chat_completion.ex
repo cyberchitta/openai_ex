@@ -17,6 +17,11 @@ defmodule OpenaiEx.ChatCompletion do
     :user
   ]
 
+  def new(opts \\ []) do
+    map = opts |> Enum.into(%{})
+    new(map |> Map.get(:model), map |> Map.get(:messages), map |> Map.drop([:model, :messages]))
+  end
+
   def new(model, messages, opts \\ %{}) do
     %{
       model: model,
