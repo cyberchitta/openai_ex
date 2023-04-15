@@ -5,7 +5,7 @@ my_app_root = Path.join(__DIR__, "..")
 
 Mix.install(
   [
-    {:openai_ex, path: my_app_root, env: :dev}
+    {:openai_ex, path: my_app_root}
   ],
   lockfile: Path.join(my_app_root, "mix.lock")
 )
@@ -49,4 +49,18 @@ To [retrieve](https://platform.openai.com/docs/api-reference/models/retrieve) a 
 
 ```elixir
 openai |> OpenaiEx.Model.retrieve("text-davinci-003")
+```
+
+### [Completion](https://platform.openai.com/docs/api-reference/completions)
+
+To [create](https://platform.openai.com/docs/api-reference/completions/create) a completion, first define the structure.
+
+```elixir
+completion = OpenaiEx.Completion.new("text-davinci-003", "Say this is a test", 7, 0)
+```
+
+then call the endpoint
+
+```elixir
+openai |> OpenaiEx.Completion.create(completion)
 ```
