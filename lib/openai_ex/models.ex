@@ -1,4 +1,11 @@
 defmodule OpenaiEx.Models do
+  @moduledoc """
+  https://platform.openai.com/docs/api-reference/models
+  """
+
+  @doc """
+  https://platform.openai.com/docs/api-reference/models/list
+  """
   def list(openai = %OpenaiEx{}) do
     openai
     |> OpenaiEx.req()
@@ -7,6 +14,9 @@ defmodule OpenaiEx.Models do
     |> Map.get("data")
   end
 
+  @doc """
+  https://platform.openai.com/docs/api-reference/models/retrieve
+  """
   def model(openai = %OpenaiEx{}, model_id) do
     openai
     |> OpenaiEx.req()

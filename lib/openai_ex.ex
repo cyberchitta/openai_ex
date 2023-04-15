@@ -1,4 +1,7 @@
 defmodule OpenaiEx do
+  @moduledoc """
+  https://platform.openai.com/docs/api-reference/authentication
+  """
   @enforce_keys [:token]
   defstruct token: nil, organization: nil
 
