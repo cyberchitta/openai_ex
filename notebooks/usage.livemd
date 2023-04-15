@@ -26,6 +26,7 @@ Following API best practices, the tokens are stored in environment variables.
 Default organization.
 
 ```elixir
+# You can use LB_OPENAI_API_KEY in Livebook
 apikey = System.fetch_env!("OPENAI_API_KEY")
 openai = OpenaiEx.new(apikey)
 ```
