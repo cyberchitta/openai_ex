@@ -2,6 +2,7 @@ defmodule OpenaiEx.ChatCompletion do
   @moduledoc """
   https://platform.openai.com/docs/api-reference/chat/completions
   """
+
   @api_fields [
     :model,
     :messages,
