@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Models do
+defmodule OpenaiEx.Model do
   @moduledoc """
   https://platform.openai.com/docs/api-reference/models
   """
