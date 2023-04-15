@@ -1,0 +1,31 @@
+# OpenaiEx Usage Notebook
+
+```elixir
+my_app_root = Path.join(__DIR__, "..")
+
+Mix.install(
+  [
+    {:openai_ex, path: my_app_root, env: :dev}
+  ],
+  lockfile: Path.join(my_app_root, "mix.lock")
+)
+```
+
+## Usage
+
+### Authentication
+
+```elixir
+apikey = System.fetch_env!("LB_OPENAI_API_KEY")
+openai = OpenaiEx.new(apikey)
+
+# organization = System.fetch_env!("LB_OPENAI_ORGANIZATION")
+# openai = OpenAIEx.new(apikey, organization)
+```
+
+### Model
+
+```
+openai |> OpenaiEx.Model.list()
+openai |> OpenaiEx.Model.retrieve("text-davinci-003")
+```
