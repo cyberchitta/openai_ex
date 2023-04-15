@@ -40,25 +40,33 @@ Specified organization (uncomment to run)
 
 ### [Model](https://platform.openai.com/docs/api-reference/models)
 
+```elixir
+alias OpenaiEx.Model
+```
+
 To [list](https://platform.openai.com/docs/api-reference/models/list) all models
 
 ```elixir
-openai |> OpenaiEx.Model.list()
+openai |> Model.list()
 ```
 
 To [retrieve](https://platform.openai.com/docs/api-reference/models/retrieve) a specific model
 
 ```elixir
-openai |> OpenaiEx.Model.retrieve("text-davinci-003")
+openai |> Model.retrieve("text-davinci-003")
 ```
 
 ### [Completion](https://platform.openai.com/docs/api-reference/completions)
+
+```elixir
+alias OpenaiEx.Completion
+```
 
 To [create](https://platform.openai.com/docs/api-reference/completions/create) a completion, first define the structure.
 
 ```elixir
 completion =
-  OpenaiEx.Completion.new(
+  Completion.new(
     model: "text-davinci-003",
     prompt: "Say this is a test",
     max_tokens: 100,
@@ -69,27 +77,25 @@ completion =
 then call the endpoint
 
 ```elixir
-openai |> OpenaiEx.Completion.create(completion)
+comp_response = openai |> Completion.create(completion)
 ```
 
 ### [Chat Completion](https://platform.openai.com/docs/api-reference/chat/completions)
 
-We begin by defining the messages needed for the chat
-
 ```elixir
+alias OpenaiEx.ChatCompletion
 alias OpenaiEx.ChatMessage
-
-messages = [ChatMessage.user("Hello")]
 ```
 
-Next we define the request structure
+First we define the request structure, which includes the messages needed for the chat
 
 ```elixir
-chat_completion = OpenaiEx.ChatCompletion.new(model: "gpt-3.5-turbo", messages: messages)
+chat_completion =
+  ChatCompletion.new(model: "gpt-3.5-turbo", messages: [ChatMessage.user("Hello")])
 ```
 
 Finally we call the [endpoint](https://platform.openai.com/docs/api-reference/chat/completions/create)
 
 ```elixir
-openai |> OpenaiEx.ChatCompletion.create(chat_completion)
+chat_response = openai |> ChatCompletion.create(chat_completion)
 ```
