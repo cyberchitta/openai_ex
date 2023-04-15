@@ -58,10 +58,12 @@ To [create](https://platform.openai.com/docs/api-reference/completions/create) a
 
 ```elixir
 completion =
-  OpenaiEx.Completion.new("text-davinci-003", "Say this is a test", %{
+  OpenaiEx.Completion.new(
+    model: "text-davinci-003",
+    prompt: "Say this is a test",
     max_tokens: 100,
     temperature: 0
-  })
+  )
 ```
 
 then call the endpoint
@@ -83,7 +85,7 @@ messages = [ChatMessage.user("Hello")]
 Next we define the request structure
 
 ```elixir
-chat_completion = OpenaiEx.ChatCompletion.new("gpt-3.5-turbo", messages)
+chat_completion = OpenaiEx.ChatCompletion.new(model: "gpt-3.5-turbo", messages: messages)
 ```
 
 Finally we call the [endpoint](https://platform.openai.com/docs/api-reference/chat/completions/create)
