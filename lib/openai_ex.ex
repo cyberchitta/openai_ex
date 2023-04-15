@@ -22,4 +22,18 @@ defmodule OpenaiEx do
     end
     |> Req.new()
   end
+
+  def post(openai = %OpenaiEx{}, url, json) do
+    openai
+    |> req()
+    |> Req.post!(url: url, json: json)
+    |> Map.get(:body)
+  end
+
+  def get(openai = %OpenaiEx{}, url) do
+    openai
+    |> req()
+    |> Req.get!(url: url)
+    |> Map.get(:body)
+  end
 end

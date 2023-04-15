@@ -7,20 +7,13 @@ defmodule OpenaiEx.Model do
   https://platform.openai.com/docs/api-reference/models/list
   """
   def list(openai = %OpenaiEx{}) do
-    openai
-    |> OpenaiEx.req()
-    |> Req.get!(url: "/models")
-    |> Map.get(:body)
-    |> Map.get("data")
+    openai |> OpenaiEx.get("/models") |> Map.get("data")
   end
 
   @doc """
   https://platform.openai.com/docs/api-reference/models/retrieve
   """
   def retrieve(openai = %OpenaiEx{}, model_id) do
-    openai
-    |> OpenaiEx.req()
-    |> Req.get!(url: "/models/#{model_id}")
-    |> Map.get(:body)
+    openai |> OpenaiEx.get("/models/#{model_id}")
   end
 end

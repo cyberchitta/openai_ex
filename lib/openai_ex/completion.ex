@@ -34,9 +34,6 @@ defmodule OpenaiEx.Completion do
   https://platform.openai.com/docs/api-reference/completions/create
   """
   def create(openai = %OpenaiEx{}, completion = %{}) do
-    openai
-    |> OpenaiEx.req()
-    |> Req.post!(url: "/completions", json: completion |> Map.take(@api_fields))
-    |> Map.get(:body)
+    openai |> OpenaiEx.post("/completions", completion |> Map.take(@api_fields))
   end
 end
