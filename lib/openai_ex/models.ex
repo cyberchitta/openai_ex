@@ -17,7 +17,7 @@ defmodule OpenaiEx.Models do
   @doc """
   https://platform.openai.com/docs/api-reference/models/retrieve
   """
-  def model(openai = %OpenaiEx{}, model_id) do
+  def retrieve(openai = %OpenaiEx{}, model_id) do
     openai
     |> OpenaiEx.req()
     |> Req.get!(url: "/models/#{model_id}")
