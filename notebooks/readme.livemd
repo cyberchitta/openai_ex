@@ -2,9 +2,7 @@
 
 ```elixir
 Mix.install([
-  #    {:openai_ex, "~> 0.1.0" }
-  # local path for library developers
-  {:openai_ex, path: Path.join(__DIR__, "..")}
+  {:openai_ex, "~> 0.1.0"}
 ])
 ```
 
