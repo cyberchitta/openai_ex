@@ -6,9 +6,11 @@ The library closely follows the structure of the [official OpenAI API client lib
 
 ## Installation and Usage
 
-For detailed installation instructions and usage examples, please open the [README Livebook](./notebooks/readme.livemd).
+For installation instructions and detailed usage examples, please see the [User Guide Livebook](./notebooks/userguide.livemd).
 
 ## Development
+
+The following section is only for developers that want to contribute to this repository.
 
 This library was developed using a Livebook docker image that runs inside a VS Code devcontainer. The `.devcontainer` folder contains all the relevant files.
 

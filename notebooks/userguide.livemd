@@ -1,8 +1,9 @@
-# OpenaiEx README
+# OpenaiEx User Guide
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.1.1"}
+  {:openai_ex, "~> 0.1.1"},
+  {:kino, "~> 0.9.1"}
 ])
 ```
 
@@ -169,11 +170,13 @@ alias OpenaiEx.Image
 img = Image.new(prompt: "A cute baby sea otter", size: "256x256")
 ```
 
-Then call the [`Image.create()`]() function to generate the image.
+Then call the [`Image.create()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the image.
 
 ```elixir
 img_response = openai |> Image.create(img)
 ```
+
+For more information on generating images, see the [OpenAI API Image reference](https://platform.openai.com/docs/api-reference/images).
 
 ### Embedding
 
@@ -196,5 +199,3 @@ emb_response = openai |> Embedding.create(emb)
 ```
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
-
-<!-- livebook:{"offset":6130,"stamp":{"token":"QTEyOEdDTQ.rNHuDbrUqKKHlS0XvYYeGyXxVcLzU5rV2xkMtYuqE2Og7Dl3f9nh2tEd-OA.pt6ESYMu88SEGVG3.mX45RoMzJyRLXZv0Etqceht-_epz8IxaBPGVXRjgj144J3Sgfi7qbSg9VyQZJmN4peM.FOIo_a_pRlkVmtivEataqg","version":1}} -->
