@@ -12,7 +12,7 @@ Mix.install([
 
 The library closely follows the structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation and code.
 
-This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/notebooks/readme.livemd) and try out the code for yourself!
+This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/main/notebooks/readme.livemd) and try out the code for yourself!
 
 ## Installation
 
