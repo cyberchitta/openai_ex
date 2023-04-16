@@ -1,6 +1,27 @@
 defmodule OpenaiEx.Completion do
   @moduledoc """
-  https://platform.openai.com/docs/api-reference/completions
+  This module provides an implementation of the OpenAI completions API. The API reference can be found at https://beta.openai.com/docs/api-reference/completions.
+
+  ## API Fields
+
+  The following fields can be used as parameters when creating a new completion:
+
+  - `:model`
+  - `:prompt`
+  - `:suffix`
+  - `:max_tokens`
+  - `:temperature`
+  - `:top_p`
+  - `:n`
+  - `:stream`
+  - `:logprobs`
+  - `:echo`
+  - `:stop`
+  - `:presence_penalty`
+  - `:frequency_penalty`
+  - `:best_of`
+  - `:logit_bias`
+  - `:user`
   """
 
   @api_fields [
@@ -22,27 +43,55 @@ defmodule OpenaiEx.Completion do
     :user
   ]
 
-  def new(opts \\ []) do
-    map = opts |> Enum.into(%{})
-    new(map |> Map.get(:model), map |> Map.get(:prompt), map |> Map.drop([:model, :prompt]))
+  @doc """
+  Creates a new completion request with the given arguments.
+
+  ## Arguments
+
+  - `args`: A list of key-value pairs, or a map, representing the fields of the completion request.
+
+  ## Returns
+
+  A map containing the fields of the completion request.
+
+  The `:model` field is required.
+
+  Example usage:
+
+      iex> _request = OpenaiEx.Completion.new([model: "davinci"])
+      %{model: "davinci"}
+
+      iex> _request = OpenaiEx.Completion.new(%{model: "davinci"})
+      %{model: "davinci"}
+  """
+
+  def new(args = [_ | _]) do
+    args |> Enum.into(%{}) |> new()
   end
 
-  def new(model, prompt, opts \\ %{}) do
+  def new(args = %{model: model}) do
     %{
-      model: model,
-      prompt: prompt
+      model: model
     }
-    |> Map.merge(opts)
+    |> Map.merge(args)
     |> Map.take(@api_fields)
   end
 
   @doc """
-  https://platform.openai.com/docs/api-reference/completions/create
+  Calls the completion 'create' endpoint using the given `openai` configuration and `completion` request.
+
+  ## Arguments
+
+  - `openai`: The OpenAI configuration.
+  - `completion`: The completion request, as a map with keys corresponding to the API fields.
+
+  ## Returns
+
+  A map containing the API response.
+
+  See https://platform.openai.com/docs/api-reference/completions/create for more information.
   """
   def create(openai = %OpenaiEx{}, completion = %{}) do
-    openai
-    |> OpenaiEx.req()
-    |> Req.post!(url: "/completions", json: completion |> Map.take(@api_fields))
-    |> Map.get(:body)
+    openai |> OpenaiEx.post("/completions", completion |> Map.take(@api_fields))
   end
 end

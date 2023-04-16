@@ -1,0 +1,137 @@
+# README
+
+```elixir
+Mix.install([
+  {:openai_ex, "~> 0.1.0"}
+])
+```
+
+## Introduction
+
+`OpenaiEx` is an Elixir library that provides a community-maintained client for the OpenAI API.
+
+The library closely follows the structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation and code.
+
+This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/notebooks/readme.livemd) and try out the code for yourself!
+
+## Installation
+
+You can install OpenaiEx using Mix:
+
+### In Livebook
+
+Add the following code to the first connection cell:
+
+<!-- livebook:{"force_markdown":true} -->
+
+````elixir
+Mix.install(
+  [
+    {:openai_ex, "~> 0.1.0"}
+  ],
+)```
+````
+
+<!-- livebook:{"break_markdown":true} -->
+
+### In a Mix Project
+
+Add the following to your mix.exs file:
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+def deps do
+  [
+    {:openai_ex, "~> 0.1.0"}
+  ]
+end
+```
+
+## Usage
+
+OpenaiEx provides a thin wrapper around the OpenAI API client, following the same API structure as the official Python and JS clients. To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to in the following sections.
+
+### Authentication
+
+To authenticate with the OpenAI API, you will need an API key. We recommend storing your API key in an environment variable, like this:
+
+```elixir
+apikey = System.fetch_env!("LB_OPENAI_API_KEY")
+openai = OpenaiEx.new(apikey)
+```
+
+You can also specify an organization if you are a member of more than one:
+
+```elixir
+# organization = System.fetch_env!("LB_OPENAI_ORGANIZATION")
+# openai = OpenAIEx.new(apikey, organization)
+```
+
+For more information on authentication, see the [OpenAI API reference](https://platform.openai.com/docs/api-reference/authentication).
+
+### Model
+
+```elixir
+alias OpenaiEx.Model
+```
+
+To list all available models, use the [`Model.list()`](https://platform.openai.com/docs/api-reference/models/list) function:
+
+```elixir
+openai |> Model.list()
+```
+
+To retrieve information about a specific model, use the [`Model.retrieve(model_id)`](https://platform.openai.com/docs/api-reference/models/retrieve) function:
+
+```elixir
+openai |> Model.retrieve("text-davinci-003")
+```
+
+For more information on using models, see the [OpenAI API Models reference](https://platform.openai.com/docs/api-reference/models).
+
+### Completion
+
+To generate a completion, you first need to define a completion request structure using the `Completion.new()` function. This function takes several parameters, such as the model ID, the prompt, the maximum number of tokens, and the temperature.
+
+```elixir
+alias OpenaiEx.Completion
+
+completion =
+  Completion.new(
+    model: "text-davinci-003",
+    prompt: "Say this is a test",
+    max_tokens: 100,
+    temperature: 0
+  )
+```
+
+Once you have defined the completion request structure, you can generate a completion using the [`Completion.create()`](https://platform.openai.com/docs/api-reference/completions/create) function:
+
+```elixir
+comp_response = openai |> Completion.create(completion)
+```
+
+For more information on generating completions, see the [OpenAI API Completions reference](https://platform.openai.com/docs/api-reference/completions).
+
+### Chat Completion
+
+```elixir
+alias OpenaiEx.ChatCompletion
+alias OpenaiEx.ChatMessage
+```
+
+To generate a chat completion, you need to define a chat completion request structure using the `ChatCompletion.new()` function. This function takes several parameters, such as the model ID and a list of chat messages. We have a module `ChatMessage` which helps in message creation.
+
+```elixir
+chat_completion =
+  ChatCompletion.new(model: "gpt-3.5-turbo", messages: [ChatMessage.user("Hello")])
+```
+
+You can generate a chat completion using the [`ChatCompletion.create()`](https://platform.openai.com/docs/api-reference/chat/completions/create) function:
+
+```elixir
+chat_response = openai |> ChatCompletion.create(chat_completion)
+```
+
+For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat/completions).
