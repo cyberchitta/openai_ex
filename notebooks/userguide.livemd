@@ -13,6 +13,8 @@ Mix.install([
 
 The library closely follows the structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation and code.
 
+To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
+
 This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/v0.1.1/notebooks/readme.livemd) and try out the code for yourself!
 
 ## Installation
@@ -25,15 +27,13 @@ Add the following code to the first connection cell:
 
 <!-- livebook:{"force_markdown":true} -->
 
-````elixir
+```elixir
 Mix.install(
   [
     {:openai_ex, "~> 0.1.1"}
   ],
-)```
-````
-
-<!-- livebook:{"break_markdown":true} -->
+)
+```
 
 ### In a Mix Project
 
@@ -49,11 +49,7 @@ def deps do
 end
 ```
 
-## Usage
-
-OpenaiEx provides a thin wrapper around the OpenAI API client, following the same API structure as the official Python and JS clients. To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to in the following sections.
-
-### Authentication
+## Authentication
 
 To authenticate with the OpenAI API, you will need an API key. We recommend storing your API key in an environment variable, like this:
 
@@ -71,15 +67,13 @@ You can also specify an organization if you are a member of more than one:
 
 For more information on authentication, see the [OpenAI API Authentication reference](https://platform.openai.com/docs/api-reference/authentication).
 
-### Model
-
-```elixir
-alias OpenaiEx.Model
-```
+## Model
 
 To list all available models, use the [`Model.list()`](https://platform.openai.com/docs/api-reference/models/list) function:
 
 ```elixir
+alias OpenaiEx.Model
+
 openai |> Model.list()
 ```
 
@@ -91,7 +85,7 @@ openai |> Model.retrieve("text-davinci-003")
 
 For more information on using models, see the [OpenAI API Models reference](https://platform.openai.com/docs/api-reference/models).
 
-### Completion
+## Completion
 
 To generate a completion, you first need to define a completion request structure using the `Completion.new()` function. This function takes several parameters, such as the model ID, the prompt, the maximum number of tokens, and the temperature.
 
@@ -115,16 +109,14 @@ comp_response = openai |> Completion.create(completion)
 
 For more information on generating completions, see the [OpenAI API Completions reference](https://platform.openai.com/docs/api-reference/completions).
 
-### Chat Completion
-
-```elixir
-alias OpenaiEx.ChatCompletion
-alias OpenaiEx.ChatMessage
-```
+## Chat Completion
 
 To generate a chat completion, you need to define a chat completion request structure using the `ChatCompletion.new()` function. This function takes several parameters, such as the model ID and a list of chat messages. We have a module `ChatMessage` which helps in message creation.
 
 ```elixir
+alias OpenaiEx.ChatCompletion
+alias OpenaiEx.ChatMessage
+
 chat_completion =
   ChatCompletion.new(model: "gpt-3.5-turbo", messages: [ChatMessage.user("Hello")])
 ```
@@ -137,7 +129,7 @@ chat_response = openai |> ChatCompletion.create(chat_completion)
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat/completions).
 
-### Edit
+## Edit
 
 First you need to define an edit request structure using the `Edit.new()` function. This function takes several parameters, such as the model ID, an input and an instruction.
 
@@ -160,7 +152,7 @@ edit_response = openai |> Edit.create(edit)
 
 For more information on generating edits, see the [OpenAI API Edit reference](https://platform.openai.com/docs/api-reference/edits).
 
-### Image
+## Image
 
 For the Image endpoint, the library currently only implements image creation. We define the image request creation request structure using the `Image.new` function
 
@@ -178,7 +170,7 @@ img_response = openai |> Image.create(img)
 
 For more information on generating images, see the [OpenAI API Image reference](https://platform.openai.com/docs/api-reference/images).
 
-### Embedding
+## Embedding
 
 Define the embedding request structure using `Embedding.new`.
 
