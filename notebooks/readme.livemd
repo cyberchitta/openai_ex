@@ -135,3 +135,28 @@ chat_response = openai |> ChatCompletion.create(chat_completion)
 ```
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat/completions).
+
+## Edit
+
+First you need to define an edit request structure using the `Edit.new()` function. This function takes several parameters, such as the model ID, an input and an instruction.
+
+```elixir
+alias OpenaiEx.Edit
+
+edit =
+  Edit.new(
+    model: "text-davinci-edit-001",
+    input: "What day of the wek is it?",
+    instruction: "Fix the spelling mistakes"
+  )
+```
+
+To generate the edit, call the [`Edit.create()`](https://beta.openai.com/docs/api-reference/edits) function.
+
+```elixir
+edit_response = openai |> Edit.create(edit)
+```
+
+For more information on generating edits, see the [OpenAI API Edit reference](https://platform.openai.com/docs/api-reference/edits).
+
+<!-- livebook:{"offset":5224,"stamp":{"token":"QTEyOEdDTQ.NaqEk0d9yuTCt-b-MSGxkszu2KbP9mwGg_95PFJGfVc-y9DmKW0Nn5JWjcE.3I9pz4hBhZg5cTuT.uW7OhoMboWHZoMgYIGxVhCbYUZjBev8tT0F3zWw-tdQ103QdyUoNkyvXDchEf747_ZU.Z5x1HC617A7lReVnIWl2qQ","version":1}} -->
