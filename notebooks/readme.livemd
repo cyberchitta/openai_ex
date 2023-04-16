@@ -159,6 +159,22 @@ edit_response = openai |> Edit.create(edit)
 
 For more information on generating edits, see the [OpenAI API Edit reference](https://platform.openai.com/docs/api-reference/edits).
 
+## Image
+
+For the Image endpoint, the library currently only implements image creation. We define the image request creation request structure using the `Image.new` function
+
+```elixir
+alias OpenaiEx.Image
+
+img = Image.new(prompt: "A cute baby sea otter", size: "256x256")
+```
+
+Then call the [`Image.create()`]() function to generate the image.
+
+```elixir
+img_response = openai |> Image.create(img)
+```
+
 ## Embedding
 
 Define the embedding request structure using `Embedding.new`.
@@ -176,9 +192,9 @@ emb =
 Then call the [`Embedding.create()`]() function.
 
 ```elixir
-openai |> Embedding.create(emb)
+emb_response = openai |> Embedding.create(emb)
 ```
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":5712,"stamp":{"token":"QTEyOEdDTQ.Th4FEf_hyIdh0Qo-UfwrkYrR4xg7pnCy_YRPpcOkbtM16suz2AdHgAb7Yvs.te3_ZAkBx0P032-0.MrSPlURsERto173FBxs7MS0OAA3XRRFi7N7mWz0U2RUrxlksDs5EO44NniPBFTgxu_w.JD6ftYRX-wZ3D5Rc0AzUjw","version":1}} -->
+<!-- livebook:{"offset":6131,"stamp":{"token":"QTEyOEdDTQ.mBUT5TMpUinW2qm9CdgK-LZh_GSPgWQ0huz79sHHV6npefjc7q4Ibt8ETWQ.wbfzZXhGAGeR4xUC.utaToc-D-2iPiZz111kB4HdVi3rZOJekpXuHathXR-Fin4YEbcJkIySbmtSaTQGZ_lU.4YlvLxhTbMt9ulhoIgaA3g","version":1}} -->
