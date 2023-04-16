@@ -4,4 +4,5 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Completion
   doctest OpenaiEx.ChatMessage
   doctest OpenaiEx.Edit
+  doctest OpenaiEx.Embedding
 end

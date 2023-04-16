@@ -159,4 +159,26 @@ edit_response = openai |> Edit.create(edit)
 
 For more information on generating edits, see the [OpenAI API Edit reference](https://platform.openai.com/docs/api-reference/edits).
 
-<!-- livebook:{"offset":5224,"stamp":{"token":"QTEyOEdDTQ.NaqEk0d9yuTCt-b-MSGxkszu2KbP9mwGg_95PFJGfVc-y9DmKW0Nn5JWjcE.3I9pz4hBhZg5cTuT.uW7OhoMboWHZoMgYIGxVhCbYUZjBev8tT0F3zWw-tdQ103QdyUoNkyvXDchEf747_ZU.Z5x1HC617A7lReVnIWl2qQ","version":1}} -->
+## Embedding
+
+Define the embedding request structure using `Embedding.new`.
+
+```elixir
+alias OpenaiEx.Embedding
+
+emb =
+  Embedding.new(
+    model: "text-embedding-ada-002",
+    input: "The food was delicious and the waiter..."
+  )
+```
+
+Then call the [`Embedding.create()`]() function.
+
+```elixir
+openai |> Embedding.create(emb)
+```
+
+For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
+
+<!-- livebook:{"offset":5712,"stamp":{"token":"QTEyOEdDTQ.Th4FEf_hyIdh0Qo-UfwrkYrR4xg7pnCy_YRPpcOkbtM16suz2AdHgAb7Yvs.te3_ZAkBx0P032-0.MrSPlURsERto173FBxs7MS0OAA3XRRFi7N7mWz0U2RUrxlksDs5EO44NniPBFTgxu_w.JD6ftYRX-wZ3D5Rc0AzUjw","version":1}} -->
