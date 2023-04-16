@@ -1,4 +1,4 @@
-# README
+# OpenaiEx README
 
 ```elixir
 Mix.install([
@@ -68,7 +68,7 @@ You can also specify an organization if you are a member of more than one:
 # openai = OpenAIEx.new(apikey, organization)
 ```
 
-For more information on authentication, see the [OpenAI API reference](https://platform.openai.com/docs/api-reference/authentication).
+For more information on authentication, see the [OpenAI API Authentication reference](https://platform.openai.com/docs/api-reference/authentication).
 
 ### Model
 
