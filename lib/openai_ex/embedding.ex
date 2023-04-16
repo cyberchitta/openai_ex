@@ -45,7 +45,7 @@ defmodule OpenaiEx.Embedding do
   def new(args = %{model: model, input: input}) do
     %{
       model: model,
-      messages: input
+      input: input
     }
     |> Map.merge(args)
     |> Map.take(@api_fields)
