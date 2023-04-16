@@ -1,28 +1,10 @@
-# OpenaiEx
+# README
 
-Community maintained Elixir client for OpenAI API.
+`OpenaiEx` is an Elixir library that provides a community-maintained client for the OpenAI API. The library closely follows the structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation and code.
 
-By design the `OpenaiEx` api maps closely to the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) in python and JS. This simplifies our doc job, since we simply point at the original references, instead of duplicating them.
+## Installation and Usage
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `openai_ex` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:openai_ex, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/openai_ex>.
-
-## Usage
-
+Please open [the installation and usage Livebook](./notebooks/readme.livemd) for complete instructions.
 
 ## Development
 
@@ -30,7 +12,7 @@ This library was developed inside a Livebook docker image running in a VS Code d
 
 Clone the repo to your local machine, open it in VS Code, and follow the prompts to open in container.
 
-Once the container is running in VS Code, you can open livebook [here](http://localhost:8080). You will need to enter the password that is in the secret environment variable `LIVEBOOK_PASSWORD` (set in `.env`, explained below).
+Once the container is running in VS Code, you can open livebook at http://localhost:8080. You will need to enter the password that is in the secret environment variable `LIVEBOOK_PASSWORD` (set in `.env`, explained below).
 
 ### Env vars and secrets
 
