@@ -1,6 +1,7 @@
 defmodule OpenaiEx do
   @moduledoc """
   `OpenaiEx` is an Elixir library that provides a community-maintained client for the OpenAI API.
+
   The library closely follows the structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference)
   for [Python](https://github.com/openai/openai-python)
   and [JavaScript](https://github.com/openai/openai-node),
@@ -11,6 +12,7 @@ defmodule OpenaiEx do
 
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.
+
   See https://platform.openai.com/docs/api-reference/authentication for details.
   """
   def new(token, organization \\ nil) do
