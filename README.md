@@ -4,16 +4,16 @@
 
 ## Installation and Usage
 
-For detailed installation instructions and usage examples, please open the [Usage Guide Livebook](./notebooks/readme.livemd).
+For detailed installation instructions and usage examples, please open the [README Livebook](./notebooks/readme.livemd).
 
 ## Development
 
-This library was developed inside a Livebook docker image running in a VS Code devcontainer (check out the `.devcontainer` folder for details).
+This library was developed using a Livebook docker image that runs inside a VS Code devcontainer. The `.devcontainer` folder contains all the relevant files.
 
-Clone the repo to your local machine, open it in VS Code, and follow the prompts to open in container.
+To get started, clone the repository to your local machine and open it in VS Code. Follow the prompts to open it in a container.
 
-Once the container is running in VS Code, you can open livebook at http://localhost:8080. You will need to enter the password that is in the secret environment variable `LIVEBOOK_PASSWORD` (set in `.env`, explained below).
+After the container is up and running in VS Code, you can access livebook at http://localhost:8080. However, you'll need to enter a password that's stored in the environment variable `LIVEBOOK_PASSWORD`. You can find this variable in the `.env` file, which is explained below.
 
-### Env vars and secrets
+### Environment Variables and Secrets
 
-For devcontainer development, any secrets (such as `OPENAI_API_KEY`) are defined as environment variables in a `.env` file in the `.devcontainer` folder. This file should **not be placed** in version control (and is included in `.gitignore` for that reason). A sample `env` (without the '.') is provided which can form the basis for your `.env` file. These secrets are passed through to Livebook in `docker-compose.yml`.
+To set environment variables for devcontainer development, you can create a `.env` file in the `.devcontainer` folder. Any secrets, such as `OPENAI_API_KEY` and `LIVEBOOK_PASSWORD`, can be defined in this file as environment variables. Note that the .env file should not be included in version control, and it's already included in the .gitignore file for this reason. You can find a sample `env` file in the same folder, which you can use as a template for your own `.env` file. These secrets will be passed to Livebook through `docker-compose.yml`.
