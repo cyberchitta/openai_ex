@@ -3,4 +3,7 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.ChatCompletion
   doctest OpenaiEx.Completion
   doctest OpenaiEx.ChatMessage
+  doctest OpenaiEx.Edit
+  doctest OpenaiEx.Embedding
+  doctest OpenaiEx.Image
 end
