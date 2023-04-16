@@ -4,7 +4,7 @@
 
 ## Installation and Usage
 
-Please open [the installation and usage Livebook](./notebooks/readme.livemd) for complete instructions.
+For detailed installation instructions and usage examples, please open the [Usage Guide Livebook](./notebooks/readme.livemd).
 
 ## Development
 
