@@ -48,13 +48,13 @@ defmodule OpenaiEx.MixProject do
 
   defp docs do
     [
-      main: "readme",
+      main: "userguide",
       source_url: @source_url,
       source_ref: "v#{@version}",
       api_reference: false,
       extra_section: "Livebooks",
       extras: [
-        "notebooks/readme.livemd"
+        "notebooks/userguide.livemd"
       ]
     ]
   end
