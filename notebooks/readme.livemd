@@ -136,7 +136,7 @@ chat_response = openai |> ChatCompletion.create(chat_completion)
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat/completions).
 
-## Edit
+### Edit
 
 First you need to define an edit request structure using the `Edit.new()` function. This function takes several parameters, such as the model ID, an input and an instruction.
 
@@ -159,7 +159,7 @@ edit_response = openai |> Edit.create(edit)
 
 For more information on generating edits, see the [OpenAI API Edit reference](https://platform.openai.com/docs/api-reference/edits).
 
-## Image
+### Image
 
 For the Image endpoint, the library currently only implements image creation. We define the image request creation request structure using the `Image.new` function
 
@@ -175,7 +175,7 @@ Then call the [`Image.create()`]() function to generate the image.
 img_response = openai |> Image.create(img)
 ```
 
-## Embedding
+### Embedding
 
 Define the embedding request structure using `Embedding.new`.
 
@@ -197,4 +197,4 @@ emb_response = openai |> Embedding.create(emb)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":6131,"stamp":{"token":"QTEyOEdDTQ.mBUT5TMpUinW2qm9CdgK-LZh_GSPgWQ0huz79sHHV6npefjc7q4Ibt8ETWQ.wbfzZXhGAGeR4xUC.utaToc-D-2iPiZz111kB4HdVi3rZOJekpXuHathXR-Fin4YEbcJkIySbmtSaTQGZ_lU.4YlvLxhTbMt9ulhoIgaA3g","version":1}} -->
+<!-- livebook:{"offset":6130,"stamp":{"token":"QTEyOEdDTQ.rNHuDbrUqKKHlS0XvYYeGyXxVcLzU5rV2xkMtYuqE2Og7Dl3f9nh2tEd-OA.pt6ESYMu88SEGVG3.mX45RoMzJyRLXZv0Etqceht-_epz8IxaBPGVXRjgj144J3Sgfi7qbSg9VyQZJmN4peM.FOIo_a_pRlkVmtivEataqg","version":1}} -->
