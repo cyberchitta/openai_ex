@@ -23,9 +23,7 @@ defmodule OpenaiEx do
   end
 
   def middleware(openai = %OpenaiEx{}) do
-    mw = [
-      {Tesla.Middleware.BaseUrl, "https://api.openai.com/v1"}
-    ]
+    mw = [{Tesla.Middleware.BaseUrl, "https://api.openai.com/v1"}]
 
     headers = [{"Authorization", "Bearer #{openai.token}"}]
 
@@ -62,5 +60,32 @@ defmodule OpenaiEx do
     |> Tesla.client()
     |> Tesla.get!(url)
     |> Map.get(:body)
+  end
+
+  @doc """
+  Converts a request map into a multipart/form-data request.
+
+  ## Arguments
+
+  - `req`: The request map to convert.
+  - `file_keys`: The keys in the request map that contain file data.
+
+  ## Returns
+
+  A Tesla.Multipart struct.
+  """
+  def to_multi_part_form_data(req, file_keys) do
+    mp =
+      req
+      |> Map.drop(file_keys)
+      |> Enum.reduce(Tesla.Multipart.new(), fn {k, v}, acc ->
+        acc |> Tesla.Multipart.add_field(to_string(k), v)
+      end)
+
+    req
+    |> Map.take(file_keys)
+    |> Enum.reduce(mp, fn {k, v}, acc ->
+      acc |> Tesla.Multipart.add_file_content(v, "", name: to_string(k))
+    end)
   end
 end

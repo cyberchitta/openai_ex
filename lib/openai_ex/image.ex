@@ -20,6 +20,8 @@ defmodule OpenaiEx.Image do
     :user
   ]
 
+  alias OpenaiEx.Image
+
   @doc """
   Creates a new image request with the given arguments.
 
@@ -88,7 +90,7 @@ defmodule OpenaiEx.Image do
   def create_edit(openai = %OpenaiEx{}, image_edit = %{}) do
     openai
     |> OpenaiEx.post("/images/edits",
-      multipart: image_edit |> OpenaiEx.Image.Edit.to_multi_part_form_data()
+      multipart: image_edit |> OpenaiEx.to_multi_part_form_data(Image.Edit.file_keys())
     )
   end
 
@@ -109,7 +111,7 @@ defmodule OpenaiEx.Image do
   def create_variation(openai = %OpenaiEx{}, image_variation = %{}) do
     openai
     |> OpenaiEx.post("/images/variations",
-      multipart: image_variation |> OpenaiEx.Image.Variation.to_multi_part_form_data()
+      multipart: image_variation |> OpenaiEx.to_multi_part_form_data(Image.Variation.file_keys())
     )
   end
 end
