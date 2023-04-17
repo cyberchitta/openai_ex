@@ -180,7 +180,9 @@ For more information on generating images, see the [OpenAI API Image reference](
 With the information in the image response, we can fetch the images from their URLs
 
 ```elixir
-fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> OpenaiEx.get_any() end)
+fetch_img = fn url -> Tesla.client([]) |> Tesla.get!(url) end
+
+fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> fetch_img.() end)
 ```
 
 #### View the generated images
@@ -211,28 +213,26 @@ img_to_vary = fetched_images |> List.first() |> Map.get(:body)
 ```
 
 ```elixir
-img_var_req = Image.Variation.new(image: img_to_vary)
+img_var_req = Image.Variation.new(image: img_to_vary, size: "256x256")
 ```
 
 Then call the [`Image.create_variation()`](https://platform.openai.com/docs/api-reference/images/create-variation) function to generate the images.
 
-```elixir
-form = img_var_req |> Map.to_list()
-```
-
-```elixir
-req =
-  openai
-  |> OpenaiEx.req()
-  |> Req.update(base_url: "http://httpbin.org", url: "/anything", form: form)
-  |> Req.post!()
-```
+<!-- livebook:{"break_markdown":true} -->
 
 ###
 
 ```elixir
 img_var_response = openai |> Image.create_variation(img_var_req)
 ```
+
+```elixir
+img_var_response["data"]
+|> Enum.map(fn i -> i["url"] |> fetch_img.() end)
+|> Enum.map(fn r -> r |> to_kino.() |> Kino.render() end)
+```
+
+For more information on images variations, see the [OpenAI API Image Variations reference](https://platform.openai.com/docs/api-reference/images/create-variation).
 
 ## Embedding
 
@@ -256,4 +256,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":7702,"stamp":{"token":"QTEyOEdDTQ.X7deJXTajI4fCH39e-h17LsFi9T9z6vtzwDTrAmxuUD1mQigt4U87QZwiQo.SVSEJq4ASQrt0SFM.sWgIq4V3gQc36EA66NSrdgvXD_LGTkoRr5lx9XJaI8vwAaAszRJFAHz1ELiMeQYheKE.D49V9S2l9dG8vlqbgjWcxQ","version":1}} -->
+<!-- livebook:{"offset":7936,"stamp":{"token":"QTEyOEdDTQ.aTDxaeImcnSSUkjn8DNYCyim-_UeROG1K3ctBWU_h68kD83HOYVtzmlnEOA.fowt7ao0ljPovgdc.YEs7JSorhE2-IkAFplfsCw8y_ZVf3HHO9BxLamPsTIpV7DTQ-bVtJ1FxjbQWY5zV4qA._OVx5aGdsD7DzfGT3Dvpzw","version":1}} -->

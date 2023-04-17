@@ -10,6 +10,8 @@ defmodule OpenaiEx.Image.Variation do
   - `:response_format`
   - `:user`
   """
+  alias Tesla.Multipart
+
   @api_fields [
     :image,
     :n,
@@ -42,5 +44,14 @@ defmodule OpenaiEx.Image.Variation do
     }
     |> Map.merge(args)
     |> Map.take(@api_fields)
+  end
+
+  def to_multi_part_form_data(img_variation) do
+    img_variation
+    |> Map.drop([:image])
+    |> Enum.reduce(Multipart.new(), fn {k, v}, acc ->
+      acc |> Multipart.add_field(to_string(k), v)
+    end)
+    |> Multipart.add_file_content(img_variation.image, "", name: "image")
   end
 end

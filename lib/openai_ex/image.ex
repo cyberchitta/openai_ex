@@ -86,7 +86,10 @@ defmodule OpenaiEx.Image do
   See the [OpenAI API Create Image Edit reference](https://platform.openai.com/docs/api-reference/images/create-edit) for more information.
   """
   def create_edit(openai = %OpenaiEx{}, image_edit = %{}) do
-    openai |> OpenaiEx.post("/images/edits", form: image_edit |> Map.to_list())
+    openai
+    |> OpenaiEx.post("/images/edits",
+      multipart: image_edit |> OpenaiEx.Image.Edit.to_multi_part_form_data()
+    )
   end
 
   @doc """
@@ -104,6 +107,9 @@ defmodule OpenaiEx.Image do
   See the [OpenAI API Create Image Variation reference](https://platform.openai.com/docs/api-reference/images/create-variation) for more information.
   """
   def create_variation(openai = %OpenaiEx{}, image_variation = %{}) do
-    openai |> OpenaiEx.post("/images/variations", form: image_variation |> Map.to_list())
+    openai
+    |> OpenaiEx.post("/images/variations",
+      multipart: image_variation |> OpenaiEx.Image.Variation.to_multi_part_form_data()
+    )
   end
 end
