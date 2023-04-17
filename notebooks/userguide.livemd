@@ -15,7 +15,7 @@ The library closely follows the structure of the [official OpenAI API client lib
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
-This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/v0.1.1/notebooks/readme.livemd) and try out the code for yourself!
+This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/v0.1.1/notebooks/userguide.livemd) and try out the code for yourself!
 
 ## Installation
 
@@ -214,4 +214,4 @@ emb_response = openai |> Embedding.create(emb)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":6818,"stamp":{"token":"QTEyOEdDTQ.AqUbQkvooJ4JqzIW2tZHoCpTbfh6zXOC96fG5ysV09vrhf3PKKq2MLDGVrE.XRz_4qSbDn77GIyw.8_chS1Kf1LBpRJwusRrYBUyNBQM2CkRYE__zd0bgCLxvCko8sCR6r1ncb3cs0unA_v1a5y1crjQpjYHldtcOn5F7a7m4gFVvnm0.Sj-cxfhXp1VLwz62gctjkg","version":1}} -->
+<!-- livebook:{"offset":6821,"stamp":{"token":"QTEyOEdDTQ.6mLz97cr1eoZhK5-9oeIqRr3ebCJTAZU1yM-ApaPkzCjAvK2Rujfl-Yi38E.pJUBfdEtoKgx62Rv.D2-wPbJ0CIXR_OLgYgevi-K4cRpjw2wIxq6IVxdv5vphcey87eP6HMdcVPWdHxwNvjsYGMg0_pHDFe-UEIphgP8wqNvD2LSHygI.zgei2XyBx4GxFUSU3J7UYg","version":1}} -->
