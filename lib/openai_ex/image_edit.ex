@@ -48,20 +48,10 @@ defmodule OpenaiEx.Image.Edit do
     |> Map.take(@api_fields)
   end
 
-  alias Tesla.Multipart
-
-  def to_multi_part_form_data(img_edit) do
-    mp =
-      img_edit
-      |> Map.drop([:image, :mask])
-      |> Enum.reduce(Multipart.new(), fn {k, v}, acc ->
-        acc |> Multipart.add_field(to_string(k), v)
-      end)
-
-    img_edit
-    |> Map.take([:image, :mask])
-    |> Enum.reduce(mp, fn {k, v}, acc ->
-      acc |> Multipart.add_file_content(v, "", name: to_string(k))
-    end)
+  @doc """
+  Returns the list of keys that contain file data.
+  """
+  def file_keys() do
+    [:image, :mask]
   end
 end
