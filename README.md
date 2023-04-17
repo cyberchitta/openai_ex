@@ -1,5 +1,5 @@
 # README
-[github ci badge](https://github.com/restlessronin/openai_ex/actions/workflows/ci.yml/badge.svg)
+![github ci badge](https://github.com/restlessronin/openai_ex/actions/workflows/ci.yml/badge.svg)
 [![hex.pm badge](https://img.shields.io/hexpm/v/openai_ex.svg)](https://hex.pm/packages/openai_ex)
 
 `OpenaiEx` is an Elixir library that provides a community-maintained client for the OpenAI API.
