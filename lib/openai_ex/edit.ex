@@ -71,6 +71,6 @@ defmodule OpenaiEx.Edit do
   See https://platform.openai.com/docs/api-reference/edits/create for more information.
   """
   def create(openai = %OpenaiEx{}, edit = %{}) do
-    openai |> OpenaiEx.post("/edits", edit |> Map.take(@api_fields))
+    openai |> OpenaiEx.post("/edits", json: edit |> Map.take(@api_fields))
   end
 end
