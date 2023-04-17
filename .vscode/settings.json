@@ -1,5 +1,0 @@
-{
-    "elixirLS.envVariables": {
-        "DIALYZER_PLT": "./.elixir_ls"
-    }
-}
