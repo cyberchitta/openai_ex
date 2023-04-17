@@ -38,12 +38,19 @@ defmodule OpenaiEx do
   end
 
   @doc """
-  Sends a POST request to the specified OpenAI API URL endpoint with the specified body encoded as JSON.
+  Sends a POST request to the specified OpenAI API URL endpoint with the specified body encoded as JSON or multipart/form-data.
   """
   def post(openai = %OpenaiEx{}, url, json: json) do
     (middleware(openai) ++ [Tesla.Middleware.JSON])
     |> Tesla.client()
     |> Tesla.post!(url, json)
+    |> Map.get(:body)
+  end
+
+  def post(openai = %OpenaiEx{}, url, multipart: multipart) do
+    (middleware(openai) ++ [Tesla.Middleware.DecodeJson])
+    |> Tesla.client()
+    |> Tesla.post!(url, multipart)
     |> Map.get(:body)
   end
 
