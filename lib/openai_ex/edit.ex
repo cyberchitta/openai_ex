@@ -1,6 +1,6 @@
 defmodule OpenaiEx.Edit do
   @moduledoc """
-  This module provides an implementation of the OpenAI edits API. The API reference can be found at https://beta.openai.com/docs/api-reference/edits.
+  This module provides an implementation of the OpenAI edits API. The API reference can be found at https://platform.openai.com/docs/api-reference/edits.
 
   ## API Fields
 

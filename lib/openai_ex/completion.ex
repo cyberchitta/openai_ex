@@ -1,6 +1,6 @@
 defmodule OpenaiEx.Completion do
   @moduledoc """
-  This module provides an implementation of the OpenAI completions API. The API reference can be found at https://beta.openai.com/docs/api-reference/completions.
+  This module provides an implementation of the OpenAI completions API. The API reference can be found at https://platform.openai.com/docs/api-reference/completions.
 
   ## API Fields
 

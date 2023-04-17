@@ -1,6 +1,6 @@
 defmodule OpenaiEx.Image do
   @moduledoc """
-  This module provides an implementation of the OpenAI images API. The API reference can be found at https://beta.openai.com/docs/api-reference/images.
+  This module provides an implementation of the OpenAI images API. The API reference can be found at https://platform.openai.com/docs/api-reference/images.
 
   ## API Fields
 
@@ -65,7 +65,7 @@ defmodule OpenaiEx.Image do
 
   A map containing the response from the OpenAI API.
 
-  See the [OpenAI API Create Image reference](https://beta.openai.com/docs/api-reference/images/create) for more information.
+  See the [OpenAI API Create Image reference](https://platform.openai.com/docs/api-reference/images/create) for more information.
   """
   def create(openai = %OpenaiEx{}, image = %{}) do
     openai |> OpenaiEx.post("/images/generations", image)
