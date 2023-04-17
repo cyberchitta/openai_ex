@@ -11,7 +11,7 @@ Mix.install([
 
 `OpenaiEx` is an Elixir library that provides a community-maintained client for the OpenAI API.
 
-The library closely follows the structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation and code.
+The library closely follows the structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation.
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
@@ -51,7 +51,7 @@ end
 
 ## Authentication
 
-To authenticate with the OpenAI API, you will need an API key. We recommend storing your API key in an environment variable, like this:
+To authenticate with the OpenAI API, you will need an API key. We recommend storing your API key in an environment variable. Since we are using Livebook, we can store this and other evironment variables as [Livebook Hub Secrets](https://news.livebook.dev/hubs-and-secret-management---launch-week-1---day-3-3tMaJ2).
 
 ```elixir
 apikey = System.fetch_env!("LB_OPENAI_API_KEY")
@@ -62,7 +62,7 @@ You can also specify an organization if you are a member of more than one:
 
 ```elixir
 # organization = System.fetch_env!("LB_OPENAI_ORGANIZATION")
-# openai = OpenAIEx.new(apikey, organization)
+# openai = OpenaiEx.new(apikey, organization)
 ```
 
 For more information on authentication, see the [OpenAI API Authentication reference](https://platform.openai.com/docs/api-reference/authentication).
@@ -77,7 +77,7 @@ alias OpenaiEx.Model
 openai |> Model.list()
 ```
 
-To retrieve information about a specific model, use the [`Model.retrieve(model_id)`](https://platform.openai.com/docs/api-reference/models/retrieve) function:
+To retrieve information about a specific model, use the [`Model.retrieve()`](https://platform.openai.com/docs/api-reference/models/retrieve) function:
 
 ```elixir
 openai |> Model.retrieve("text-davinci-003")
@@ -87,12 +87,12 @@ For more information on using models, see the [OpenAI API Models reference](http
 
 ## Completion
 
-To generate a completion, you first need to define a completion request structure using the `Completion.new()` function. This function takes several parameters, such as the model ID, the prompt, the maximum number of tokens, and the temperature.
+To generate a completion, you first need to define a completion request structure using the `Completion.new()` function. This function takes several parameters, such as the model ID, the prompt, the maximum number of tokens, etc.
 
 ```elixir
 alias OpenaiEx.Completion
 
-completion =
+completion_req =
   Completion.new(
     model: "text-davinci-003",
     prompt: "Say this is a test",
@@ -104,27 +104,26 @@ completion =
 Once you have defined the completion request structure, you can generate a completion using the [`Completion.create()`](https://platform.openai.com/docs/api-reference/completions/create) function:
 
 ```elixir
-comp_response = openai |> Completion.create(completion)
+comp_response = openai |> Completion.create(completion_req)
 ```
 
 For more information on generating completions, see the [OpenAI API Completions reference](https://platform.openai.com/docs/api-reference/completions).
 
 ## Chat Completion
 
-To generate a chat completion, you need to define a chat completion request structure using the `ChatCompletion.new()` function. This function takes several parameters, such as the model ID and a list of chat messages. We have a module `ChatMessage` which helps in message creation.
+To generate a chat completion, you need to define a chat completion request structure using the `ChatCompletion.new()` function. This function takes several parameters, such as the model ID and a list of chat messages. We have a module `ChatMessage` which helps create messages in the [chat format](https://platform.openai.com/docs/guides/chat/introduction).
 
 ```elixir
 alias OpenaiEx.ChatCompletion
 alias OpenaiEx.ChatMessage
 
-chat_completion =
-  ChatCompletion.new(model: "gpt-3.5-turbo", messages: [ChatMessage.user("Hello")])
+chat_req = ChatCompletion.new(model: "gpt-3.5-turbo", messages: [ChatMessage.user("Hello")])
 ```
 
 You can generate a chat completion using the [`ChatCompletion.create()`](https://platform.openai.com/docs/api-reference/chat/completions/create) function:
 
 ```elixir
-chat_response = openai |> ChatCompletion.create(chat_completion)
+chat_response = openai |> ChatCompletion.create(chat_req)
 ```
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat/completions).
@@ -136,7 +135,7 @@ First you need to define an edit request structure using the `Edit.new()` functi
 ```elixir
 alias OpenaiEx.Edit
 
-edit =
+edit_req =
   Edit.new(
     model: "text-davinci-edit-001",
     input: "What day of the wek is it?",
@@ -147,28 +146,51 @@ edit =
 To generate the edit, call the [`Edit.create()`](https://beta.openai.com/docs/api-reference/edits) function.
 
 ```elixir
-edit_response = openai |> Edit.create(edit)
+edit_response = openai |> Edit.create(edit_req)
 ```
 
 For more information on generating edits, see the [OpenAI API Edit reference](https://platform.openai.com/docs/api-reference/edits).
 
 ## Image
 
-For the Image endpoint, the library currently only implements image creation. We define the image request creation request structure using the `Image.new` function
+For the Image endpoint, the library currently only implements image creation. We define the image creation request structure using the `Image.new` function
 
 ```elixir
 alias OpenaiEx.Image
 
-img = Image.new(prompt: "A cute baby sea otter", size: "256x256")
+img_req = Image.new(prompt: "A cute baby sea otter", size: "256x256", n: 2)
 ```
 
-Then call the [`Image.create()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the image.
+Then call the [`Image.create()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the images.
 
 ```elixir
-img_response = openai |> Image.create(img)
+img_response = openai |> Image.create(img_req)
 ```
 
 For more information on generating images, see the [OpenAI API Image reference](https://platform.openai.com/docs/api-reference/images).
+
+### Fetch the generated images
+
+With the information in the image response, we can fetch the images from their URLs
+
+```elixir
+img_urls = img_response["data"] |> Enum.map(fn i -> i["url"] end)
+
+api_images = img_urls |> Enum.map(fn url -> url |> Req.get!() end)
+```
+
+### View the generated images
+
+Finally, we can render the images using Kino
+
+```elixir
+api_images
+|> Enum.map(fn res ->
+  res.body
+  |> Kino.Image.new(res |> Req.Response.get_header("content-type") |> List.first())
+  |> Kino.render()
+end)
+```
 
 ## Embedding
 
@@ -191,3 +213,5 @@ emb_response = openai |> Embedding.create(emb)
 ```
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
+
+<!-- livebook:{"offset":6818,"stamp":{"token":"QTEyOEdDTQ.AqUbQkvooJ4JqzIW2tZHoCpTbfh6zXOC96fG5ysV09vrhf3PKKq2MLDGVrE.XRz_4qSbDn77GIyw.8_chS1Kf1LBpRJwusRrYBUyNBQM2CkRYE__zd0bgCLxvCko8sCR6r1ncb3cs0unA_v1a5y1crjQpjYHldtcOn5F7a7m4gFVvnm0.Sj-cxfhXp1VLwz62gctjkg","version":1}} -->
