@@ -29,7 +29,9 @@ defmodule OpenaiEx.MixProject do
 
   defp deps do
     [
-      {:req, "~> 0.3"},
+      {:tesla, "~> 1.4"},
+      {:hackney, "~> 1.17"},
+      {:jason, "~> 1.2"},
       {:ex_doc, ">= 0.0.0", only: :docs},
       {:credo, "~> 1.6", only: :dev, runtime: false}
     ]

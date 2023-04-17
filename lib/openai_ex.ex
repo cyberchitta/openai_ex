@@ -22,31 +22,25 @@ defmodule OpenaiEx do
     }
   end
 
-  defp req(openai = %OpenaiEx{}) do
-    options = [base_url: "https://api.openai.com/v1", auth: {:bearer, openai.token}]
-
+  def middleware(openai = %OpenaiEx{}) do
+    mw = [
+      {Tesla.Middleware.BaseUrl, "https://api.openai.com/v1"}
+    ]
+    headers = [{"Authorization", "Bearer #{openai.token}"}]
     if is_nil(openai.organization) do
-      options
+      mw ++ [{Tesla.Middleware.Headers, headers}]
     else
-      options ++ [headers: ["OpenAI-Organization", openai.organization]]
+      mw ++ [{Tesla.Middleware.Headers, headers ++ [{"OpenAI-Organization", openai.organization}]}]
     end
-    |> Req.new()
   end
 
   @doc """
-  Sends a POST request to the specified OpenAI API URL endpoint with the specified body either encoded as JSON or as Form data.
+  Sends a POST request to the specified OpenAI API URL endpoint with the specified body encoded as JSON.
   """
   def post(openai = %OpenaiEx{}, url, json: json) do
-    openai
-    |> req()
-    |> Req.post!(url: url, json: json)
-    |> Map.get(:body)
-  end
-
-  def post(openai = %OpenaiEx{}, url, form: form) do
-    openai
-    |> req()
-    |> Req.post!(url: url, form: form)
+    (middleware(openai) ++ [Tesla.Middleware.JSON])
+    |> Tesla.client()
+    |> Tesla.post!(url, json)
     |> Map.get(:body)
   end
 
@@ -54,9 +48,16 @@ defmodule OpenaiEx do
   Sends a GET request to the specified OpenAI API URL endpoint.
   """
   def get(openai = %OpenaiEx{}, url) do
-    openai
-    |> req()
-    |> Req.get!(url: url)
+    (middleware(openai) ++ [Tesla.Middleware.JSON])
+    |> Tesla.client()
+    |> Tesla.get!(url)
     |> Map.get(:body)
+  end
+
+  @doc """
+  Sends a GET request for any old URL.
+  """
+  def get_any(url) do
+    Tesla.client([]) |> Tesla.get!(url)
   end
 end

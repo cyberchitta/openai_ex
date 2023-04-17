@@ -180,7 +180,7 @@ For more information on generating images, see the [OpenAI API Image reference](
 With the information in the image response, we can fetch the images from their URLs
 
 ```elixir
-fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> Req.get!() end)
+fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> OpenaiEx.get_any() end)
 ```
 
 #### View the generated images
@@ -189,7 +189,7 @@ Finally, we can render the images using Kino
 
 ```elixir
 to_kino = fn req_r ->
-  Kino.Image.new(req_r.body, Req.Response.get_header(req_r, "content-type") |> List.first())
+  Kino.Image.new(req_r.body, "image/png")
 end
 
 fetched_images
@@ -256,4 +256,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":7745,"stamp":{"token":"QTEyOEdDTQ.IZJfsfNTC959braSENPsNr66WbinH2yFpaMCRAM_-L4pyYxsMnas6MvnhG8.k_AFRVffKftlNCCe.GEzWDYoEhHTEvIj6Xl3IdGwCwHnLKWyuhzIbvYJvgC2NzU-2zCdH-jCmk7ssepQFgb4.6qv8juUktw7vNfCWHl-Rmg","version":1}} -->
+<!-- livebook:{"offset":7702,"stamp":{"token":"QTEyOEdDTQ.X7deJXTajI4fCH39e-h17LsFi9T9z6vtzwDTrAmxuUD1mQigt4U87QZwiQo.SVSEJq4ASQrt0SFM.sWgIq4V3gQc36EA66NSrdgvXD_LGTkoRr5lx9XJaI8vwAaAszRJFAHz1ELiMeQYheKE.D49V9S2l9dG8vlqbgjWcxQ","version":1}} -->
