@@ -11,6 +11,7 @@ defmodule OpenaiEx.MixProject do
       version: @version,
       description: @description,
       elixir: "~> 1.12",
+      elixirc_options: [debug_info: Mix.env() == :dev],
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
@@ -23,16 +24,14 @@ defmodule OpenaiEx.MixProject do
   end
 
   def application do
-    [
-      extra_applications: [:logger]
-    ]
+    []
   end
 
   defp deps do
     [
       {:req, "~> 0.3"},
       {:ex_doc, ">= 0.0.0", only: :docs},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.6", only: :dev, runtime: false}
     ]
   end
 
