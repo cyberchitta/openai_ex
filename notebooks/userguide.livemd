@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, path: Path.join(__DIR__, "..")},
+  {:openai_ex, "~> 0.1.2"},
   {:kino, "~> 0.9.2"}
 ])
 ```
@@ -15,7 +15,7 @@ The library closely follows the structure of the [official OpenAI API client lib
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
-This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/v0.1.1/notebooks/userguide.livemd) and try out the code for yourself!
+This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/v0.1.2/notebooks/userguide.livemd) and try out the code for yourself!
 
 ## Installation
 
@@ -30,7 +30,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.1.1"}
+    {:openai_ex, "~> 0.1.2"}
   ],
 )
 ```
@@ -44,7 +44,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.1.1"}
+    {:openai_ex, "~> 0.1.2"}
   ]
 end
 ```
@@ -264,4 +264,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":8177,"stamp":{"token":"QTEyOEdDTQ.wAQw45v8PMJoArll_A3JQIMQHSox7_ISy-h5Z9opKhUTa8T5qA6vHddtdrU.1fZJZTCp2aPmqxia.BPz9p7Eo3tVFTo_qacW_687VqnY4EKyV52P2jp9_WxFuTgVQsoVDHaXyuhBMoi1ryc0.GuWJRpyIqigeUdKG2n4-gQ","version":1}} -->
+<!-- livebook:{"offset":8157,"stamp":{"token":"QTEyOEdDTQ.mGbsIdzvqaizSPp2jvpamyYGYHh0Z-N_Eqbw6iMWJ4stjprbxFxChV0V5rQ.3eJaqOY8Aluy9XaT.UPLHt04Tc0u9Y4qK8eSdWbJXLWsemhQTaERcAmwA6K4KCq0p8PnesbG1vxAPSvd-NsI.eui_dyAO-DcdxPODCF1-Bw","version":1}} -->
