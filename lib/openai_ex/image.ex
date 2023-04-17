@@ -1,6 +1,6 @@
 defmodule OpenaiEx.Image do
   @moduledoc """
-  This module provides an implementation of the OpenAI images API. The API reference can be found at https://beta.openai.com/docs/api-reference/images.
+  This module provides an implementation of the OpenAI images API. The API reference can be found at https://platform.openai.com/docs/api-reference/images.
 
   ## API Fields
 
@@ -54,7 +54,7 @@ defmodule OpenaiEx.Image do
   end
 
   @doc """
-  Calls the image endpoint using the given `openai` configuration and the given `image` request.
+  Calls the image generation endpoint using the given `openai` configuration and the given `image` request.
 
   ## Arguments
 
@@ -65,9 +65,45 @@ defmodule OpenaiEx.Image do
 
   A map containing the response from the OpenAI API.
 
-  See the [OpenAI API Create Image reference](https://beta.openai.com/docs/api-reference/images/create) for more information.
+  See the [OpenAI API Create Image reference](https://platform.openai.com/docs/api-reference/images/create) for more information.
   """
   def create(openai = %OpenaiEx{}, image = %{}) do
-    openai |> OpenaiEx.post("/images/generations", image)
+    openai |> OpenaiEx.post("/images/generations", json: image)
+  end
+
+  @doc """
+  Calls the image edit endpoint using the given `openai` configuration and the given `image_edit` request.
+
+  ## Arguments
+
+  - `openai`: The OpenAI configuration to use.
+  - `image_edit`: The image edit request to send.
+
+  ## Returns
+
+  A map containing the response from the OpenAI API.
+
+  See the [OpenAI API Create Image Edit reference](https://platform.openai.com/docs/api-reference/images/create-edit) for more information.
+  """
+  def create_edit(openai = %OpenaiEx{}, image_edit = %{}) do
+    openai |> OpenaiEx.post("/images/edits", form: image_edit |> Map.to_list())
+  end
+
+  @doc """
+  Calls the image variation endpoint using the given `openai` configuration and the given `image_variation` request.
+
+  ## Arguments
+
+  - `openai`: The OpenAI configuration to use.
+  - `image_variation`: The image variation request to send.
+
+  ## Returns
+
+  A map containing the response from the OpenAI API.
+
+  See the [OpenAI API Create Image Variation reference](https://platform.openai.com/docs/api-reference/images/create-variation) for more information.
+  """
+  def create_variation(openai = %OpenaiEx{}, image_variation = %{}) do
+    openai |> OpenaiEx.post("/images/variations", form: image_variation |> Map.to_list())
   end
 end

@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.1.1"},
-  {:kino, "~> 0.9.1"}
+  {:openai_ex, path: Path.join(__DIR__, "..")},
+  {:kino, "~> 0.9.2"}
 ])
 ```
 
@@ -69,6 +69,8 @@ For more information on authentication, see the [OpenAI API Authentication refer
 
 ## Model
 
+### List Models
+
 To list all available models, use the [`Model.list()`](https://platform.openai.com/docs/api-reference/models/list) function:
 
 ```elixir
@@ -76,6 +78,8 @@ alias OpenaiEx.Model
 
 openai |> Model.list()
 ```
+
+### Retrieve Models
 
 To retrieve information about a specific model, use the [`Model.retrieve()`](https://platform.openai.com/docs/api-reference/models/retrieve) function:
 
@@ -143,7 +147,7 @@ edit_req =
   )
 ```
 
-To generate the edit, call the [`Edit.create()`](https://beta.openai.com/docs/api-reference/edits) function.
+To generate the edit, call the [`Edit.create()`](https://platform.openai.com/docs/api-reference/edits) function.
 
 ```elixir
 edit_response = openai |> Edit.create(edit_req)
@@ -153,7 +157,9 @@ For more information on generating edits, see the [OpenAI API Edit reference](ht
 
 ## Image
 
-For the Image endpoint, the library currently only implements image creation. We define the image creation request structure using the `Image.new` function
+### Generate Image
+
+We define the image creation request structure using the `Image.new` function
 
 ```elixir
 alias OpenaiEx.Image
@@ -169,27 +175,63 @@ img_response = openai |> Image.create(img_req)
 
 For more information on generating images, see the [OpenAI API Image reference](https://platform.openai.com/docs/api-reference/images).
 
-### Fetch the generated images
+#### Fetch the generated images
 
 With the information in the image response, we can fetch the images from their URLs
 
 ```elixir
-img_urls = img_response["data"] |> Enum.map(fn i -> i["url"] end)
-
-api_images = img_urls |> Enum.map(fn url -> url |> Req.get!() end)
+fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> Req.get!() end)
 ```
 
-### View the generated images
+#### View the generated images
 
 Finally, we can render the images using Kino
 
 ```elixir
-api_images
-|> Enum.map(fn res ->
-  res.body
-  |> Kino.Image.new(res |> Req.Response.get_header("content-type") |> List.first())
-  |> Kino.render()
-end)
+to_kino = fn req_r ->
+  Kino.Image.new(req_r.body, Req.Response.get_header(req_r, "content-type") |> List.first())
+end
+
+fetched_images
+|> Enum.map(fn r -> r |> to_kino.() |> Kino.render() end)
+```
+
+### Edit Image
+
+We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. We will
+
+<!-- livebook:{"break_markdown":true} -->
+
+### Image Variations
+
+We define an image variation request structure using the `Image.Variation.new()` function. This function requires an image.
+
+```elixir
+img_to_vary = fetched_images |> List.first() |> Map.get(:body)
+```
+
+```elixir
+img_var_req = Image.Variation.new(image: img_to_vary)
+```
+
+Then call the [`Image.create_variation()`](https://platform.openai.com/docs/api-reference/images/create-variation) function to generate the images.
+
+```elixir
+form = img_var_req |> Map.to_list()
+```
+
+```elixir
+req =
+  openai
+  |> OpenaiEx.req()
+  |> Req.update(base_url: "http://httpbin.org", url: "/anything", form: form)
+  |> Req.post!()
+```
+
+###
+
+```elixir
+img_var_response = openai |> Image.create_variation(img_var_req)
 ```
 
 ## Embedding
@@ -199,7 +241,7 @@ Define the embedding request structure using `Embedding.new`.
 ```elixir
 alias OpenaiEx.Embedding
 
-emb =
+emb_req =
   Embedding.new(
     model: "text-embedding-ada-002",
     input: "The food was delicious and the waiter..."
@@ -209,9 +251,9 @@ emb =
 Then call the [`Embedding.create()`]() function.
 
 ```elixir
-emb_response = openai |> Embedding.create(emb)
+emb_response = openai |> Embedding.create(emb_req)
 ```
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":6821,"stamp":{"token":"QTEyOEdDTQ.6mLz97cr1eoZhK5-9oeIqRr3ebCJTAZU1yM-ApaPkzCjAvK2Rujfl-Yi38E.pJUBfdEtoKgx62Rv.D2-wPbJ0CIXR_OLgYgevi-K4cRpjw2wIxq6IVxdv5vphcey87eP6HMdcVPWdHxwNvjsYGMg0_pHDFe-UEIphgP8wqNvD2LSHygI.zgei2XyBx4GxFUSU3J7UYg","version":1}} -->
+<!-- livebook:{"offset":7745,"stamp":{"token":"QTEyOEdDTQ.IZJfsfNTC959braSENPsNr66WbinH2yFpaMCRAM_-L4pyYxsMnas6MvnhG8.k_AFRVffKftlNCCe.GEzWDYoEhHTEvIj6Xl3IdGwCwHnLKWyuhzIbvYJvgC2NzU-2zCdH-jCmk7ssepQFgb4.6qv8juUktw7vNfCWHl-Rmg","version":1}} -->

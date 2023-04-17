@@ -34,12 +34,19 @@ defmodule OpenaiEx do
   end
 
   @doc """
-  Sends a POST request to the specified OpenAI API URL endpoint with the specified JSON body.
+  Sends a POST request to the specified OpenAI API URL endpoint with the specified body either encoded as JSON or as Form data.
   """
-  def post(openai = %OpenaiEx{}, url, json) do
+  def post(openai = %OpenaiEx{}, url, json: json) do
     openai
     |> req()
     |> Req.post!(url: url, json: json)
+    |> Map.get(:body)
+  end
+
+  def post(openai = %OpenaiEx{}, url, form: form) do
+    openai
+    |> req()
+    |> Req.post!(url: url, form: form)
     |> Map.get(:body)
   end
 

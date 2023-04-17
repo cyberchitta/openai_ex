@@ -84,6 +84,6 @@ defmodule OpenaiEx.ChatCompletion do
   See https://platform.openai.com/docs/api-reference/chat/completions/create for more information.
   """
   def create(openai = %OpenaiEx{}, chat_completion = %{}) do
-    openai |> OpenaiEx.post("/chat/completions", chat_completion |> Map.take(@api_fields))
+    openai |> OpenaiEx.post("/chat/completions", json: chat_completion |> Map.take(@api_fields))
   end
 end
