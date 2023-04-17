@@ -26,11 +26,14 @@ defmodule OpenaiEx do
     mw = [
       {Tesla.Middleware.BaseUrl, "https://api.openai.com/v1"}
     ]
+
     headers = [{"Authorization", "Bearer #{openai.token}"}]
+
     if is_nil(openai.organization) do
       mw ++ [{Tesla.Middleware.Headers, headers}]
     else
-      mw ++ [{Tesla.Middleware.Headers, headers ++ [{"OpenAI-Organization", openai.organization}]}]
+      mw ++
+        [{Tesla.Middleware.Headers, headers ++ [{"OpenAI-Organization", openai.organization}]}]
     end
   end
 
@@ -52,12 +55,5 @@ defmodule OpenaiEx do
     |> Tesla.client()
     |> Tesla.get!(url)
     |> Map.get(:body)
-  end
-
-  @doc """
-  Sends a GET request for any old URL.
-  """
-  def get_any(url) do
-    Tesla.client([]) |> Tesla.get!(url)
   end
 end
