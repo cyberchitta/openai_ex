@@ -198,22 +198,30 @@ fetched_images
 |> Enum.map(fn r -> r |> to_kino.() |> Kino.render() end)
 ```
 
+```elixir
+img_to_expmt = fetched_images |> List.first() |> Map.get(:body)
+```
+
 ### Edit Image
 
-We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. We will
+We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. We will simply send in the same image that we received
 
-<!-- livebook:{"break_markdown":true} -->
+```elixir
+img_edit_req = Image.Edit.new(image: img_to_expmt, prompt: "Image shows a smiling Otter")
+```
+
+We then call the [`Image.create_edit()`]() function
+
+```elixir
+img_edit_response = openai |> Image.create_edit(img_edit_req)
+```
 
 ### Image Variations
 
 We define an image variation request structure using the `Image.Variation.new()` function. This function requires an image.
 
 ```elixir
-img_to_vary = fetched_images |> List.first() |> Map.get(:body)
-```
-
-```elixir
-img_var_req = Image.Variation.new(image: img_to_vary, size: "256x256")
+img_var_req = Image.Variation.new(image: img_to_expmt, size: "256x256")
 ```
 
 Then call the [`Image.create_variation()`](https://platform.openai.com/docs/api-reference/images/create-variation) function to generate the images.
@@ -256,4 +264,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":7936,"stamp":{"token":"QTEyOEdDTQ.aTDxaeImcnSSUkjn8DNYCyim-_UeROG1K3ctBWU_h68kD83HOYVtzmlnEOA.fowt7ao0ljPovgdc.YEs7JSorhE2-IkAFplfsCw8y_ZVf3HHO9BxLamPsTIpV7DTQ-bVtJ1FxjbQWY5zV4qA._OVx5aGdsD7DzfGT3Dvpzw","version":1}} -->
+<!-- livebook:{"offset":8177,"stamp":{"token":"QTEyOEdDTQ.wAQw45v8PMJoArll_A3JQIMQHSox7_ISy-h5Z9opKhUTa8T5qA6vHddtdrU.1fZJZTCp2aPmqxia.BPz9p7Eo3tVFTo_qacW_687VqnY4EKyV52P2jp9_WxFuTgVQsoVDHaXyuhBMoi1ryc0.GuWJRpyIqigeUdKG2n4-gQ","version":1}} -->

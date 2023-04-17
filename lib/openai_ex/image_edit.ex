@@ -61,7 +61,7 @@ defmodule OpenaiEx.Image.Edit do
     img_edit
     |> Map.take([:image, :mask])
     |> Enum.reduce(mp, fn {k, v}, acc ->
-      acc |> Multipart.add_file_content(v, name: to_string(k))
+      acc |> Multipart.add_file_content(v, "", name: to_string(k))
     end)
   end
 end
