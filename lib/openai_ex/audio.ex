@@ -34,14 +34,6 @@ defmodule OpenaiEx.Audio do
   A map containing the fields of the audio request.
 
   The `:file` and `:model` fields are required.
-
-  Example usage:
-
-      iex> _request = OpenaiEx.Audio.new([file: "test.wav", model: "whisper-1"])
-      %{file: "test.wav", model: "davinci"}
-
-      iex> _request = OpenaiEx.Audio.new(%{file: "test.wav", model: "whisper-1"})
-      %{file: "test.wav", model: "davinci"}
   """
   def new(args = [_ | _]) do
     args |> Enum.into(%{}) |> new()
