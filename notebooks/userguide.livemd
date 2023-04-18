@@ -2,9 +2,9 @@
 
 ```elixir
 Mix.install([
-  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "0.1.2"}
+  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "0.1.2"},
   #  {:openai_ex, "~> 0.1.2"},
-  {:openai_ex, path: Path.join(__DIR__, "..")},
+  #  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.9.2"}
 ])
 ```
@@ -32,6 +32,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
+#   {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "0.1.2"}
     {:openai_ex, "~> 0.1.2"}
   ],
 )
@@ -46,6 +47,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
+#   {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "0.1.2"}
     {:openai_ex, "~> 0.1.2"}
   ]
 end
@@ -282,4 +284,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":8621,"stamp":{"token":"QTEyOEdDTQ.1FGfeiiIF9-vmlA7mBgRNTh5h8x994gX-YxBJIJ_FJla9sfasbXa0QczmB4.S3UeU7UV0xKUMP5_.nwKiRNbRsV6CvAkYCurtV8Okvv6047BAMkgxgY0cT4D2eHThQhBAtC5KDaDiJHGw8lE.qSyF6SphLZHCAmjA9Hh_-g","version":1}} -->
+<!-- livebook:{"offset":8794,"stamp":{"token":"QTEyOEdDTQ.dYP0K9nva6ZkZx0c2MUvWO6dSRvZwYRcbLvuC9JOY3MM4Bx7oQtFRmRzYC8.oFqbJSSEVdI_849p.LiJF2NijACQybqu9usCaxzsP-zFoeLub3TDk6QP_oCCqk56A2UF7jLAiTs-1qS8BH4g.4lCLKoB6Yo3Kb8zlRu_q4w","version":1}} -->
