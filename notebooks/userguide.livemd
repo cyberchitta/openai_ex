@@ -53,7 +53,7 @@ end
 
 ## Authentication
 
-To authenticate with the OpenAI API, you will need an API key. We recommend storing your API key in an environment variable. Since we are using Livebook, we can store this and other evironment variables as [Livebook Hub Secrets](https://news.livebook.dev/hubs-and-secret-management---launch-week-1---day-3-3tMaJ2).
+To authenticate with the OpenAI API, you will need an API key. We recommend storing your API key in an environment variable. Since we are using Livebook, we can store this and other environment variables as [Livebook Hub Secrets](https://news.livebook.dev/hubs-and-secret-management---launch-week-1---day-3-3tMaJ2).
 
 ```elixir
 apikey = System.fetch_env!("LB_OPENAI_API_KEY")
@@ -287,4 +287,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":8771,"stamp":{"token":"QTEyOEdDTQ.WFFoQ4rbuv1MDW-FDE4Ia6AxYrXZyUdcFoUz7yx24wwx5gKunj6FQHW1mzg.yFwibAlbM2Go5IHM.DH9P5C4cQgidJE8PepLinkYsEuhEMi2S32MUH4NidMS0_3USv1JenLFZpeRIo0Vu7Ag.Oe7Qjyn-Gg_7zieGMEdZcg","version":1}} -->
+<!-- livebook:{"offset":8772,"stamp":{"token":"QTEyOEdDTQ.Iga4W9XuM5RMTqel6nKX5hmc860tvaRSuIpWokpbRfjdLR76qdNWWAgUz-c.88H-qdfLRfo6DWeB.2QzMNDGe_rWhixkVCdAsKs_5UNZTz8rlrakaIuf3zeDR6MSw0pvuqod6hOwsKeyl6dM.eMmZwr9B5_JynCQc5XAjkw","version":1}} -->
