@@ -57,7 +57,7 @@ defmodule OpenaiEx.Edit do
   end
 
   @doc """
-  Calls the edit endpoint using the given `openai` configuration and the given `edit` request.
+  Calls the edit endpoint.
 
   ## Arguments
 

@@ -70,7 +70,7 @@ defmodule OpenaiEx.ChatCompletion do
   end
 
   @doc """
-  Calls the chat completion 'create' endpoint using the given `openai` configuration and `chat_completion` request.
+  Calls the chat completion 'create' endpoint.
 
   ## Arguments
 

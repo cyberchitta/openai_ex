@@ -78,7 +78,7 @@ defmodule OpenaiEx.Completion do
   end
 
   @doc """
-  Calls the completion 'create' endpoint using the given `openai` configuration and `completion` request.
+  Calls the completion 'create' endpoint.
 
   ## Arguments
 

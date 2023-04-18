@@ -56,7 +56,7 @@ defmodule OpenaiEx.Image do
   end
 
   @doc """
-  Calls the image generation endpoint using the given `openai` configuration and the given `image` request.
+  Calls the image generation endpoint.
 
   ## Arguments
 
@@ -74,7 +74,7 @@ defmodule OpenaiEx.Image do
   end
 
   @doc """
-  Calls the image edit endpoint using the given `openai` configuration and the given `image_edit` request.
+  Calls the image edit endpoint.
 
   ## Arguments
 
@@ -95,7 +95,7 @@ defmodule OpenaiEx.Image do
   end
 
   @doc """
-  Calls the image variation endpoint using the given `openai` configuration and the given `image_variation` request.
+  Calls the image variation endpoint.
 
   ## Arguments
 

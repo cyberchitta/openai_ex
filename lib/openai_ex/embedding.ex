@@ -52,7 +52,7 @@ defmodule OpenaiEx.Embedding do
   end
 
   @doc """
-  Calls the embedding endpoint using the given `openai` configuration and the given `embedding` request.
+  Calls the embedding endpoint.
 
   ## Arguments
 
