@@ -282,4 +282,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":8621,"stamp":{"token":"QTEyOEdDTQ.p4TIPRxaE5Dxh5W5uhPZfkZ0ZZVPgtV7UkQbttl-ZKwraaEP0wxGX-B7R0c.GqjmKxEbG3Ei11b2.xBQC0RpQq8VWOa282vLlhJ1jd8cmKJT8IZteXKV85vZ2Z0vBRwQBaM5kVw91nSxn5W8.OgbXNu7cjsDmjCLgq0Tn2Q","version":1}} -->
+<!-- livebook:{"offset":8621,"stamp":{"token":"QTEyOEdDTQ.1FGfeiiIF9-vmlA7mBgRNTh5h8x994gX-YxBJIJ_FJla9sfasbXa0QczmB4.S3UeU7UV0xKUMP5_.nwKiRNbRsV6CvAkYCurtV8Okvv6047BAMkgxgY0cT4D2eHThQhBAtC5KDaDiJHGw8lE.qSyF6SphLZHCAmjA9Hh_-g","version":1}} -->
