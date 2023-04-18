@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "0.1.2"},
-  #  {:openai_ex, "~> 0.1.2"},
+  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.2"},
+  {:openai_ex, "~> 0.1.2"},
   #  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.9.2"}
 ])
@@ -32,8 +32,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "0.1.2"}
-#   {:openai_ex, "~> 0.1.2"}
+    {:openai_ex, "~> 0.1.2"}
   ],
 )
 ```
@@ -47,8 +46,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "0.1.2"}
-#   {:openai_ex, "~> 0.1.2"}
+    {:openai_ex, "~> 0.1.2"}
   ]
 end
 ```
@@ -211,7 +209,12 @@ img_to_expmt = fetched_images |> List.first() |> Map.get(:body)
 We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. For the image, we will use the one that we received. Let's load the mask from a URL.
 
 ```elixir
-star_mask = File.read!(Path.join(__DIR__, "../assets/images/starmask.png"))
+# star_mask = File.read!(Path.join(__DIR__, "../assets/images/starmask.png"))
+star_mask =
+  fetch_img.(
+    "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/images/starmask.png"
+  )
+  |> Map.get(:body)
 ```
 
 ```elixir
@@ -284,4 +287,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":8794,"stamp":{"token":"QTEyOEdDTQ.75t7lvCKUflnQxTMZgDl2EOmfjcCLNRHkthM9bqtZ7_yls0-cptAsOgVY_0.n2QtpFtTu_asiFw8.TpoVDUbByFRPweoqiK7ZCv4B1cU0Q-et2QXZ08IVYwUloQ1O9DyUaL_cX2N93I8pCjo.XoTQW41qyN9J7FZDT_nuzQ","version":1}} -->
+<!-- livebook:{"offset":8771,"stamp":{"token":"QTEyOEdDTQ.WFFoQ4rbuv1MDW-FDE4Ia6AxYrXZyUdcFoUz7yx24wwx5gKunj6FQHW1mzg.yFwibAlbM2Go5IHM.DH9P5C4cQgidJE8PepLinkYsEuhEMi2S32MUH4NidMS0_3USv1JenLFZpeRIo0Vu7Ag.Oe7Qjyn-Gg_7zieGMEdZcg","version":1}} -->

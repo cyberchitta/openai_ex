@@ -11,7 +11,7 @@ defmodule OpenaiEx.MixProject do
       version: @version,
       description: @description,
       elixir: "~> 1.12",
-      elixirc_options: [debug_info: Mix.env() == :dev],
+      elixirc_options: [debug_info: true],
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
