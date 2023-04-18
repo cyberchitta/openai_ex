@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.2"},
-  {:openai_ex, "~> 0.1.2"},
+  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.3"},
+  {:openai_ex, "~> 0.1.3"},
   #  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.9.2"}
 ])
@@ -17,7 +17,7 @@ The library closely follows the structure of the [official OpenAI API client lib
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
-This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/v0.1.2/notebooks/userguide.livemd) and try out the code for yourself!
+This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/v0.1.3/notebooks/userguide.livemd) and try out the code for yourself!
 
 ## Installation
 
@@ -32,7 +32,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.1.2"}
+    {:openai_ex, "~> 0.1.3"}
   ],
 )
 ```
@@ -46,7 +46,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.1.2"}
+    {:openai_ex, "~> 0.1.3"}
   ]
 end
 ```
@@ -182,9 +182,9 @@ For more information on generating images, see the [OpenAI API Image reference](
 With the information in the image response, we can fetch the images from their URLs
 
 ```elixir
-fetch_img = fn url -> Tesla.client([]) |> Tesla.get!(url) end
+fetch_blob = fn url -> Tesla.client([]) |> Tesla.get!(url) |> Map.get(:body) end
 
-fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> fetch_img.() end)
+fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> fetch_blob.() end)
 ```
 
 #### View the generated images
@@ -192,16 +192,12 @@ fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> fetch_img.
 Finally, we can render the images using Kino
 
 ```elixir
-to_kino = fn req_r ->
-  Kino.Image.new(req_r.body, "image/png")
-end
-
 fetched_images
-|> Enum.map(fn r -> r |> to_kino.() |> Kino.render() end)
+|> Enum.map(fn r -> r |> Kino.Image.new("image/png") |> Kino.render() end)
 ```
 
 ```elixir
-img_to_expmt = fetched_images |> List.first() |> Map.get(:body)
+img_to_expmt = fetched_images |> List.first()
 ```
 
 ### Edit Image
@@ -211,10 +207,9 @@ We define an image edit request structure using the `Image.Edit.new()` function.
 ```elixir
 # star_mask = File.read!(Path.join(__DIR__, "../assets/images/starmask.png"))
 star_mask =
-  fetch_img.(
+  fetch_blob.(
     "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/images/starmask.png"
   )
-  |> Map.get(:body)
 ```
 
 Set up the image edit request with image, mask and prompt.
@@ -235,10 +230,11 @@ We then call the [`Image.create_edit()`]() function
 img_edit_response = openai |> Image.create_edit(img_edit_req)
 ```
 
+and view the result
+
 ```elixir
 img_edit_response["data"]
-|> Enum.map(fn i -> i["url"] |> fetch_img.() end)
-|> Enum.map(fn r -> r |> to_kino.() |> Kino.render() end)
+|> Enum.map(fn i -> i["url"] |> fetch_blob.() |> Kino.Image.new("image/png") |> Kino.render() end)
 ```
 
 ### Image Variations
@@ -261,8 +257,7 @@ img_var_response = openai |> Image.create_variation(img_var_req)
 
 ```elixir
 img_var_response["data"]
-|> Enum.map(fn i -> i["url"] |> fetch_img.() end)
-|> Enum.map(fn r -> r |> to_kino.() |> Kino.render() end)
+|> Enum.map(fn i -> i["url"] |> fetch_blob.() |> Kino.Image.new("image/png") |> Kino.render() end)
 ```
 
 For more information on images variations, see the [OpenAI API Image Variations reference](https://platform.openai.com/docs/api-reference/images/create-variation).
@@ -289,4 +284,38 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":8832,"stamp":{"token":"QTEyOEdDTQ.XdBQgjPhaT1eXAO3vpRRV0hx_AvBeSa4My7eUQOhskSJ3C3zPgTa0Lw5roA._SbQ8rRBVpfRSzAh.ORe9Xg-Jqhl3GuSlgl54_ug5NdmGh6D1ul51SS5iti6UKMh19G7SsMHRL8rqEh9abiM.speZ3ZU8Prpz-d1hiJTc0A","version":1}} -->
+## Audio
+
+### Transcription
+
+To define an Audio request structure, we need to create a file parameter using `Audio.File.new()`.
+
+```elixir
+alias OpenaiEx.Audio
+
+# audio_file = Audio.File.new(path: Path.join(__DIR__, "../assets/transcribe.mp3"))
+
+audio_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/transcribe.mp3"
+
+audio_file = Audio.File.new(name: audio_url, content: fetch_blob.(audio_url))
+```
+
+The file parameter is used to create the Audio request structure
+
+```elixir
+audio_req = Audio.new(file: audio_file, model: "whisper-1")
+```
+
+We then call the [`Audio.transcribe()`](https://platform.openai.com/docs/api-reference/audio/create) function to create a transcription.
+
+```elixir
+audio_response = openai |> Audio.transcribe(audio_req)
+```
+
+### Translation
+
+The translation call uses practically the same request structure, but calls the `Audio.translate()` endpoint
+
+For more information on the audio endpoints see the [Openai API Audio Reference](https://platform.openai.com/docs/api-reference/audio)
+
+<!-- livebook:{"offset":9807,"stamp":{"token":"QTEyOEdDTQ.jeHA5rzfmjQMh4M8Dc0SNuR6TU2Phc1YEO8KQx504IBTGE4ysw5RBxtRWAU.mqsPyGe7tNZ6_CnI.7G238YbHURQlMZnO8JZTJPR0o14KOY97eapc5wUE7-GCfLmnwwza-YCak_gY6yqalLM.7xEnoiqlySsaRzVl1LmGXg","version":1}} -->
