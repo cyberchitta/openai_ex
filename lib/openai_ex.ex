@@ -71,7 +71,13 @@ defmodule OpenaiEx do
     req
     |> Map.take(file_keys)
     |> Enum.reduce(mp, fn {k, v}, acc ->
-      acc |> Tesla.Multipart.add_file_content(v, "", name: to_string(k))
+      {filename, content} =
+        case v do
+          {f, c} -> {f, c}
+          c -> {"", c}
+        end
+
+      acc |> Tesla.Multipart.add_file_content(content, filename, name: to_string(k))
     end)
   end
 end
