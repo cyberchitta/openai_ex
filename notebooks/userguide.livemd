@@ -2,7 +2,9 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.1.2"},
+  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "0.1.2"}
+  #  {:openai_ex, "~> 0.1.2"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.9.2"}
 ])
 ```
@@ -204,16 +206,32 @@ img_to_expmt = fetched_images |> List.first() |> Map.get(:body)
 
 ### Edit Image
 
-We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. We will simply send in the same image that we received
+We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. For the image, we will use the one that we received. Let's load the mask from a URL.
 
 ```elixir
-img_edit_req = Image.Edit.new(image: img_to_expmt, prompt: "Image shows a smiling Otter")
+star_mask = File.read!(Path.join(__DIR__, "../assets/images/starmask.png"))
+```
+
+```elixir
+img_edit_req =
+  Image.Edit.new(
+    image: img_to_expmt,
+    mask: star_mask,
+    size: "256x256",
+    prompt: "Image shows a smiling Otter"
+  )
 ```
 
 We then call the [`Image.create_edit()`]() function
 
 ```elixir
 img_edit_response = openai |> Image.create_edit(img_edit_req)
+```
+
+```elixir
+img_edit_response["data"]
+|> Enum.map(fn i -> i["url"] |> fetch_img.() end)
+|> Enum.map(fn r -> r |> to_kino.() |> Kino.render() end)
 ```
 
 ### Image Variations
@@ -264,4 +282,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":8157,"stamp":{"token":"QTEyOEdDTQ.mGbsIdzvqaizSPp2jvpamyYGYHh0Z-N_Eqbw6iMWJ4stjprbxFxChV0V5rQ.3eJaqOY8Aluy9XaT.UPLHt04Tc0u9Y4qK8eSdWbJXLWsemhQTaERcAmwA6K4KCq0p8PnesbG1vxAPSvd-NsI.eui_dyAO-DcdxPODCF1-Bw","version":1}} -->
+<!-- livebook:{"offset":8621,"stamp":{"token":"QTEyOEdDTQ.p4TIPRxaE5Dxh5W5uhPZfkZ0ZZVPgtV7UkQbttl-ZKwraaEP0wxGX-B7R0c.GqjmKxEbG3Ei11b2.xBQC0RpQq8VWOa282vLlhJ1jd8cmKJT8IZteXKV85vZ2Z0vBRwQBaM5kVw91nSxn5W8.OgbXNu7cjsDmjCLgq0Tn2Q","version":1}} -->
