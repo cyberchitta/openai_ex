@@ -217,6 +217,8 @@ star_mask =
   |> Map.get(:body)
 ```
 
+Set up the image edit request with image, mask and prompt.
+
 ```elixir
 img_edit_req =
   Image.Edit.new(
@@ -287,4 +289,4 @@ emb_response = openai |> Embedding.create(emb_req)
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
 
-<!-- livebook:{"offset":8772,"stamp":{"token":"QTEyOEdDTQ.Iga4W9XuM5RMTqel6nKX5hmc860tvaRSuIpWokpbRfjdLR76qdNWWAgUz-c.88H-qdfLRfo6DWeB.2QzMNDGe_rWhixkVCdAsKs_5UNZTz8rlrakaIuf3zeDR6MSw0pvuqod6hOwsKeyl6dM.eMmZwr9B5_JynCQc5XAjkw","version":1}} -->
+<!-- livebook:{"offset":8832,"stamp":{"token":"QTEyOEdDTQ.XdBQgjPhaT1eXAO3vpRRV0hx_AvBeSa4My7eUQOhskSJ3C3zPgTa0Lw5roA._SbQ8rRBVpfRSzAh.ORe9Xg-Jqhl3GuSlgl54_ug5NdmGh6D1ul51SS5iti6UKMh19G7SsMHRL8rqEh9abiM.speZ3ZU8Prpz-d1hiJTc0A","version":1}} -->
