@@ -22,6 +22,7 @@ defmodule OpenaiEx do
     }
   end
 
+  @doc false
   def middleware(openai = %OpenaiEx{}) do
     mw = [{Tesla.Middleware.BaseUrl, "https://api.openai.com/v1"}]
 
@@ -35,9 +36,7 @@ defmodule OpenaiEx do
     end
   end
 
-  @doc """
-  Sends a POST request to the specified OpenAI API URL endpoint with the specified body encoded as JSON or multipart/form-data.
-  """
+  @doc false
   def post(openai = %OpenaiEx{}, url, json: json) do
     (middleware(openai) ++ [Tesla.Middleware.JSON])
     |> Tesla.client()
@@ -52,9 +51,7 @@ defmodule OpenaiEx do
     |> Map.get(:body)
   end
 
-  @doc """
-  Sends a GET request to the specified OpenAI API URL endpoint.
-  """
+  @doc false
   def get(openai = %OpenaiEx{}, url) do
     (middleware(openai) ++ [Tesla.Middleware.JSON])
     |> Tesla.client()
@@ -62,18 +59,7 @@ defmodule OpenaiEx do
     |> Map.get(:body)
   end
 
-  @doc """
-  Converts a request map into a multipart/form-data request.
-
-  ## Arguments
-
-  - `req`: The request map to convert.
-  - `file_keys`: The keys in the request map that contain file data.
-
-  ## Returns
-
-  A Tesla.Multipart struct.
-  """
+  @doc false
   def to_multi_part_form_data(req, file_keys) do
     mp =
       req

@@ -44,9 +44,7 @@ defmodule OpenaiEx.Image.Variation do
     |> Map.take(@api_fields)
   end
 
-  @doc """
-  Returns the list of keys that contain file data.
-  """
+  @doc false
   def file_keys() do
     [:image]
   end
