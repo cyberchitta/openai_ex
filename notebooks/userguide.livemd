@@ -3,7 +3,7 @@
 ```elixir
 Mix.install([
   #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.5"},
-  {:openai_ex, "0.1.5"},
+  {:openai_ex, "== 0.1.5"},
   #  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.9.2"}
 ])
