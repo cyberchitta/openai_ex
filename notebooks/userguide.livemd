@@ -327,7 +327,7 @@ To request all files that belong to the user organization, call the [`File.list(
 ```elixir
 alias OpenaiEx.File
 
-files_list_resp = File.list()
+openai |> File.list()
 ```
 
 ### Upload files
@@ -342,18 +342,52 @@ fine_tune_file = OpenaiEx.new_file(name: ftf_url, content: fetch_blob.(ftf_url))
 upload_req = File.new_upload(file: fine_tune_file, purpose: "fine-tune")
 ```
 
-### Retrieve files
+Then we call the [`File.create()`](https://platform.openai.com/docs/api-reference/files/upload) function to upload the file
 
 ```elixir
+upload_res = openai |> File.create(upload_req)
+```
 
+We can verify that the file has been uploaded by calling
+
+```elixir
+openai |> File.list()
+```
+
+We grab the file id from the previous response value to use in the following samples
+
+```elixir
+file_id = upload_res["id"]
+```
+
+### Retrieve files
+
+In order to retrieve meta information on a file, we simply call the [`File.retrieve()`]() function with the given id
+
+```elixir
+openai |> File.retrieve(file_id)
 ```
 
 ### Retrieve file content
 
-```elixir
+Similarly to download the file contents, we call [`File.download()`]()
 
+```elixir
+openai |> File.download(file_id)
 ```
 
 ### Delete file
 
-<!-- livebook:{"offset":10614,"stamp":{"token":"QTEyOEdDTQ.Q9mNBsP9Af6Jub0MtalW3wrsAppX_FTSq2Rh4-lEqjJiZsZlBwlfLw0KQGY.WFts3bqMxRt3QX1Z.Ju2r5L1BK3HB5A0HrvEY6MCAs_UWsT4wYQXtKnCjji1oI9_BtLf1Gr_cQYOiR9LLxMc.FPDhhVqlgqfZOjTU6EPYRg","version":1}} -->
+Finally, we can delete the file by calling [`File.delete()`](https://platform.openai.com/docs/api-reference/files/delete)
+
+```elixir
+openai |> File.delete(file_id)
+```
+
+Verify that the file has been deleted by listing files again
+
+```elixir
+openai |> File.list()
+```
+
+<!-- livebook:{"offset":11538,"stamp":{"token":"QTEyOEdDTQ.P7Z3DR15YOpu74QBiF-pxxAh7PYd2kVkqlM816p_Y_BPTd4ho5uuklqoqQY.cZuPWOectwF3E1Pc.UW29RigHU3Y7E5_Tpuh6U9EwX3ccMEa7tDcCE67Oh-Nt25nG65KfRaRnTIaPlTKuDhw.dtMAYsiYRvWKcpUDKOfhmQ","version":1}} -->
