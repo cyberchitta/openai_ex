@@ -1,0 +1,53 @@
+# Play
+
+```elixir
+Mix.install([
+  {:openai_ex, path: Path.join(__DIR__, "..")}
+])
+```
+
+## Section
+
+```elixir
+apikey = System.fetch_env!("LB_OPENAI_API_KEY")
+openai = OpenaiEx.new(apikey)
+```
+
+```elixir
+alias OpenaiEx.File
+
+files_list_resp = openai |> File.list()
+```
+
+```elixir
+# fine_tune_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/fine-tune.jsonl"))
+ftf_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/fine-tune.jsonl"
+
+fetch_blob = fn url -> Tesla.client([]) |> Tesla.get!(url) |> Map.get(:body) end
+fine_tune_file = OpenaiEx.new_file(name: ftf_url, content: fetch_blob.(ftf_url))
+upload_req = File.new_upload(file: fine_tune_file, purpose: "fine-tune")
+
+upload_res = openai |> File.create(upload_req)
+
+file_id = upload_res["id"]
+```
+
+```elixir
+allfiles = openai |> File.list()
+
+allfiles["data"] |> Enum.map(fn f -> openai |> File.delete(f["id"]) end)
+```
+
+```elixir
+openai |> File.retrieve(file_id)
+```
+
+```elixir
+openai |> File.download("file-VuEqnARMuvcSbhrOaABps5HZ")
+```
+
+```elixir
+openai |> File.delete(file_id)
+```
+
+<!-- livebook:{"offset":1072,"stamp":{"token":"QTEyOEdDTQ.zmpesBrpbum-qjSAYufeVOxYafq6hGsm7YaLTSMxPtBIc1vhixhqEBjg4xo.zfqwPzErk2Ok_qdD.9j8AX7G9asym2YbQ6nH3EtqmFRZNwaX12lr-YQ3fqgBo3A2Fq8eVb74Lnq_0MsofU7o.U4ypq6S2MnYbPhDI56cIKA","version":1}} -->
