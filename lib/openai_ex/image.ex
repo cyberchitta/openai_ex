@@ -111,7 +111,8 @@ defmodule OpenaiEx.Image do
   def create_variation(openai = %OpenaiEx{}, image_variation = %{}) do
     openai
     |> OpenaiEx.post("/images/variations",
-      multipart: image_variation |> OpenaiEx.to_multi_part_form_data(Image.Variation.file_fields())
+      multipart:
+        image_variation |> OpenaiEx.to_multi_part_form_data(Image.Variation.file_fields())
     )
   end
 end
