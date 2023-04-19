@@ -52,24 +52,32 @@ defmodule OpenaiEx do
   end
 
   @doc false
+  def delete(openai = %OpenaiEx{}, url) do
+    (middleware(openai) ++ [Tesla.Middleware.DecodeJson])
+    |> Tesla.client()
+    |> Tesla.delete!(url)
+    |> Map.get(:body)
+  end
+
+  @doc false
   def get(openai = %OpenaiEx{}, url) do
-    (middleware(openai) ++ [Tesla.Middleware.JSON])
+    (middleware(openai) ++ [Tesla.Middleware.DecodeJson])
     |> Tesla.client()
     |> Tesla.get!(url)
     |> Map.get(:body)
   end
 
   @doc false
-  def to_multi_part_form_data(req, file_keys) do
+  def to_multi_part_form_data(req, file_fields) do
     mp =
       req
-      |> Map.drop(file_keys)
+      |> Map.drop(file_fields)
       |> Enum.reduce(Tesla.Multipart.new(), fn {k, v}, acc ->
         acc |> Tesla.Multipart.add_field(to_string(k), v)
       end)
 
     req
-    |> Map.take(file_keys)
+    |> Map.take(file_fields)
     |> Enum.reduce(mp, fn {k, v}, acc ->
       {filename, content} =
         case v do
@@ -79,5 +87,19 @@ defmodule OpenaiEx do
 
       acc |> Tesla.Multipart.add_file_content(content, filename, name: to_string(k))
     end)
+  end
+
+  @doc """
+  Create file parameter struct for use in multipart requests.
+
+  OpenAI API has endpoints which need a file parameter, such as Files and Audio.
+  This function creates a file parameter given a name and content or a local file path.
+  """
+  def new_file(name: name, content: content) do
+    {name, content}
+  end
+
+  def new_file(path: path) do
+    {path, File.read!(path)}
   end
 end
