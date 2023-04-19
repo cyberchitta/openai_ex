@@ -49,7 +49,7 @@ defmodule OpenaiEx.Image.Edit do
   end
 
   @doc false
-  def file_keys() do
+  def file_fields() do
     [:image, :mask]
   end
 end

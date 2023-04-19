@@ -90,7 +90,7 @@ defmodule OpenaiEx.Image do
   def create_edit(openai = %OpenaiEx{}, image_edit = %{}) do
     openai
     |> OpenaiEx.post("/images/edits",
-      multipart: image_edit |> OpenaiEx.to_multi_part_form_data(Image.Edit.file_keys())
+      multipart: image_edit |> OpenaiEx.to_multi_part_form_data(Image.Edit.file_fields())
     )
   end
 
@@ -111,7 +111,7 @@ defmodule OpenaiEx.Image do
   def create_variation(openai = %OpenaiEx{}, image_variation = %{}) do
     openai
     |> OpenaiEx.post("/images/variations",
-      multipart: image_variation |> OpenaiEx.to_multi_part_form_data(Image.Variation.file_keys())
+      multipart: image_variation |> OpenaiEx.to_multi_part_form_data(Image.Variation.file_fields())
     )
   end
 end

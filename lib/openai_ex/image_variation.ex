@@ -45,7 +45,7 @@ defmodule OpenaiEx.Image.Variation do
   end
 
   @doc false
-  def file_keys() do
+  def file_fields() do
     [:image]
   end
 end

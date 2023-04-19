@@ -60,16 +60,16 @@ defmodule OpenaiEx do
   end
 
   @doc false
-  def to_multi_part_form_data(req, file_keys) do
+  def to_multi_part_form_data(req, file_fields) do
     mp =
       req
-      |> Map.drop(file_keys)
+      |> Map.drop(file_fields)
       |> Enum.reduce(Tesla.Multipart.new(), fn {k, v}, acc ->
         acc |> Tesla.Multipart.add_field(to_string(k), v)
       end)
 
     req
-    |> Map.take(file_keys)
+    |> Map.take(file_fields)
     |> Enum.reduce(mp, fn {k, v}, acc ->
       {filename, content} =
         case v do

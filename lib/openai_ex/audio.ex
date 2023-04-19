@@ -65,7 +65,7 @@ defmodule OpenaiEx.Audio do
   def transcribe(openai = %OpenaiEx{}, audio = %{}) do
     openai
     |> OpenaiEx.post("/audio/transcriptions",
-      multipart: audio |> OpenaiEx.to_multi_part_form_data(file_keys())
+      multipart: audio |> OpenaiEx.to_multi_part_form_data(file_fields())
     )
   end
 
@@ -86,12 +86,12 @@ defmodule OpenaiEx.Audio do
   def translate(openai = %OpenaiEx{}, audio = %{}) do
     openai
     |> OpenaiEx.post("/audio/translations",
-      multipart: audio |> OpenaiEx.to_multi_part_form_data(file_keys())
+      multipart: audio |> OpenaiEx.to_multi_part_form_data(file_fields())
     )
   end
 
   @doc false
-  def file_keys() do
+  def file_fields() do
     [:file]
   end
 end
