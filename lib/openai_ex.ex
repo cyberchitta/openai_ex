@@ -80,4 +80,16 @@ defmodule OpenaiEx do
       acc |> Tesla.Multipart.add_file_content(content, filename, name: to_string(k))
     end)
   end
+
+  @doc """
+  OpenAI API has endpoints which need a file parameter, such as Files and Audio.
+  This function creates a file parameter given a name and content or a local file path.
+  """
+  def new_file(name: name, content: content) do
+    {name, content}
+  end
+
+  def new_file(path: path) do
+    {path, File.read!(path)}
+  end
 end
