@@ -82,6 +82,8 @@ defmodule OpenaiEx do
   end
 
   @doc """
+  Create file parameter struct for use in multipart requests.
+
   OpenAI API has endpoints which need a file parameter, such as Files and Audio.
   This function creates a file parameter given a name and content or a local file path.
   """
