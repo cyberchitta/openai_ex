@@ -37,7 +37,7 @@ defmodule OpenaiEx.Image do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Image.new([prompt: "This is a test"])
+      iex> _request = OpenaiEx.Image.new(prompt: "This is a test")
       %{prompt: "This is a test"}
 
       iex> _request = OpenaiEx.Image.new(%{prompt: "This is a test"})

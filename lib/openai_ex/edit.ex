@@ -36,7 +36,7 @@ defmodule OpenaiEx.Edit do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Edit.new([model: "davinci", instruction: "This is a test"])
+      iex> _request = OpenaiEx.Edit.new(model: "davinci", instruction: "This is a test")
       %{instruction: "This is a test", model: "davinci"}
 
       iex> _request = OpenaiEx.Edit.new(%{model: "davinci", instruction: "This is a test"})

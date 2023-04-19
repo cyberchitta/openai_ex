@@ -49,7 +49,7 @@ defmodule OpenaiEx.ChatCompletion do
 
   Example usage:
 
-      iex> _request = OpenaiEx.ChatCompletion.new([model: "davinci", messages: [OpenaiEx.ChatMessage.user("Hello, world!")]])
+      iex> _request = OpenaiEx.ChatCompletion.new(model: "davinci", messages: [OpenaiEx.ChatMessage.user("Hello, world!")])
       %{messages: [%{content: "Hello, world!", role: "user"}], model: "davinci"}
 
       iex> _request = OpenaiEx.ChatCompletion.new(%{model: "davinci", messages: [OpenaiEx.ChatMessage.user("Hello, world!")]})

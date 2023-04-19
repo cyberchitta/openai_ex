@@ -58,7 +58,7 @@ defmodule OpenaiEx.Completion do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Completion.new([model: "davinci"])
+      iex> _request = OpenaiEx.Completion.new(model: "davinci")
       %{model: "davinci"}
 
       iex> _request = OpenaiEx.Completion.new(%{model: "davinci"})

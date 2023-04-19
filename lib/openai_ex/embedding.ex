@@ -31,7 +31,7 @@ defmodule OpenaiEx.Embedding do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Embedding.new([model: "davinci", input: "This is a test"])
+      iex> _request = OpenaiEx.Embedding.new(model: "davinci", input: "This is a test")
       %{input: "This is a test", model: "davinci"}
 
       iex> _request = OpenaiEx.Embedding.new(%{model: "davinci", input: "This is a test"})
