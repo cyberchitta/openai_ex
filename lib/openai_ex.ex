@@ -52,8 +52,16 @@ defmodule OpenaiEx do
   end
 
   @doc false
+  def delete(openai = %OpenaiEx{}, url) do
+    (middleware(openai) ++ [Tesla.Middleware.DecodeJson])
+    |> Tesla.client()
+    |> Tesla.delete!(url)
+    |> Map.get(:body)
+  end
+
+  @doc false
   def get(openai = %OpenaiEx{}, url) do
-    (middleware(openai) ++ [Tesla.Middleware.JSON])
+    (middleware(openai) ++ [Tesla.Middleware.DecodeJson])
     |> Tesla.client()
     |> Tesla.get!(url)
     |> Map.get(:body)
