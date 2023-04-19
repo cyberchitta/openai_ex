@@ -9,7 +9,7 @@ defmodule OpenaiEx.Model do
   https://platform.openai.com/docs/api-reference/models/list
   """
   def list(openai = %OpenaiEx{}) do
-    openai |> OpenaiEx.get("/models") |> Map.get("data")
+    openai |> OpenaiEx.get("/models")
   end
 
   @doc """
