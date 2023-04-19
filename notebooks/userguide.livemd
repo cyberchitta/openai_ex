@@ -17,7 +17,7 @@ The library closely follows the structure of the [official OpenAI API client lib
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
-This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Flivebook.dev%2Frun%3Furl%3Dhttps%3A%2F%2Fgithub.com%2Frestlessronin%2Fopenai_ex%2Fblob%2Fv0.1.4%2Fnotebooks%2Fuserguide.livemd) and try out the code for yourself!
+This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://github.com/restlessronin/openai_ex/blob/v0.1.4/notebooks/userguide.livemd) and try out the code for yourself!
 
 ## Installation
 
