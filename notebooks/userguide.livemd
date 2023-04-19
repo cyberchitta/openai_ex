@@ -3,8 +3,8 @@
 ```elixir
 Mix.install([
   #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.4"},
-  {:openai_ex, "~> 0.1.4"},
-  #  {:openai_ex, path: Path.join(__DIR__, "..")},
+  #  {:openai_ex, "~> 0.1.4"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.9.2"}
 ])
 ```
@@ -318,7 +318,7 @@ The translation call uses practically the same request structure, but calls the 
 
 For more information on the audio endpoints see the [Openai API Audio Reference](https://platform.openai.com/docs/api-reference/audio)
 
-## Files
+## File
 
 ### List files
 
@@ -389,3 +389,21 @@ Verify that the file has been deleted by listing files again
 ```elixir
 openai |> File.list()
 ```
+
+## Moderation
+
+We use the moderation API by calling `Moderation.new()` to create a new request
+
+```elixir
+alias OpenaiEx.Moderation
+
+mod_req = Moderation.new(input: "I want to kill people")
+```
+
+The call the function [`Moderation.create()`](https://platform.openai.com/docs/api-reference/moderations/create)
+
+```elixir
+mod_res = openai |> Moderation.create(mod_req)
+```
+
+For more information on the moderation endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/moderations)
