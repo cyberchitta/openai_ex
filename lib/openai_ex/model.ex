@@ -13,11 +13,20 @@ defmodule OpenaiEx.Model do
   end
 
   @doc """
-  Retrieves a specific model by ID.
+  Retrieves a specific model.
 
   https://platform.openai.com/docs/api-reference/models/retrieve
   """
-  def retrieve(openai = %OpenaiEx{}, model_id) do
-    openai |> OpenaiEx.get("/models/#{model_id}")
+  def retrieve(openai = %OpenaiEx{}, model) do
+    openai |> OpenaiEx.get("/models/#{model}")
+  end
+
+  @doc """
+  Deletes a specific model.
+
+  https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
+  """
+  def delete(openai = %OpenaiEx{}, model) do
+    openai |> OpenaiEx.delete("/models/#{model}")
   end
 end
