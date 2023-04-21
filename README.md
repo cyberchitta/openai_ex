@@ -3,7 +3,7 @@
 [![License: Apache-2](https://img.shields.io/badge/License-Apache2-yellow.svg)](https://opensource.org/license/apache-2-0/)
 [![hex.pm badge](https://img.shields.io/hexpm/v/openai_ex.svg)](https://hex.pm/packages/openai_ex)
 
-`OpenaiEx` is an Elixir library that provides a community-maintained client for the OpenAI API.
+`OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client especially for Livebook development.
 
 The library closely follows the naming / structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation.
 
