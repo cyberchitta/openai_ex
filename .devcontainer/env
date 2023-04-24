@@ -2,3 +2,6 @@
 OPENAI_API_KEY=pasteYourActualApiKeyHere
 OPENAI_ORGANIZATION=pasteYourActualOrgHere
 LIVEBOOK_PASSWORD=pasteSuperSecretPasswordHere
+# dialyzer write permissions workaround (for macos)
+UID=0
+GID=0
