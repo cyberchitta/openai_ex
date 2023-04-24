@@ -24,14 +24,16 @@ defmodule OpenaiEx.MixProject do
   end
 
   def application do
-    []
+    [
+      mod: {OpenaiEx.Application, []}
+    ]
   end
 
   defp deps do
     [
-      {:tesla, "~> 1.4"},
-      {:hackney, "~> 1.17"},
-      {:jason, "~> 1.2"},
+      {:finch, "~> 0.16"},
+      {:jason, "~> 1.4"},
+      {:multipart, git: "https://github.com/restlessronin/multipart", branch: "enable-openai"},
       {:ex_doc, ">= 0.0.0", only: :docs},
       {:credo, "~> 1.6", only: :dev, runtime: false}
     ]
