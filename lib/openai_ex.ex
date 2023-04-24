@@ -11,7 +11,7 @@ defmodule OpenaiEx do
   defstruct token: nil, organization: nil
 
   @base_url "https://api.openai.com/v1"
-  @spec new(any, any) :: %OpenaiEx{organization: any, token: any}
+
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.
 
