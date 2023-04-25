@@ -79,12 +79,9 @@ defmodule OpenaiEx do
   @doc false
   def finch_run(finch_request) do
     finch_request
-    |> Finch.request(OpenaiEx.Finch)
-    |> finch_result()
-  end
-
-  def finch_result({:ok, %{body: body}}) do
-    Jason.decode!(body)
+    |> Finch.request!(OpenaiEx.Finch)
+    |> Map.get(:body)
+    |> Jason.decode!()
   end
 
   @doc false
