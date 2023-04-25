@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.8"},
-  {:openai_ex, "~> 0.1.8"},
+  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.8"},
+  #  {:openai_ex, "~> 0.1.7"},
   #  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.9.2"}
 ])
@@ -472,4 +472,3 @@ mod_res = openai |> Moderation.create(mod_req)
 
 For more information on the moderation endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/moderations)
 
-<!-- livebook:{"offset":13881,"stamp":{"token":"QTEyOEdDTQ.IE6nRZ5nHbDe_0PYB1VY6P60ziqnKYaVvvHmaC7EO-QryQpv5ItAOwQNOGQ.Y-hwtzPbGvCOXEG5.LD_W0ek9OzHYPHEtjUuVoY9XV01dM2HXaLAu3uYOcPIukjeg1PFPcOgl1Za6bSmfu2Q.EG2QGUWb5UPg0dHPcq8z_A","version":1}} -->
