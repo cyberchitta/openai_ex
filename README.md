@@ -11,6 +11,8 @@ The library closely follows the naming / structure of the [official OpenAI API c
 
 For installation instructions and detailed usage examples, please look at the [User Guide](./notebooks/userguide.livemd). The guide is a Livebook, so you can run all of the code in it without creating a new project.
 
+You can also find the documentation [on hexdocs](https://hexdocs.pm/openai_ex).
+
 ## Development
 
 The following section is only for developers that want to contribute to this repository.
