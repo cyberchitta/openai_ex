@@ -33,7 +33,7 @@ defmodule OpenaiEx.MixProject do
     [
       {:finch, "~> 0.16"},
       {:jason, "~> 1.4"},
-      {:multipart, git: "https://github.com/restlessronin/multipart", branch: "enable-openai"},
+      {:multipart, "~> 0.4"},
       {:ex_doc, ">= 0.0.0", only: :docs},
       {:credo, "~> 1.6", only: :dev, runtime: false}
     ]
