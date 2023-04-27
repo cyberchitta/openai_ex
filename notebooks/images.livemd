@@ -1,34 +1,35 @@
 <!-- livebook:{"app_settings":{"access_type":"public","slug":"genimage"}} -->
 
-# Image Kino App
+# Image Generation Kino App
 
 ```elixir
-Mix.install(
-  [
-    {:openai_ex, "~> 0.1.8"},
-    {:kino, "~> 0.9.2"},
-    {:kino_bumblebee, "~> 0.3.0"},
-    {:exla, "~> 0.5.1"}
-  ],
-  config: [nx: [default_backend: EXLA.Backend]]
-)
+Mix.install([
+  {:openai_ex, "~> 0.1.8"},
+  {:kino, "~> 0.9.2"}
+])
 
 alias OpenaiEx
 alias OpenaiEx.Image
 ```
 
-## Image Generation
+## Simple Kino UI
 
 ```elixir
 openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
 ```
 
+set default parameters for image generation, and define a function to fetch generated images from a URL.
+
 ```elixir
+size = "256x256"
+n = 4
+
 fetch_blob = fn url ->
-  {:ok, %{body: body}} = Finch.build(:get, url) |> Finch.request(OpenaiEx.Finch)
-  body
+  Finch.build(:get, url) |> Finch.request!(OpenaiEx.Finch) |> Map.get(:body)
 end
 ```
+
+### Prompt / Response UI
 
 ```elixir
 text_input = Kino.Input.textarea("Describe Image")
@@ -43,9 +44,10 @@ Kino.listen(form, fn %{data: %{text: prompt}} ->
     openai
     |> Image.create(%{
       prompt: prompt,
-      n: 4,
-      size: "256x256"
+      n: n,
+      size: size
     })
+    #   |> IO.inspect()
     |> Map.get("data")
     |> Enum.map(fn x -> x["url"] end)
 
@@ -57,5 +59,3 @@ end)
 
 Kino.Layout.grid([form, frame], boxed: true, gap: 16)
 ```
-
-<!-- livebook:{"offset":1225,"stamp":{"token":"QTEyOEdDTQ.zim-20KPF4aLwrpNvsu9n9KYOaxw663waKj8pwwqBBSpujp_cub3_NbkBCA.12ySoChvdjAuL-kY.-xNVaDGQwPgy0mCrkY-0aQZ7FxZXp7-fnGvwfvVteMQSXiMN99wQEGZYSY-2YIOVI7o.oWYCOu3hH5_8VebGI3aNwg","version":1}} -->
