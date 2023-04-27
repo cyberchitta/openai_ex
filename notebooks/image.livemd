@@ -1,0 +1,61 @@
+<!-- livebook:{"app_settings":{"access_type":"public","slug":"genimage"}} -->
+
+# Image Kino App
+
+```elixir
+Mix.install(
+  [
+    {:openai_ex, "~> 0.1.8"},
+    {:kino, "~> 0.9.2"},
+    {:kino_bumblebee, "~> 0.3.0"},
+    {:exla, "~> 0.5.1"}
+  ],
+  config: [nx: [default_backend: EXLA.Backend]]
+)
+
+alias OpenaiEx
+alias OpenaiEx.Image
+```
+
+## Image Generation
+
+```elixir
+openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
+```
+
+```elixir
+fetch_blob = fn url ->
+  {:ok, %{body: body}} = Finch.build(:get, url) |> Finch.request(OpenaiEx.Finch)
+  body
+end
+```
+
+```elixir
+text_input = Kino.Input.textarea("Describe Image")
+
+form = Kino.Control.form([text: text_input], submit: "Generate")
+frame = Kino.Frame.new()
+
+Kino.listen(form, fn %{data: %{text: prompt}} ->
+  Kino.Frame.render(frame, Kino.Text.new("Running..."))
+
+  res_urls =
+    openai
+    |> Image.create(%{
+      prompt: prompt,
+      n: 4,
+      size: "256x256"
+    })
+    |> Map.get("data")
+    |> Enum.map(fn x -> x["url"] end)
+
+  res_urls
+  |> Enum.map(fn x -> x |> fetch_blob.() |> Kino.Image.new("image/png") end)
+  |> Kino.Layout.grid(columns: 2)
+  |> then(&Kino.Frame.render(frame, &1))
+end)
+
+Kino.Layout.grid([form, frame], boxed: true, gap: 16)
+```
+
+<!-- livebook:{"offset":1225,"stamp":{"token":"QTEyOEdDTQ.zim-20KPF4aLwrpNvsu9n9KYOaxw663waKj8pwwqBBSpujp_cub3_NbkBCA.12ySoChvdjAuL-kY.-xNVaDGQwPgy0mCrkY-0aQZ7FxZXp7-fnGvwfvVteMQSXiMN99wQEGZYSY-2YIOVI7o.oWYCOu3hH5_8VebGI3aNwg","version":1}} -->

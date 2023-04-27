@@ -183,7 +183,7 @@ With the information in the image response, we can fetch the images from their U
 
 ```elixir
 fetch_blob = fn url ->
-  {:ok, %Finch.Response{body: body}} = Finch.build(:get, url) |> Finch.request(OpenaiEx.Finch)
+  {:ok, %{body: body}} = Finch.build(:get, url) |> Finch.request(OpenaiEx.Finch)
   body
 end
 ```
@@ -471,4 +471,3 @@ mod_res = openai |> Moderation.create(mod_req)
 ```
 
 For more information on the moderation endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/moderations)
-
