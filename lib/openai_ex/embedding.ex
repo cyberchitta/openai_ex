@@ -66,6 +66,6 @@ defmodule OpenaiEx.Embedding do
   See https://platform.openai.com/docs/api-reference/embeddings/create for more information.
   """
   def create(openai = %OpenaiEx{}, embedding = %{}) do
-    openai |> OpenaiEx.post("/embeddings", json: embedding)
+    openai |> OpenaiEx.Http.post("/embeddings", json: embedding)
   end
 end
