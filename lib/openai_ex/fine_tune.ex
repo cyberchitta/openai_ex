@@ -63,7 +63,7 @@ defmodule OpenaiEx.FineTune do
   https://platform.openai.com/docs/api-reference/fine-tunes/create
   """
   def create(openai = %OpenaiEx{}, finetune = %{}) do
-    openai |> OpenaiEx.post("/fine-tunes", json: finetune)
+    openai |> OpenaiEx.Http.post("/fine-tunes", json: finetune)
   end
 
   @doc """
@@ -72,7 +72,7 @@ defmodule OpenaiEx.FineTune do
   https://platform.openai.com/docs/api-reference/fine-tunes/list
   """
   def list(openai = %OpenaiEx{}) do
-    openai |> OpenaiEx.get("/fine-tunes")
+    openai |> OpenaiEx.Http.get("/fine-tunes")
   end
 
   @doc """
@@ -81,7 +81,7 @@ defmodule OpenaiEx.FineTune do
   https://platform.openai.com/docs/api-reference/fine-tunes/retrieve
   """
   def retrieve(openai = %OpenaiEx{}, fine_tune_id: fine_tune_id) do
-    openai |> OpenaiEx.get("/fine-tunes/#{fine_tune_id}")
+    openai |> OpenaiEx.Http.get("/fine-tunes/#{fine_tune_id}")
   end
 
   @doc """
@@ -90,7 +90,7 @@ defmodule OpenaiEx.FineTune do
   https://platform.openai.com/docs/api-reference/fine-tunes/cancel
   """
   def cancel(openai = %OpenaiEx{}, fine_tune_id: fine_tune_id) do
-    openai |> OpenaiEx.post("/fine-tunes/#{fine_tune_id}/cancel", json: %{})
+    openai |> OpenaiEx.Http.post("/fine-tunes/#{fine_tune_id}/cancel", json: %{})
   end
 
   @doc """
@@ -99,6 +99,6 @@ defmodule OpenaiEx.FineTune do
   https://platform.openai.com/docs/api-reference/fine-tunes/events
   """
   def list_events(openai = %OpenaiEx{}, fine_tune_id: fine_tune_id) do
-    openai |> OpenaiEx.get("/fine-tunes/#{fine_tune_id}/events")
+    openai |> OpenaiEx.Http.get("/fine-tunes/#{fine_tune_id}/events")
   end
 end

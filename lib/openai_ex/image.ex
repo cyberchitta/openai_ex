@@ -70,7 +70,7 @@ defmodule OpenaiEx.Image do
   See the [OpenAI API Create Image reference](https://platform.openai.com/docs/api-reference/images/create) for more information.
   """
   def create(openai = %OpenaiEx{}, image = %{}) do
-    openai |> OpenaiEx.post("/images/generations", json: image)
+    openai |> OpenaiEx.Http.post("/images/generations", json: image)
   end
 
   @doc """
@@ -89,8 +89,8 @@ defmodule OpenaiEx.Image do
   """
   def create_edit(openai = %OpenaiEx{}, image_edit = %{}) do
     openai
-    |> OpenaiEx.post("/images/edits",
-      multipart: image_edit |> OpenaiEx.to_multi_part_form_data(Image.Edit.file_fields())
+    |> OpenaiEx.Http.post("/images/edits",
+      multipart: image_edit |> OpenaiEx.Http.to_multi_part_form_data(Image.Edit.file_fields())
     )
   end
 
@@ -110,9 +110,9 @@ defmodule OpenaiEx.Image do
   """
   def create_variation(openai = %OpenaiEx{}, image_variation = %{}) do
     openai
-    |> OpenaiEx.post("/images/variations",
+    |> OpenaiEx.Http.post("/images/variations",
       multipart:
-        image_variation |> OpenaiEx.to_multi_part_form_data(Image.Variation.file_fields())
+        image_variation |> OpenaiEx.Http.to_multi_part_form_data(Image.Variation.file_fields())
     )
   end
 end

@@ -73,7 +73,7 @@ defmodule OpenaiEx.File do
   https://platform.openai.com/docs/api-reference/files/list
   """
   def list(openai = %OpenaiEx{}) do
-    openai |> OpenaiEx.get("/files")
+    openai |> OpenaiEx.Http.get("/files")
   end
 
   @doc """
@@ -92,8 +92,8 @@ defmodule OpenaiEx.File do
   """
   def create(openai = %OpenaiEx{}, upload) do
     openai
-    |> OpenaiEx.post("/files",
-      multipart: upload |> OpenaiEx.to_multi_part_form_data(file_fields())
+    |> OpenaiEx.Http.post("/files",
+      multipart: upload |> OpenaiEx.Http.to_multi_part_form_data(file_fields())
     )
   end
 
@@ -113,7 +113,7 @@ defmodule OpenaiEx.File do
   """
   def delete(openai = %OpenaiEx{}, file_id) do
     openai
-    |> OpenaiEx.delete("/files/#{file_id}")
+    |> OpenaiEx.Http.delete("/files/#{file_id}")
   end
 
   @doc """
@@ -132,7 +132,7 @@ defmodule OpenaiEx.File do
   """
   def retrieve(openai = %OpenaiEx{}, file_id) do
     openai
-    |> OpenaiEx.get("/files/#{file_id}")
+    |> OpenaiEx.Http.get("/files/#{file_id}")
   end
 
   @doc """
@@ -151,7 +151,7 @@ defmodule OpenaiEx.File do
   """
   def download(openai = %OpenaiEx{}, file_id) do
     openai
-    |> OpenaiEx.get("/files/#{file_id}/content")
+    |> OpenaiEx.Http.get("/files/#{file_id}/content")
   end
 
   @doc false

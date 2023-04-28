@@ -65,6 +65,6 @@ defmodule OpenaiEx.Moderation do
   """
   def create(openai = %OpenaiEx{}, moderation) do
     openai
-    |> OpenaiEx.post("/moderations", json: moderation |> Map.take(@api_fields))
+    |> OpenaiEx.Http.post("/moderations", json: moderation |> Map.take(@api_fields))
   end
 end
