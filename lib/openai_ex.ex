@@ -96,16 +96,19 @@ defmodule OpenaiEx do
     req
     |> Map.take(file_fields)
     |> Enum.reduce(mp, fn {k, v}, acc ->
-      {filename, content} =
+      part =
         case v do
-          {f, c} -> {f, c}
-          c -> {"", c}
+          {path} ->
+            Multipart.Part.file_field(path, k)
+
+          {filename, content} ->
+            Multipart.Part.file_content_field(filename, content, k, filename: filename)
+
+          content ->
+            Multipart.Part.file_content_field("", content, k, filename: "")
         end
 
-      acc
-      |> Multipart.add_part(
-        Multipart.Part.file_content_field(filename, content, k, filename: filename)
-      )
+      acc |> Multipart.add_part(part)
     end)
   end
 
@@ -120,6 +123,6 @@ defmodule OpenaiEx do
   end
 
   def new_file(path: path) do
-    {path, File.read!(path)}
+    {path}
   end
 end
