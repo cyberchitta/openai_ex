@@ -96,20 +96,22 @@ defmodule OpenaiEx do
     req
     |> Map.take(file_fields)
     |> Enum.reduce(mp, fn {k, v}, acc ->
-      part =
-        case v do
-          {path} ->
-            Multipart.Part.file_field(path, k)
-
-          {filename, content} ->
-            Multipart.Part.file_content_field(filename, content, k, filename: filename)
-
-          content ->
-            Multipart.Part.file_content_field("", content, k, filename: "")
-        end
-
-      acc |> Multipart.add_part(part)
+      acc |> Multipart.add_part(to_file_field_part(k, v))
     end)
+  end
+
+  @doc false
+  defp to_file_field_part(k, v) do
+    case v do
+      {path} ->
+        Multipart.Part.file_field(path, k)
+
+      {filename, content} ->
+        Multipart.Part.file_content_field(filename, content, k, filename: filename)
+
+      content ->
+        Multipart.Part.file_content_field("", content, k, filename: "")
+    end
   end
 
   @doc """
