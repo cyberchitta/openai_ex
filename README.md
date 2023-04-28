@@ -9,14 +9,9 @@ The library closely follows the naming / structure of the [official OpenAI API c
 
 ## Installation and Usage
 
-For installation instructions and detailed usage examples, please look at the [User Guide](./notebooks/userguide.livemd). The guide is a Livebook, so you can run all of the code in it without creating a new project. There are also Livebook Kino App starter samples for Images and Continuations.
+For installation instructions and detailed usage examples, please look at the [User Guide on hexdocs](https://hexdocs.pm/openai_ex/userguide.html). The guide is a Livebook, so you can run all of the code in it without creating a new project. There are also Livebook Kino App starter samples for [Images](https://hexdocs.pm/openai_ex/images.html) and [Continuations](https://hexdocs.pm/openai_ex/continuations.html), also on [hexdocs](https://hexdocs.pm/openai_ex)
 
 Discussion and announcements on [this thread in Elixir Forum](https://elixirforum.com/t/openai-ex-openai-api-client-library/)
-
-All documentation can also be found on [hexdocs](https://hexdocs.pm/openai_ex)
-* [User Guide](https://hexdocs.pm/openai_ex/userguide.html)
-* [Continuation Kino App](https://hexdocs.pm/openai_ex/continuations.html)
-* [Image Kino App](https://hexdocs.pm/openai_ex/images.html)
 
 ## Development
 
