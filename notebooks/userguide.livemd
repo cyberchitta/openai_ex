@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.8"},
-  {:openai_ex, "~> 0.1.8"},
+  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.1.9"},
+  {:openai_ex, "~> 0.1.9"},
   #  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.9.2"}
 ])
@@ -17,7 +17,7 @@ The library closely follows the structure of the [official OpenAI API client lib
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
-This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://raw.githubusercontent.com/restlessronin/openai_ex/v0.1.8/notebooks/userguide.livemd) and try out the code for yourself!
+This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to [open it in Livebook](https://livebook.dev/run?url=https://raw.githubusercontent.com/restlessronin/openai_ex/v0.1.9/notebooks/userguide.livemd) and try out the code for yourself!
 
 ## Installation
 
@@ -32,7 +32,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.1.8"}
+    {:openai_ex, "~> 0.1.9"}
   ],
 )
 ```
@@ -46,7 +46,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.1.8"}
+    {:openai_ex, "~> 0.1.9"}
   ]
 end
 ```
@@ -209,11 +209,12 @@ img_to_expmt = fetched_images |> List.first()
 We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. For the image, we will use the one that we received. Let's load the mask from a URL.
 
 ```elixir
-# star_mask = File.read!(Path.join(__DIR__, "../assets/images/starmask.png"))
 star_mask =
   fetch_blob.(
     "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/images/starmask.png"
   )
+
+# star_mask = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/images/starmask.png"))
 ```
 
 Set up the image edit request with image, mask and prompt.
@@ -297,11 +298,11 @@ To define an Audio request structure, we need to create a file parameter using `
 ```elixir
 alias OpenaiEx.Audio
 
-# audio_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/transcribe.mp3"))
-
 audio_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/transcribe.mp3"
 
 audio_file = OpenaiEx.new_file(name: audio_url, content: fetch_blob.(audio_url))
+
+# audio_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/transcribe.mp3"))
 ```
 
 The file parameter is used to create the Audio request structure
