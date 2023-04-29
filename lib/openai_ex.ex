@@ -26,10 +26,14 @@ defmodule OpenaiEx do
   Create file parameter struct for use in multipart requests.
 
   OpenAI API has endpoints which need a file parameter, such as Files and Audio.
-  This function creates a file parameter given a name and content or a local file path.
+  This function creates a file parameter given a name (optional) and content or a local file path.
   """
   def new_file(name: name, content: content) do
     {name, content}
+  end
+
+  def new_file(content: content) do
+    {"", content}
   end
 
   def new_file(path: path) do
