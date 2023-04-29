@@ -32,10 +32,6 @@ defmodule OpenaiEx do
     {name, content}
   end
 
-  def new_file(content: content) do
-    {"", content}
-  end
-
   def new_file(path: path) do
     {path}
   end
