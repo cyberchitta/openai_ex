@@ -18,7 +18,7 @@ alias OpenaiEx.Completion
 openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
 ```
 
-Set default parameters for continuation fields
+### Model Choices
 
 ```elixir
 comp_models = [
@@ -28,22 +28,14 @@ comp_models = [
   "text-babbage-001",
   "text-ada-001"
 ]
-
-model = comp_models |> Enum.at(0)
-max_tokens = 100
-temperature = 1
 ```
 
-### Prompt / Response UI
+### Continuation API
+
+This function calls the continuation API and renders the result in the given Kino frame.
 
 ```elixir
-frame = Kino.Frame.new()
-inputs = [prompt: Kino.Input.textarea("Prompt")]
-form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
-
-Kino.listen(form, fn %{data: %{prompt: prompt}} ->
-  Kino.Frame.append(frame, Kino.Markdown.new("**Me** #{prompt}"))
-
+completion = fn model, prompt, max_tokens, temperature, last_frame ->
   text =
     openai
     |> Completion.create(%{
@@ -56,10 +48,100 @@ Kino.listen(form, fn %{data: %{prompt: prompt}} ->
     |> Enum.at(0)
     |> Map.get("text")
 
-  Kino.Frame.append(frame, Kino.Markdown.new("**#{model}** #{text}"))
-end)
-
-Kino.Layout.grid([frame, form], boxed: true, gap: 16)
+  Kino.Frame.render(last_frame, Kino.Markdown.new("**Bot** #{text}"))
+  text
+end
 ```
 
-<!-- livebook:{"offset":1267,"stamp":{"token":"QTEyOEdDTQ.6L6wiYAyyNZN6atBVU4-sRc2-7KpQjiKFaFltJ1Ivbnn5x-MfYxCasAkI78.iVJqZokBZau50Qmm.vDeKt2QK4Rz7NS4fjaReGM2VLKkAtgjjbH5NbUw5LQXN7i5xVYsiCyyBB0_Mus0y2Z4.M74c16yxHUkpiEija0qGow","version":1}} -->
+### Streaming Continuation
+
+This function calls the streaming continuation API and continously updates the Kino frame with the latest tokens
+
+```elixir
+completion_stream = fn model, prompt, max_tokens, temperature, last_frame ->
+  token_stream =
+    openai
+    |> Completion.create(
+      %{
+        model: model,
+        prompt: prompt,
+        max_tokens: max_tokens,
+        temperature: temperature
+      },
+      stream: true
+    )
+    |> Stream.flat_map(& &1)
+    |> Stream.map(fn %{data: data} ->
+      data |> Map.get("choices") |> Enum.at(0) |> Map.get("text")
+    end)
+
+  token_stream
+  |> Enum.reduce(fn out, acc ->
+    next = acc <> out
+    Kino.Frame.render(last_frame, Kino.Markdown.new("**Bot** #{next}"))
+    next
+  end)
+end
+```
+
+### Prompt / Response UI
+
+We create a UI that can be used to call the continuation endpoint with or without streaming.
+
+```elixir
+create_form = fn title, completion ->
+  chat_frame = Kino.Frame.new()
+  last_frame = Kino.Frame.new()
+
+  inputs = [
+    model: Kino.Input.select("Model", comp_models |> Enum.map(fn x -> {x, x} end)),
+    max_tokens: Kino.Input.number("Max Tokens", default: 100),
+    temperature: Kino.Input.number("Temperature", default: 1),
+    prompt: Kino.Input.textarea("Prompt")
+  ]
+
+  form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
+
+  Kino.Frame.append(chat_frame, Kino.Markdown.new(title))
+
+  Kino.listen(form, [], fn %{
+                             data: %{
+                               prompt: prompt,
+                               model: model,
+                               max_tokens: max_tokens,
+                               temperature: temperature
+                             }
+                           },
+                           history ->
+    case history do
+      [] ->
+        nil
+
+      [last | _rest] ->
+        Kino.Frame.append(chat_frame, Kino.Markdown.new("**Bot** #{last.text}"))
+    end
+
+    Kino.Frame.append(chat_frame, Kino.Markdown.new("**Me** #{prompt}"))
+
+    text = completion.(model, prompt, max_tokens, temperature, last_frame)
+
+    {:cont, [%{prompt: prompt, text: text} | history]}
+  end)
+
+  Kino.Layout.grid([chat_frame, last_frame, form], boxed: true, gap: 16)
+end
+```
+
+Create the Form for the non-streaming Continuation API. Use it.
+
+```elixir
+create_form.("## Continuation Endpoint", completion)
+```
+
+Create the form for the streaming continuation API, and use it.
+
+```elixir
+create_form.("## Stream Continuation Endpoint", completion_stream)
+```
+
+<!-- livebook:{"offset":3499,"stamp":{"token":"QTEyOEdDTQ.kDdikiJ7V4iUwG2e2qTFP8S2ZjOp9H3bDYdF6LpfQi89KNykQi0nox3FICg.lNnd2R4QW17hyLGq.W8PkS9KRqt2YS8U-s1kZKtMOOANns7Y5dhTTl1J-nP8oh_wa_hE8eIo9uC-ukjzVV6c.wlDMiCPbyROP9eqy2Y_YhQ","version":1}} -->

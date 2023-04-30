@@ -124,7 +124,7 @@ completion_stream = openai |> Completion.create(completion_req, stream: true)
 completion_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
 ```
 
-For an example of how to programmatically work with this stream, check out the Completion stream Kino App livebook.
+For an example of how to programmatically work with this stream, check out the [Completion Kino App livebook](https://hexdocs.pm/openai_ex/continuations.html) which builds a ChatBot UI using the Continuation API (with and without streaming).
 
 For more information on generating completions, see the [OpenAI API Completions reference](https://platform.openai.com/docs/api-reference/completions).
 
