@@ -58,7 +58,7 @@ defmodule OpenaiEx.MixProject do
       extra_section: "Livebooks",
       extras: [
         "notebooks/userguide.livemd",
-        "notebooks/continuations.livemd",
+        "notebooks/completions.livemd",
         "notebooks/images.livemd"
       ]
     ]

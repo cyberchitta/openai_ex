@@ -1,6 +1,6 @@
 <!-- livebook:{"app_settings":{"access_type":"public","show_source":true,"slug":"completion"}} -->
 
-# Continuation Kino App
+# Completions Bot
 
 ```elixir
 Mix.install([
@@ -30,9 +30,9 @@ comp_models = [
 ]
 ```
 
-### Continuation API
+### Completion API
 
-This function calls the continuation API and renders the result in the given Kino frame.
+This function calls the completion API and renders the result in the given Kino frame.
 
 ```elixir
 completion = fn model, prompt, max_tokens, temperature, last_frame ->
@@ -53,9 +53,9 @@ completion = fn model, prompt, max_tokens, temperature, last_frame ->
 end
 ```
 
-### Streaming Continuation
+### Streaming Completion
 
-This function calls the streaming continuation API and continously updates the Kino frame with the latest tokens
+This function calls the streaming completion API and continously updates the Kino frame with the latest tokens
 
 ```elixir
 completion_stream = fn model, prompt, max_tokens, temperature, last_frame ->
@@ -86,7 +86,7 @@ end
 
 ### Prompt / Response UI
 
-We create a UI that can be used to call the continuation endpoint with or without streaming.
+This is a function to create a Form UI that can be used to call the completion API. The 2nd parameter determines whether the normal or streaming API is called.
 
 ```elixir
 create_form = fn title, completion ->
@@ -132,16 +132,14 @@ create_form = fn title, completion ->
 end
 ```
 
-Create the Form for the non-streaming Continuation API. Use it.
+Create the Form for the non-streaming Completion API. Use it.
 
 ```elixir
-create_form.("## Continuation Endpoint", completion)
+create_form.("## Completion Endpoint", completion)
 ```
 
-Create the form for the streaming continuation API, and use it.
+Create the form for the streaming completion API, and use it.
 
 ```elixir
-create_form.("## Stream Continuation Endpoint", completion_stream)
+create_form.("## Stream Completion Endpoint", completion_stream)
 ```
-
-<!-- livebook:{"offset":3499,"stamp":{"token":"QTEyOEdDTQ.kDdikiJ7V4iUwG2e2qTFP8S2ZjOp9H3bDYdF6LpfQi89KNykQi0nox3FICg.lNnd2R4QW17hyLGq.W8PkS9KRqt2YS8U-s1kZKtMOOANns7Y5dhTTl1J-nP8oh_wa_hE8eIo9uC-ukjzVV6c.wlDMiCPbyROP9eqy2Y_YhQ","version":1}} -->
