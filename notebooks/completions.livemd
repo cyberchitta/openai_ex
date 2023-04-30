@@ -12,13 +12,11 @@ alias OpenaiEx
 alias OpenaiEx.Completion
 ```
 
-## Simple Kino UI
+## Model Choices
 
 ```elixir
 openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
 ```
-
-### Model Choices
 
 ```elixir
 comp_models = [
@@ -30,7 +28,7 @@ comp_models = [
 ]
 ```
 
-### Completion API
+## Normal Completion
 
 This function calls the completion API and renders the result in the given Kino frame.
 
@@ -53,7 +51,7 @@ completion = fn model, prompt, max_tokens, temperature, last_frame ->
 end
 ```
 
-### Streaming Completion
+## Streaming Completion
 
 This function calls the streaming completion API and continously updates the Kino frame with the latest tokens
 
@@ -84,18 +82,18 @@ completion_stream = fn model, prompt, max_tokens, temperature, last_frame ->
 end
 ```
 
-### Prompt / Response UI
+## Create a Form UI
 
 This is a function to create a Form UI that can be used to call the completion API. The 2nd parameter determines whether the normal or streaming API is called.
 
 ```elixir
-create_form = fn title, completion ->
+create_form = fn title, completion_fn ->
   chat_frame = Kino.Frame.new()
   last_frame = Kino.Frame.new()
 
   inputs = [
     model: Kino.Input.select("Model", comp_models |> Enum.map(fn x -> {x, x} end)),
-    max_tokens: Kino.Input.number("Max Tokens", default: 100),
+    max_tokens: Kino.Input.number("Max Tokens", default: 400),
     temperature: Kino.Input.number("Temperature", default: 1),
     prompt: Kino.Input.textarea("Prompt")
   ]
@@ -123,7 +121,7 @@ create_form = fn title, completion ->
 
     Kino.Frame.append(chat_frame, Kino.Markdown.new("**Me** #{prompt}"))
 
-    text = completion.(model, prompt, max_tokens, temperature, last_frame)
+    text = completion_fn.(model, prompt, max_tokens, temperature, last_frame)
 
     {:cont, [%{prompt: prompt, text: text} | history]}
   end)
@@ -132,11 +130,15 @@ create_form = fn title, completion ->
 end
 ```
 
+### Normal Completion
+
 Create the Form for the non-streaming Completion API. Use it.
 
 ```elixir
 create_form.("## Completion Endpoint", completion)
 ```
+
+### Streaming Completion
 
 Create the form for the streaming completion API, and use it.
 
