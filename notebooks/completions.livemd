@@ -102,19 +102,22 @@ create_form = fn title, completion_fn ->
 
   form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
 
-  Kino.listen(form, fn %{
-                         data: %{
-                           prompt: prompt,
-                           model: model,
-                           max_tokens: max_tokens,
-                           temperature: temperature
-                         }
-                       } ->
-    Kino.Frame.render(chat_frame, Kino.Markdown.new(title))
-    Kino.Frame.append(chat_frame, Kino.Markdown.new("**Me** #{prompt}"))
+  Kino.listen(
+    form,
+    fn %{
+         data: %{
+           prompt: prompt,
+           model: model,
+           max_tokens: max_tokens,
+           temperature: temperature
+         }
+       } ->
+      Kino.Frame.render(chat_frame, Kino.Markdown.new(title))
+      Kino.Frame.append(chat_frame, Kino.Markdown.new("**Me** #{prompt}"))
 
-    completion_fn.(model, prompt, max_tokens, temperature, last_frame)
-  end)
+      completion_fn.(model, prompt, max_tokens, temperature, last_frame)
+    end
+  )
 
   Kino.Layout.grid([chat_frame, last_frame, form], boxed: true, gap: 16)
 end
@@ -125,7 +128,7 @@ end
 Create the Form for the non-streaming completion API and use it.
 
 ```elixir
-create_form.("## Completion Endpoint", completion)
+create_form.("## Completion Chatbot", completion)
 ```
 
 ### Streaming Chatbot
@@ -133,7 +136,5 @@ create_form.("## Completion Endpoint", completion)
 Create the form for the streaming completion API, and use it.
 
 ```elixir
-create_form.("## Stream Completion Endpoint", completion_stream)
+create_form.("## Streaming Chatbot", completion_stream)
 ```
-
-<!-- livebook:{"offset":3345,"stamp":{"token":"QTEyOEdDTQ.bVQPn9judfbW0qzUlciG_MmwwZrG-WxTM_htnl7OuMqUND4yEs9lDHA1qWU.XSkDY9fpXsfC3BDH.-1KtP4bCYW9ZsiaAj4BmNHoBeNi4lT9dPppHwTMILh4tmISNyh5DA9J9UYzUR7q0PEg.YYDw3VWsA3U8NbKr1MqJIQ","version":1}} -->
