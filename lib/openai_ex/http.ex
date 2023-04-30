@@ -16,29 +16,33 @@ defmodule OpenaiEx.Http do
 
   @doc false
   def post(openai = %OpenaiEx{}, url, multipart: multipart) do
-    body_stream = Multipart.body_stream(multipart)
-    content_length = Multipart.content_length(multipart)
-    content_type = Multipart.content_type(multipart, "multipart/form-data")
-
     :post
     |> Finch.build(
       @base_url <> url,
       headers(openai) ++
-        [{"Content-Type", content_type}, {"Content-Length", to_string(content_length)}],
-      {:stream, body_stream}
+        [
+          {"Content-Type", Multipart.content_type(multipart, "multipart/form-data")},
+          {"Content-Length", to_string(Multipart.content_length(multipart))}
+        ],
+      {:stream, Multipart.body_stream(multipart)}
     )
     |> finch_run()
   end
 
   @doc false
   def post(openai = %OpenaiEx{}, url, json: json) do
+    build_post(openai, url, json: json)
+    |> finch_run()
+  end
+
+  @doc false
+  def build_post(openai = %OpenaiEx{}, url, json: json) do
     :post
     |> Finch.build(
       @base_url <> url,
       headers(openai) ++ [{"Content-Type", "application/json"}],
       Jason.encode_to_iodata!(json)
     )
-    |> finch_run()
   end
 
   @doc false

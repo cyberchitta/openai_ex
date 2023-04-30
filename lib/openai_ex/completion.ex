@@ -13,7 +13,6 @@ defmodule OpenaiEx.Completion do
   - `:temperature`
   - `:top_p`
   - `:n`
-  - `:stream`
   - `:logprobs`
   - `:echo`
   - `:stop`
@@ -32,7 +31,6 @@ defmodule OpenaiEx.Completion do
     :temperature,
     :top_p,
     :n,
-    :stream,
     :logprobs,
     :echo,
     :stop,
@@ -77,6 +75,8 @@ defmodule OpenaiEx.Completion do
     |> Map.take(@api_fields)
   end
 
+  @completion_url "/completions"
+
   @doc """
   Calls the completion 'create' endpoint.
 
@@ -91,7 +91,14 @@ defmodule OpenaiEx.Completion do
 
   See https://platform.openai.com/docs/api-reference/completions/create for more information.
   """
+  def create(openai = %OpenaiEx{}, completion = %{}, stream: true) do
+    openai
+    |> OpenaiEx.HttpSse.post(@completion_url,
+      json: completion |> Map.take(@api_fields) |> Map.put(:stream, true)
+    )
+  end
+
   def create(openai = %OpenaiEx{}, completion = %{}) do
-    openai |> OpenaiEx.Http.post("/completions", json: completion |> Map.take(@api_fields))
+    openai |> OpenaiEx.Http.post(@completion_url, json: completion |> Map.take(@api_fields))
   end
 end

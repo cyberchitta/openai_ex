@@ -11,7 +11,6 @@ defmodule OpenaiEx.ChatCompletion do
   - `:temperature`
   - `:top_p`
   - `:n`
-  - `:stream`
   - `:stop`
   - `:max_tokens`
   - `:presence_penalty`
@@ -25,7 +24,6 @@ defmodule OpenaiEx.ChatCompletion do
     :temperature,
     :top_p,
     :n,
-    :stream,
     :stop,
     :max_tokens,
     :presence_penalty,
@@ -69,6 +67,8 @@ defmodule OpenaiEx.ChatCompletion do
     |> Map.take(@api_fields)
   end
 
+  @completion_url "/chat/completions"
+
   @doc """
   Calls the chat completion 'create' endpoint.
 
@@ -83,8 +83,15 @@ defmodule OpenaiEx.ChatCompletion do
 
   See https://platform.openai.com/docs/api-reference/chat/completions/create for more information.
   """
+  def create(openai = %OpenaiEx{}, chat_completion = %{}, stream: true) do
+    openai
+    |> OpenaiEx.HttpSse.post(@completion_url,
+      json: chat_completion |> Map.take(@api_fields) |> Map.put(:stream, true)
+    )
+  end
+
   def create(openai = %OpenaiEx{}, chat_completion = %{}) do
     openai
-    |> OpenaiEx.Http.post("/chat/completions", json: chat_completion |> Map.take(@api_fields))
+    |> OpenaiEx.Http.post(@completion_url, json: chat_completion |> Map.take(@api_fields))
   end
 end
