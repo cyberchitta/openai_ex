@@ -9,7 +9,12 @@ The library closely follows the naming / structure of the [official OpenAI API c
 
 ## Installation and Usage
 
-For installation instructions and detailed usage examples, please look at the [User Guide on hexdocs](https://hexdocs.pm/openai_ex/userguide.html). The guide is a Livebook, so you can run all of the code in it without creating a new project. There are also Livebook Kino App starter samples for [Images](https://hexdocs.pm/openai_ex/images.html) and [Continuations](https://hexdocs.pm/openai_ex/continuations.html), also on [hexdocs](https://hexdocs.pm/openai_ex)
+For installation instructions and detailed usage examples, please look at the [User Guide on hexdocs](https://hexdocs.pm/openai_ex/userguide.html). The guide is a Livebook, so you can run all of the code in it without creating a new project.
+
+There are also Livebook starter samples for
+* A [Completions Chatbot](https://hexdocs.pm/openai_ex/completions.html) which can be deployed as an app. The deployed app displays 2 forms, one for normal completions and another for streaming completions.
+* An [Image Generation UI](https://hexdocs.pm/openai_ex/images.html)
+Both are hosted on [hexdocs](https://hexdocs.pm/openai_ex)
 
 Discussion and announcements on [this thread in Elixir Forum](https://elixirforum.com/t/openai-ex-openai-api-client-library/)
 
