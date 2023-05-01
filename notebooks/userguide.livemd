@@ -114,7 +114,7 @@ Once you have defined the completion request structure, you can generate a compl
 comp_response = openai |> Completion.create(completion_req)
 ```
 
-There is also an option to call the endpoint with a stream option. This returns the result as a series of tokens, which have to be put together in code.
+You can also call the endpoint and have it return a stream. This returns the result as a series of tokens, which have to be put together in code.
 
 To use the stream option, call the `Completion.create()` function with `stream: true`
 
@@ -153,7 +153,7 @@ You can generate a chat completion using the [`ChatCompletion.create()`](https:/
 chat_response = openai |> ChatCompletion.create(chat_req)
 ```
 
-There is also an option to call the endpoint with a stream option. This returns the result as a series of tokens, which have to be put together in code.
+You can also call the endpoint and have it stream the response. This returns the result as a series of tokens, which have to be put together in code.
 
 To use the stream option, call the `ChatCompletion.create()` function with `stream: true`
 
@@ -163,7 +163,7 @@ chat_stream = openai |> ChatCompletion.create(chat_req, stream: true)
 chat_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
 ```
 
-For an example of how to programmatically work with this stream, check out the Chat Completion stream Kino App livebook.
+For a more in-depth example of `ChatCompletion`, check out the [Deeplearning.AI OrderBot Livebook](https://hexdocs.pm/openai_ex/dlai_orderbot.html).
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat).
 
