@@ -153,11 +153,9 @@ req = DlaiOrderbot.create_chat_req(messages: context)
 bot_says = openai |> DlaiOrderbot.get_completion(req)
 Kino.Frame.append(chat_frame, Kino.Text.new("#{bot_says}"))
 
-messages = context ++ [ChatMessage.assistant(bot_says)]
-
 Kino.listen(
   form,
-  messages,
+  context ++ [ChatMessage.assistant(bot_says)],
   fn %{
        data: %{
          prompt: you_say
@@ -178,4 +176,4 @@ Kino.listen(
 Kino.Layout.grid([chat_frame, form], boxed: true, gap: 16)
 ```
 
-<!-- livebook:{"offset":4866,"stamp":{"token":"QTEyOEdDTQ.x0vhKPcHkKgvwC2ZhcH7cmJPrbvKl46U5SEof5wPpuRP3fP5ToCC-8q56mY.17RVAmCWBlygLPFv.7pTAu6ED3d86B1VnRwP3FwzqnX7QHr2WUwIItlsmy-ULL4HuDHfg_9rFgaBQF32RxpE.cJZ8ZEgTu-c-3TxWb4oUew","version":1}} -->
+<!-- livebook:{"offset":4845,"stamp":{"token":"QTEyOEdDTQ.hHH6hLw7atXrT_dFR558zj7gFkbWxJ5PbpJxoyu0g_4D7VGW0Lec1GtIfHU.cubpjPheNL44Y0PX.l0HPM1fp4BT0bQU9VYZCCGaEMxOtF2tB1qpxChCE2oXWntHYLQgkHQ8PepHhXWUwXqA.GI7xkF2OT7LnE6m6_CRrtA","version":1}} -->
