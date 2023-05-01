@@ -11,12 +11,14 @@ The library closely follows the naming / structure of the [official OpenAI API c
 
 For installation instructions and detailed usage examples, please look at the [User Guide on hexdocs](https://hexdocs.pm/openai_ex/userguide.html). The guide is a Livebook, so you can run all of the code in it without creating a new project.
 
-There are also Livebook starter samples for
+There are also Livebook examples for
+* The [Deeplearning.AI Orderbot](https://hexdocs.pm/openai_ex/dlai_orderbot.html). This notebook is an elixir / Kino translation of the python notebook in [Lesson 8](https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/8/chatbot), of [Deeplearning.AI](https://www.deeplearning.ai/)'s course [ChatGPT Prompt Engineering for Developers](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/).
 * A [Completions Chatbot](https://hexdocs.pm/openai_ex/completions.html) which can be deployed as an app. The deployed app displays 2 forms, one for normal completions and another for streaming completions.
 * An [Image Generation UI](https://hexdocs.pm/openai_ex/images.html)
-Both are hosted on [hexdocs](https://hexdocs.pm/openai_ex)
 
-Discussion and announcements on [this thread in Elixir Forum](https://elixirforum.com/t/openai-ex-openai-api-client-library/)
+These are hosted on [hexdocs](https://hexdocs.pm/openai_ex) and can be used as inspiration / starters for your own projects.
+
+Discussion and announcements are on [this thread in Elixir Forum](https://elixirforum.com/t/openai-ex-openai-api-client-library/)
 
 ## Development
 

@@ -1,0 +1,181 @@
+# Deeplearning.AI Order Bot
+
+```elixir
+Mix.install([
+  {:openai_ex, "~> 0.2.0"},
+  {:kino, "~> 0.9.2"}
+])
+
+alias OpenaiEx
+alias OpenaiEx.ChatCompletion
+alias OpenaiEx.ChatMessage
+```
+
+## Source
+
+This notebook is an elixir translation of the python notebook in [Lesson 8](https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/8/chatbot), of [Deeplearning.AI](https://www.deeplearning.ai/)'s course [ChatGPT Prompt Engineering for Developers](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/).
+
+## Chat Format
+
+In this notebook, you will explore how you can utilize the chat format to have extended conversations with chatbots personalized or specialized for specific tasks or behaviors.
+
+### Setup
+
+```elixir
+openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
+```
+
+```elixir
+defmodule OpenaiEx.Notebooks.DlaiOrderbot do
+  alias OpenaiEx
+  alias OpenaiEx.ChatCompletion
+
+  def create_chat_req(args = [_ | _]) do
+    args
+    |> Enum.into(%{
+      model: "gpt-3.5-turbo",
+      temperature: 0
+    })
+    |> ChatCompletion.new()
+  end
+
+  def get_completion(openai = %OpenaiEx{}, cc_req = %{}) do
+    openai
+    |> ChatCompletion.create(cc_req)
+    # for debugging
+    #    |> IO.inspect()
+    |> Map.get("choices")
+    |> Enum.at(0)
+    |> Map.get("message")
+    |> Map.get("content")
+  end
+end
+
+alias OpenaiEx.Notebooks.DlaiOrderbot
+```
+
+```elixir
+messages = [
+  ChatMessage.system("You are an assistant that speaks like Shakespeare."),
+  ChatMessage.user("tell me a joke"),
+  ChatMessage.assistant("Why did the chicken cross the road"),
+  ChatMessage.user("I don't know")
+]
+
+req = DlaiOrderbot.create_chat_req(messages: messages, temperature: 1)
+openai |> DlaiOrderbot.get_completion(req)
+```
+
+```elixir
+messages = [
+  ChatMessage.system("You are friendly chatbot."),
+  ChatMessage.user("Hi, my name is Isa")
+]
+
+req = DlaiOrderbot.create_chat_req(messages: messages, temperature: 1)
+openai |> DlaiOrderbot.get_completion(req)
+```
+
+```elixir
+messages = [
+  ChatMessage.system("You are friendly chatbot."),
+  ChatMessage.user("Yes, can you remind me, What is my name?")
+]
+
+req = DlaiOrderbot.create_chat_req(messages: messages, temperature: 1)
+openai |> DlaiOrderbot.get_completion(req)
+```
+
+```elixir
+messages = [
+  ChatMessage.system("You are friendly chatbot."),
+  ChatMessage.user("Hi, my name is Isa"),
+  ChatMessage.assistant(
+    "Hi Isa! It's nice to meet you. Is there anything I can help you with today?"
+  ),
+  ChatMessage.user("Yes, can you remind me, What is my name?")
+]
+
+req = DlaiOrderbot.create_chat_req(messages: messages, temperature: 1)
+openai |> DlaiOrderbot.get_completion(req)
+```
+
+## Order Bot
+
+We can automate the collection of user prompts and assistant responses to build a OrderBot. The OrderBot will take orders at a pizza restaurant.
+
+```elixir
+context = [
+  ChatMessage.system("""
+  You are OrderBot, an automated service to collect orders for a pizza restaurant. \
+  You first greet the customer, then collects the order, \
+  and then asks if it's a pickup or delivery. \
+  You wait to collect the entire order, then summarize it and check for a final \
+  time if the customer wants to add anything else. \
+  If it's a delivery, you ask for an address. \
+  Finally you collect the payment.\
+  Make sure to clarify all options, extras and sizes to uniquely \
+  identify the item from the menu.\
+  You respond in a short, very conversational friendly style. \
+  The menu includes \
+  pepperoni pizza  12.95, 10.00, 7.00 \
+  cheese pizza   10.95, 9.25, 6.50 \
+  eggplant pizza   11.95, 9.75, 6.75 \
+  fries 4.50, 3.50 \
+  greek salad 7.25 \
+  Toppings: \
+  extra cheese 2.00, \
+  mushrooms 1.50 \
+  sausage 3.00 \
+  canadian bacon 3.50 \
+  AI sauce 1.50 \
+  peppers 1.00 \
+  Drinks: \
+  coke 3.00, 2.00, 1.00 \
+  sprite 3.00, 2.00, 1.00 \
+  bottled water 5.00 \
+  """)
+]
+```
+
+```elixir
+chat_frame = Kino.Frame.new()
+
+inputs = [
+  prompt: Kino.Input.textarea("You")
+]
+
+form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
+
+Kino.Frame.render(chat_frame, Kino.Markdown.new("## Chat"))
+
+req = DlaiOrderbot.create_chat_req(messages: context)
+bot_says = openai |> DlaiOrderbot.get_completion(req)
+Kino.Frame.append(chat_frame, Kino.Text.new("#{bot_says}"))
+
+messages = context ++ [ChatMessage.assistant(bot_says)]
+
+Kino.listen(
+  form,
+  messages,
+  fn %{
+       data: %{
+         prompt: you_say
+       }
+     },
+     history ->
+    Kino.Frame.append(chat_frame, Kino.Markdown.new("**You** #{you_say}"))
+
+    history = history ++ [ChatMessage.user(you_say)]
+
+    req = DlaiOrderbot.create_chat_req(messages: history)
+    bot_says = openai |> DlaiOrderbot.get_completion(req)
+    Kino.Frame.append(chat_frame, Kino.Text.new("#{bot_says}"))
+    {:cont, history ++ [ChatMessage.assistant(bot_says)]}
+  end
+)
+
+Kino.Layout.grid([chat_frame, form], boxed: true, gap: 16)
+```
+
+<!-- livebook:{"offset":4866,"stamp":{"token":"QTEyOEdDTQ.x0vhKPcHkKgvwC2ZhcH7cmJPrbvKl46U5SEof5wPpuRP3fP5ToCC-8q56mY.17RVAmCWBlygLPFv.7pTAu6ED3d86B1VnRwP3FwzqnX7QHr2WUwIItlsmy-ULL4HuDHfg_9rFgaBQF32RxpE.cJZ8ZEgTu-c-3TxWb4oUew","version":1}} -->
