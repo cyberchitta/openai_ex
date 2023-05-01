@@ -1,5 +1,4 @@
 # README
-![github ci badge](https://github.com/restlessronin/openai_ex/actions/workflows/ci.yml/badge.svg)
 [![License: Apache-2](https://img.shields.io/badge/License-Apache2-yellow.svg)](https://opensource.org/license/apache-2-0/)
 [![hex.pm badge](https://img.shields.io/hexpm/v/openai_ex.svg)](https://hex.pm/packages/openai_ex)
 
