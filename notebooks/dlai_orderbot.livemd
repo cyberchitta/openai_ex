@@ -175,5 +175,3 @@ Kino.listen(
 
 Kino.Layout.grid([chat_frame, form], boxed: true, gap: 16)
 ```
-
-<!-- livebook:{"offset":4845,"stamp":{"token":"QTEyOEdDTQ.hHH6hLw7atXrT_dFR558zj7gFkbWxJ5PbpJxoyu0g_4D7VGW0Lec1GtIfHU.cubpjPheNL44Y0PX.l0HPM1fp4BT0bQU9VYZCCGaEMxOtF2tB1qpxChCE2oXWntHYLQgkHQ8PepHhXWUwXqA.GI7xkF2OT7LnE6m6_CRrtA","version":1}} -->

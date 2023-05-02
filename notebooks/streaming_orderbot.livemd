@@ -1,0 +1,139 @@
+# Streaming Orderbot
+
+```elixir
+Mix.install([
+  {:openai_ex, "~> 0.2.0"},
+  {:kino, "~> 0.9.2"}
+])
+
+alias OpenaiEx
+alias OpenaiEx.ChatCompletion
+alias OpenaiEx.ChatMessage
+```
+
+## Setup
+
+This notebook creates an Orderbot, similar to the one in [Deeplearning.AI Orderbot](https://hexdocs.pm/openai_ex/0.2.0/dlai_orderbot.html), but using the streaming version of the Chat Completion API.
+
+```elixir
+openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
+```
+
+```elixir
+defmodule OpenaiEx.Notebooks.StreamingOrderbot do
+  alias OpenaiEx
+  alias OpenaiEx.ChatCompletion
+
+  def create_chat_req(args = [_ | _]) do
+    args
+    |> Enum.into(%{
+      model: "gpt-3.5-turbo",
+      temperature: 0
+    })
+    |> ChatCompletion.new()
+  end
+
+  def get_completion_stream(openai = %OpenaiEx{}, cc_req = %{}) do
+    openai
+    |> ChatCompletion.create(cc_req, stream: true)
+    |> Stream.flat_map(& &1)
+    |> Stream.map(fn %{data: d} -> d |> Map.get("choices") |> Enum.at(0) |> Map.get("delta") end)
+    |> Stream.filter(fn map -> map |> Map.has_key?("content") end)
+    |> Stream.map(fn map -> map |> Map.get("content") end)
+  end
+
+  def stream_completion_to_frame(openai = %OpenaiEx{}, messages, frame) do
+    openai
+    |> get_completion_stream(create_chat_req(messages: messages))
+    |> Enum.reduce("", fn token, text ->
+      next = text <> token
+      Kino.Frame.render(frame, Kino.Text.new(next))
+      next
+    end)
+  end
+
+  def create_orderbot(openai = %OpenaiEx{}, context) do
+    chat_frame = Kino.Frame.new()
+    last_frame = Kino.Frame.new()
+    inputs = [prompt: Kino.Input.textarea("You")]
+    form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
+    Kino.Layout.grid([chat_frame, last_frame, form], boxed: true, gap: 16) |> Kino.render()
+    Kino.Frame.render(chat_frame, Kino.Markdown.new("### Orderbot Chat"))
+
+    bot_says = openai |> stream_completion_to_frame(context, last_frame)
+
+    Kino.listen(
+      form,
+      context ++ [ChatMessage.assistant(bot_says)],
+      fn %{
+           data: %{
+             prompt: you_say
+           }
+         },
+         history ->
+        Kino.Frame.render(last_frame, Kino.Text.new(""))
+
+        Kino.Frame.append(
+          chat_frame,
+          history |> List.last() |> IO.inspect() |> Map.get(:content) |> Kino.Text.new()
+        )
+
+        Kino.Frame.append(chat_frame, Kino.Markdown.new("**You** #{you_say}"))
+
+        bot_says =
+          openai
+          |> stream_completion_to_frame(
+            history ++ [ChatMessage.user(you_say)],
+            last_frame
+          )
+
+        {:cont, history ++ [ChatMessage.user(you_say), ChatMessage.assistant(bot_says)]}
+      end
+    )
+  end
+end
+
+alias OpenaiEx.Notebooks.StreamingOrderbot
+```
+
+## Orderbot
+
+```elixir
+context = [
+  ChatMessage.system("""
+  You are OrderBot, an automated service to collect orders for a pizza restaurant. \
+  You first greet the customer, then collects the order, \
+  and then asks if it's a pickup or delivery. \
+  You wait to collect the entire order, then summarize it and check for a final \
+  time if the customer wants to add anything else. \
+  If it's a delivery, you ask for an address. \
+  Finally you collect the payment.\
+  Make sure to clarify all options, extras and sizes to uniquely \
+  identify the item from the menu.\
+  You respond in a short, very conversational friendly style. \
+  The menu includes \
+  pepperoni pizza  12.95, 10.00, 7.00 \
+  cheese pizza   10.95, 9.25, 6.50 \
+  eggplant pizza   11.95, 9.75, 6.75 \
+  fries 4.50, 3.50 \
+  greek salad 7.25 \
+  Toppings: \
+  extra cheese 2.00, \
+  mushrooms 1.50 \
+  sausage 3.00 \
+  canadian bacon 3.50 \
+  AI sauce 1.50 \
+  peppers 1.00 \
+  Drinks: \
+  coke 3.00, 2.00, 1.00 \
+  sprite 3.00, 2.00, 1.00 \
+  bottled water 5.00 \
+  """)
+]
+```
+
+```elixir
+openai |> StreamingOrderbot.create_orderbot(context)
+```
+
+<!-- livebook:{"offset":3849,"stamp":{"token":"QTEyOEdDTQ.x31461DVU-YqwMg4Zre2MW7nr59PkJVxhqc-UY9TITLfa0MHipmZCpEpi1g.CG2aooKmq-31zUtF.O6blMCdgXbvfqpEMYxegX89k7CXjfpb9BOzJ1_xbrxIdoQTzrvjLChmbdy4RYvpWRc8.MENdwFkug2fqxOvra6L1lQ","version":1}} -->
