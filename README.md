@@ -6,11 +6,14 @@
 
 The library closely follows the naming / structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation.
 
+**All** of the OpenAI API is implemented, including the **streaming** ChatCompletion and Completion APIs.
+
 ## Installation and Usage
 
-For installation instructions and detailed usage examples, please look at the [User Guide on hexdocs](https://hexdocs.pm/openai_ex/userguide.html). The guide is a Livebook, and you can run all of the code in it without creating a new project.
+For installation instructions and detailed usage examples, please look at the [User Guide on hexdocs](https://hexdocs.pm/openai_ex/userguide.html). The guide is a Livebook, and you can run all of the code in it without creating a new project. Practically every API call has a running example in the User Guide.
 
 There are also Livebook examples for
+* [Streaming Orderbot](https://hexdocs.pm/openai_ex/streaming_orderbot.html) An example of how to use ChatCompletion streaming in a Chatbot. This is a streaming version of the next Livebook in this list.
 * The [Deeplearning.AI Orderbot](https://hexdocs.pm/openai_ex/dlai_orderbot.html). This notebook is an elixir / Kino translation of the python notebook in [Lesson 8](https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/8/chatbot), of [Deeplearning.AI](https://www.deeplearning.ai/)'s course [ChatGPT Prompt Engineering for Developers](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/).
 * A [Completions Chatbot](https://hexdocs.pm/openai_ex/completions.html) which can be deployed as a Livebook app. The deployed app displays 2 forms, one for normal completions and another for streaming completions.
 * An [Image Generation UI](https://hexdocs.pm/openai_ex/images.html)

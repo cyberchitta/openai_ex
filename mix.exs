@@ -58,6 +58,7 @@ defmodule OpenaiEx.MixProject do
       extra_section: "Livebooks",
       extras: [
         "notebooks/userguide.livemd",
+        "notebooks/streaming_orderbot.livemd",
         "notebooks/dlai_orderbot.livemd",
         "notebooks/completions.livemd",
         "notebooks/images.livemd"

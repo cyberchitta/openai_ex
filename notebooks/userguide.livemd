@@ -165,6 +165,8 @@ chat_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) en
 
 For a more in-depth example of `ChatCompletion`, check out the [Deeplearning.AI OrderBot Livebook](https://hexdocs.pm/openai_ex/dlai_orderbot.html).
 
+For a detailed example of the use of the streaming `ChatCompletion` API, check out [Streaming Orderbot](https://hexdocs.pm/openai_ex/streaming_orderbot.html), the streaming equivalent of the prior example.
+
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat).
 
 ## Edit
