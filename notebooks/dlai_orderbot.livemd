@@ -139,19 +139,20 @@ context = [
 ```
 
 ```elixir
+append_completion = fn openai, messages, frame ->
+  req = DlaiOrderbot.create_chat_req(messages: messages)
+  bot_says = openai |> DlaiOrderbot.get_completion(req)
+  Kino.Frame.append(frame, Kino.Text.new("#{bot_says}"))
+  bot_says
+end
+
 chat_frame = Kino.Frame.new()
-
-inputs = [
-  prompt: Kino.Input.textarea("You")
-]
-
+inputs = [prompt: Kino.Input.textarea("You")]
 form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
+Kino.Frame.render(chat_frame, Kino.Markdown.new("### Orderbot Chat"))
+Kino.Layout.grid([chat_frame, form], boxed: true, gap: 16) |> Kino.render()
 
-Kino.Frame.render(chat_frame, Kino.Markdown.new("## Chat"))
-
-req = DlaiOrderbot.create_chat_req(messages: context)
-bot_says = openai |> DlaiOrderbot.get_completion(req)
-Kino.Frame.append(chat_frame, Kino.Text.new("#{bot_says}"))
+bot_says = openai |> append_completion.(context, chat_frame)
 
 Kino.listen(
   form,
@@ -159,12 +160,10 @@ Kino.listen(
   fn %{data: %{prompt: you_say}}, history ->
     Kino.Frame.append(chat_frame, Kino.Markdown.new("**You** #{you_say}"))
     history = history ++ [ChatMessage.user(you_say)]
-    req = DlaiOrderbot.create_chat_req(messages: history)
-    bot_says = openai |> DlaiOrderbot.get_completion(req)
-    Kino.Frame.append(chat_frame, Kino.Text.new("#{bot_says}"))
+    bot_says = openai |> append_completion.(history, chat_frame)
     {:cont, history ++ [ChatMessage.assistant(bot_says)]}
   end
 )
-
-Kino.Layout.grid([chat_frame, form], boxed: true, gap: 16)
 ```
+
+<!-- livebook:{"offset":4839,"stamp":{"token":"QTEyOEdDTQ.yZaFllwIh-n2WDbyN9Dm6W1P2UMcNSkp1Qlv07D6yxiOc-GeEj3Ua-j_uOk.WoXqlDxwtk-WO5gb.QwfT16yp9XMNaMxhC4Qjwd-23kWIztOfx3E3ChPMPqlKqdvVVUrmxxhYVnfiw8zufjk.OHDMl7uv2ykOaQ6ZjenN-g","version":1}} -->
