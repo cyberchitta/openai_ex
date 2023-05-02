@@ -159,11 +159,12 @@ Kino.listen(
   context ++ [ChatMessage.assistant(bot_says)],
   fn %{data: %{prompt: you_say}}, history ->
     Kino.Frame.append(chat_frame, Kino.Markdown.new("**You** #{you_say}"))
-    history = history ++ [ChatMessage.user(you_say)]
-    bot_says = openai |> append_completion.(history, chat_frame)
-    {:cont, history ++ [ChatMessage.assistant(bot_says)]}
+
+    bot_says = openai |> append_completion.(history ++ [ChatMessage.user(you_say)], chat_frame)
+
+    {:cont, history ++ [ChatMessage.user(you_say), ChatMessage.assistant(bot_says)]}
   end
 )
 ```
 
-<!-- livebook:{"offset":4839,"stamp":{"token":"QTEyOEdDTQ.yZaFllwIh-n2WDbyN9Dm6W1P2UMcNSkp1Qlv07D6yxiOc-GeEj3Ua-j_uOk.WoXqlDxwtk-WO5gb.QwfT16yp9XMNaMxhC4Qjwd-23kWIztOfx3E3ChPMPqlKqdvVVUrmxxhYVnfiw8zufjk.OHDMl7uv2ykOaQ6ZjenN-g","version":1}} -->
+<!-- livebook:{"offset":4846,"stamp":{"token":"QTEyOEdDTQ.OxbmA9yVtznx09EnrrqZ3RZlQ102-tKvsFxAkyrJkCR6NQ7ZYJLep6YqPfw.4S--5cRgPHLewOvz.RXoed-grPmfv3NRijNoUOWUDCZSvSnJ9_s7gqKKSvVfSBkkKYnosAjWz_0TX8BviPu0.WRtwSnOQNPToLNK66eBE_A","version":1}} -->
