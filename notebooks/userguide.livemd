@@ -13,7 +13,13 @@ Mix.install([
 
 `OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client especially for Livebook development.
 
-The library closely follows the structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation.
+At this point, all current API endpoints and features are supported, including the **streaming version of the completion and chat completion endpoints**.
+
+There are some differences compared to other elixir openai wrappers.
+
+* I tried to faithfully mirror the naming/structure of the official python api. For example, content that is already in memory can be uploaded as part of a request, it doesn't have to be read from a file at a local path.
+* I was developing for a livebook use-case, so I don't have any config, only environment variables.
+* Streaming API versions are fully supported.
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
