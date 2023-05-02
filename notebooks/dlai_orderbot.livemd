@@ -156,16 +156,9 @@ Kino.Frame.append(chat_frame, Kino.Text.new("#{bot_says}"))
 Kino.listen(
   form,
   context ++ [ChatMessage.assistant(bot_says)],
-  fn %{
-       data: %{
-         prompt: you_say
-       }
-     },
-     history ->
+  fn %{data: %{prompt: you_say}}, history ->
     Kino.Frame.append(chat_frame, Kino.Markdown.new("**You** #{you_say}"))
-
     history = history ++ [ChatMessage.user(you_say)]
-
     req = DlaiOrderbot.create_chat_req(messages: history)
     bot_says = openai |> DlaiOrderbot.get_completion(req)
     Kino.Frame.append(chat_frame, Kino.Text.new("#{bot_says}"))

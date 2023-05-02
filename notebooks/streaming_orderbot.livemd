@@ -57,35 +57,21 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
     last_frame = Kino.Frame.new()
     inputs = [prompt: Kino.Input.textarea("You")]
     form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
-    Kino.Layout.grid([chat_frame, last_frame, form], boxed: true, gap: 16) |> Kino.render()
     Kino.Frame.render(chat_frame, Kino.Markdown.new("### Orderbot Chat"))
+    Kino.Layout.grid([chat_frame, last_frame, form], boxed: true, gap: 16) |> Kino.render()
 
     bot_says = openai |> stream_completion_to_frame(context, last_frame)
 
     Kino.listen(
       form,
       context ++ [ChatMessage.assistant(bot_says)],
-      fn %{
-           data: %{
-             prompt: you_say
-           }
-         },
-         history ->
+      fn %{data: %{prompt: you_say}}, history ->
         Kino.Frame.render(last_frame, Kino.Text.new(""))
-
-        Kino.Frame.append(
-          chat_frame,
-          history |> List.last() |> IO.inspect() |> Map.get(:content) |> Kino.Text.new()
-        )
-
+        Kino.Frame.append(chat_frame, Kino.Text.new(List.last(history).content))
         Kino.Frame.append(chat_frame, Kino.Markdown.new("**You** #{you_say}"))
 
         bot_says =
-          openai
-          |> stream_completion_to_frame(
-            history ++ [ChatMessage.user(you_say)],
-            last_frame
-          )
+          openai |> stream_completion_to_frame(history ++ [ChatMessage.user(you_say)], last_frame)
 
         {:cont, history ++ [ChatMessage.user(you_say), ChatMessage.assistant(bot_says)]}
       end
@@ -136,4 +122,4 @@ context = [
 openai |> StreamingOrderbot.create_orderbot(context)
 ```
 
-<!-- livebook:{"offset":3849,"stamp":{"token":"QTEyOEdDTQ.x31461DVU-YqwMg4Zre2MW7nr59PkJVxhqc-UY9TITLfa0MHipmZCpEpi1g.CG2aooKmq-31zUtF.O6blMCdgXbvfqpEMYxegX89k7CXjfpb9BOzJ1_xbrxIdoQTzrvjLChmbdy4RYvpWRc8.MENdwFkug2fqxOvra6L1lQ","version":1}} -->
+<!-- livebook:{"offset":3677,"stamp":{"token":"QTEyOEdDTQ.A-j8Zp6W0IuRRjiBlGTW5QoRIiak8DxbRJqBoMB9UTOjzOyEiDGuru01Tkw.2O7o3rtTJa9sLnGQ.Vx-yNhgPCyf8RTJZfAxBQTd0KMvYR6BB8Olas-1iRpdyM6I32nuvmbK5Rpir_IBOBBw.Y1f1-jL3lIPFQNKZPoIaEg","version":1}} -->
