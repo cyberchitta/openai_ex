@@ -62,7 +62,7 @@ defmodule OpenaiEx.Http do
   @doc false
   def finch_run(finch_request) do
     finch_request
-    |> Finch.request!(OpenaiEx.Finch)
+    |> Finch.request!(OpenaiEx.Finch, receive_timeout: 45_000)
     |> Map.get(:body)
     |> Jason.decode!()
   end
