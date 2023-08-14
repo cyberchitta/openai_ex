@@ -9,8 +9,8 @@
             "extensions": [
 				"jakebecker.elixir-ls",
 				"eamodio.gitlens",
-				"github.copilot-nightly",
-				"GitHub.copilot-chat"
+				"GitHub.copilot-chat",
+				"GitHub.copilot"
 			]
         }
     }
