@@ -3,7 +3,7 @@
 ```elixir
 Mix.install([
   {:openai_ex, "~> 0.2.1"},
-  {:kino, "~> 0.9.2"}
+  {:kino, "~> 0.10.0"}
 ])
 
 alias OpenaiEx
@@ -167,4 +167,4 @@ Kino.listen(
 )
 ```
 
-<!-- livebook:{"offset":4846,"stamp":{"token":"QTEyOEdDTQ.OxbmA9yVtznx09EnrrqZ3RZlQ102-tKvsFxAkyrJkCR6NQ7ZYJLep6YqPfw.4S--5cRgPHLewOvz.RXoed-grPmfv3NRijNoUOWUDCZSvSnJ9_s7gqKKSvVfSBkkKYnosAjWz_0TX8BviPu0.WRtwSnOQNPToLNK66eBE_A","version":1}} -->
+<!-- livebook:{"offset":4847,"stamp":{"token":"QTEyOEdDTQ.pMrr-t5CE0Pvwb3eOKFSLos23e4QVe9ZcOp100QHWN8kYZv4wvWfadycV3Y.KOmZPk7CG2JEwnDl.1xc2Ioo-ttjzgKl2ljpAsO2WiFa3oYsdWjZLNZXT7gmMZ7sk9ia5Bztx08qZ95LkVg._8NPiAUhOdAN5OZdNSEszA","version":1}} -->

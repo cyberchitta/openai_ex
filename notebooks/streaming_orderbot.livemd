@@ -3,7 +3,7 @@
 ```elixir
 Mix.install([
   {:openai_ex, "~> 0.2.1"},
-  {:kino, "~> 0.9.2"}
+  {:kino, "~> 0.10.0"}
 ])
 
 alias OpenaiEx
@@ -122,4 +122,4 @@ context = [
 openai |> StreamingOrderbot.create_orderbot(context)
 ```
 
-<!-- livebook:{"offset":3677,"stamp":{"token":"QTEyOEdDTQ.A-j8Zp6W0IuRRjiBlGTW5QoRIiak8DxbRJqBoMB9UTOjzOyEiDGuru01Tkw.2O7o3rtTJa9sLnGQ.Vx-yNhgPCyf8RTJZfAxBQTd0KMvYR6BB8Olas-1iRpdyM6I32nuvmbK5Rpir_IBOBBw.Y1f1-jL3lIPFQNKZPoIaEg","version":1}} -->
+<!-- livebook:{"offset":3678,"stamp":{"token":"QTEyOEdDTQ.0jdhT2N5QwQcVLNGrRy4cztjpWvFpXapAuUyd7-C-kD_QeBTwdjAjqFYy_E.0JRwl7Qp_RXVC9kM.1jHtlyfPt5lTtSP5Wxo33cjVta8wkwmM0qTgPAhct0eE83mJzCCO1oZljKu8vwSOaQ.rKCLSYgYTnku_NzyqeNpow","version":1}} -->
