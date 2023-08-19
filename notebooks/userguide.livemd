@@ -5,7 +5,7 @@ Mix.install([
   #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.2.1"},
   {:openai_ex, "~> 0.2.1"},
   #  {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.9.2"}
+  {:kino, "~> 0.10.0"}
 ])
 ```
 
@@ -512,3 +512,5 @@ mod_res = openai |> Moderation.create(mod_req)
 ```
 
 For more information on the moderation endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/moderations)
+
+<!-- livebook:{"offset":15765,"stamp":{"token":"QTEyOEdDTQ.i8hJZvH1l-uetTiHLwSEBHdxTICxZc8W7c6szyPEaIjfiKtkaBezJgiUp_U.T73TwA2TrqgYC1Sa.9vRyRLz6lHsxNATaYEck6iDFkEnoZehRmzqWQHgIdma4IBK3bMH_nFT1jHCRBbIykA.FV5s7_pKPMji1GAG70Vdeg","version":1}} -->
