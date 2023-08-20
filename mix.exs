@@ -1,7 +1,7 @@
 defmodule OpenaiEx.MixProject do
   use Mix.Project
 
-  @version "0.2.1"
+  @version "0.2.2"
   @description "Community maintained OpenAI API Elixir client for Livebook"
   @source_url "https://github.com/restlessronin/openai_ex"
 
