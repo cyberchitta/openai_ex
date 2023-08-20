@@ -1,6 +1,5 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
-  require Logger
 
   # based on
   # https://gist.github.com/zachallaun/88aed2a0cef0aed6d68dcc7c12531649
@@ -41,21 +40,18 @@ defmodule OpenaiEx.HttpSse do
 
   @doc false
   defp tokenize_data(evt_data, acc) do
-    cond do
-      String.contains?(evt_data, "\n\n") ->
-        evt_chunks = String.split(acc <> evt_data, "\n\n")
-        {rem, token_chunks} = List.pop_at(evt_chunks, -1)
+    if String.contains?(evt_data, "\n\n") do
+      {remaining, token_chunks} = (acc <> evt_data) |> String.split("\n\n") |> List.pop_at(-1)
 
-        tokens =
-          token_chunks
-          |> Enum.map(fn chunk -> extract_token(chunk) end)
-          |> Enum.filter(fn %{data: data} -> data != "[DONE]" end)
-          |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
+      tokens =
+        token_chunks
+        |> Enum.map(fn chunk -> extract_token(chunk) end)
+        |> Enum.filter(fn %{data: data} -> data != "[DONE]" end)
+        |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
 
-        {tokens, rem}
-
-      true ->
-        {[], acc <> evt_data}
+      {tokens, remaining}
+    else
+      {[], acc <> evt_data}
     end
   end
 
