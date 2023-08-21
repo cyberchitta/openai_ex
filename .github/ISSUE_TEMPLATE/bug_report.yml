@@ -51,6 +51,6 @@ body:
     id: lib-version
     attributes:
       label: Library version
-      placeholder: openai_ex v0.2.2
+      placeholder: openai_ex v0.2.3
     validations:
       required: true
