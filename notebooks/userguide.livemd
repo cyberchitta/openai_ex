@@ -2,9 +2,9 @@
 
 ```elixir
 Mix.install([
-  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.2.2"},
-  {:openai_ex, "~> 0.2.2"},
-  #  {:openai_ex, path: Path.join(__DIR__, "..")},
+  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.2.3"},
+  # {:openai_ex, "~> 0.2.3"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.10.0"}
 ])
 ```
@@ -38,7 +38,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.2.2"}
+    {:openai_ex, "~> 0.2.3"}
   ],
 )
 ```
@@ -52,7 +52,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.2.2"}
+    {:openai_ex, "~> 0.2.3"}
   ]
 end
 ```
@@ -512,5 +512,3 @@ mod_res = openai |> Moderation.create(mod_req)
 ```
 
 For more information on the moderation endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/moderations)
-
-<!-- livebook:{"offset":15765,"stamp":{"token":"QTEyOEdDTQ.i8hJZvH1l-uetTiHLwSEBHdxTICxZc8W7c6szyPEaIjfiKtkaBezJgiUp_U.T73TwA2TrqgYC1Sa.9vRyRLz6lHsxNATaYEck6iDFkEnoZehRmzqWQHgIdma4IBK3bMH_nFT1jHCRBbIykA.FV5s7_pKPMji1GAG70Vdeg","version":1}} -->

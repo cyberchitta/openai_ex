@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.2.2"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.10.0"}
 ])
 
@@ -13,7 +13,7 @@ alias OpenaiEx.ChatMessage
 
 ## Setup
 
-This notebook creates an Orderbot, similar to the one in [Deeplearning.AI Orderbot](https://hexdocs.pm/openai_ex/0.2.2/dlai_orderbot.html), but using the streaming version of the Chat Completion API.
+This notebook creates an Orderbot, similar to the one in [Deeplearning.AI Orderbot](https://hexdocs.pm/openai_ex/0.2.3/dlai_orderbot.html), but using the streaming version of the Chat Completion API.
 
 ```elixir
 openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
@@ -121,5 +121,3 @@ context = [
 ```elixir
 openai |> StreamingOrderbot.create_orderbot(context)
 ```
-
-<!-- livebook:{"offset":3678,"stamp":{"token":"QTEyOEdDTQ.0jdhT2N5QwQcVLNGrRy4cztjpWvFpXapAuUyd7-C-kD_QeBTwdjAjqFYy_E.0JRwl7Qp_RXVC9kM.1jHtlyfPt5lTtSP5Wxo33cjVta8wkwmM0qTgPAhct0eE83mJzCCO1oZljKu8vwSOaQ.rKCLSYgYTnku_NzyqeNpow","version":1}} -->
