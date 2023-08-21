@@ -74,7 +74,7 @@ completion_stream = fn model, prompt, max_tokens, temperature, last_frame ->
     end)
 
   token_stream
-  |> Enum.reduce(fn out, acc ->
+  |> Enum.reduce("", fn out, acc ->
     next = acc <> out
     Kino.Frame.render(last_frame, Kino.Markdown.new("**Bot** #{next}"))
     next
