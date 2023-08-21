@@ -1,6 +1,6 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
-require Logger
+  require Logger
 
   # based on
   # https://gist.github.com/zachallaun/88aed2a0cef0aed6d68dcc7c12531649
@@ -38,8 +38,9 @@ require Logger
         if acc != "" do
           Logger.warning(inspect(Jason.decode!(acc)))
         end
+
         {:halt, {acc, ref, task}}
-      end
+    end
   end
 
   @doc false
