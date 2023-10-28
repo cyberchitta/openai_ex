@@ -13,7 +13,7 @@ Mix.install([
 
 `OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client especially for Livebook development.
 
-At this point, all current API endpoints and features are supported, including the **streaming version of the completion and chat completion endpoints**.
+At this point, all API endpoints and features (as of Oct 27, 2023) are supported, including the **streaming version of the completion and chat completion endpoints**.
 
 There are some differences compared to other elixir openai wrappers.
 
