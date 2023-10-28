@@ -8,15 +8,15 @@ defmodule OpenaiEx.Image do
 
   - `:prompt`
   - `:n`
-  - `:size`
   - `:response_format`
+  - `:size`
   - `:user`
   """
   @api_fields [
     :prompt,
     :n,
-    :size,
     :response_format,
+    :size,
     :user
   ]
 
