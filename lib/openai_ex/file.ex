@@ -8,11 +8,13 @@ defmodule OpenaiEx.File do
 
   - `:file`
   - `:purpose`
+
   - `:file_id`
   """
   @api_fields [
     :file,
     :purpose,
+
     :file_id
   ]
 
