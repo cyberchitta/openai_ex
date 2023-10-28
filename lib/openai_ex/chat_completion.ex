@@ -9,7 +9,6 @@ defmodule OpenaiEx.ChatCompletion do
   - `:messages`
   - `:model`
   - `:frequency_penalty`
-
   - `:function_call`
   - `:functions`
   - `:logit_bias`
