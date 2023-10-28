@@ -6,13 +6,15 @@ defmodule OpenaiEx.Embedding do
 
   The following fields can be used as parameters when creating a new embedding:
 
-  - `:model`
   - `:input`
+  - `:model`
+  - `:encoding_format`
   - `:user`
   """
   @api_fields [
-    :model,
     :input,
+    :model,
+    :encoding_format,
     :user
   ]
 
