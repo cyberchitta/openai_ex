@@ -5,8 +5,8 @@ defmodule OpenaiEx.Image.Edit do
   ## API Fields
 
   - `:image`
-  - `:mask`
   - `:prompt`
+  - `:mask`
   - `:n`
   - `:size`
   - `:response_format`
@@ -14,8 +14,8 @@ defmodule OpenaiEx.Image.Edit do
   """
   @api_fields [
     :image,
-    :mask,
     :prompt,
+    :mask,
     :n,
     :size,
     :response_format,
