@@ -8,18 +8,18 @@ defmodule OpenaiEx.Audio do
 
   - `:file`
   - `:model`
+  - `:language`
   - `:prompt`
   - `:response_format`
   - `:temperature`
-  - `:language`
   """
   @api_fields [
     :file,
     :model,
+    :language,
     :prompt,
     :response_format,
-    :temperature,
-    :language
+    :temperature
   ]
 
   @doc """

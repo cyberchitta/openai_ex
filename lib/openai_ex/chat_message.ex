@@ -8,13 +8,21 @@ defmodule OpenaiEx.ChatMessage do
 
   - `:content`
   - `:role`
+  - `:function_call`
+  - `:name`
   """
 
   defp new(role, content) do
+    new(content, role, nil, nil)
+  end
+
+  defp new(content, role, function_call, name) do
     %{
-      role: role,
-      content: content
+      content: content,
+      role: role
     }
+    |> (&if(!is_nil(function_call), do: Map.put(&1, :function_call, function_call), else: &1)).()
+    |> (&if(!is_nil(name), do: Map.put(&1, :name, name), else: &1)).()
   end
 
   @doc """
@@ -46,4 +54,14 @@ defmodule OpenaiEx.ChatMessage do
       %{content: "Hello, world!", role: "assistant"}
   """
   def assistant(content), do: new("assistant", content)
+
+  @doc """
+  Create a `ChatMessage` map with role `function`.
+
+  Example usage:
+
+      iex> _message = OpenaiEx.ChatMessage.function("greet", "Hello, world!")
+      %{content: "Hello, world!", role: "function", name: "greet"}
+  """
+  def function(name, content), do: new(content, "function", nil, name)
 end
