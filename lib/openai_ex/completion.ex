@@ -8,36 +8,36 @@ defmodule OpenaiEx.Completion do
 
   - `:model`
   - `:prompt`
-  - `:suffix`
+  - `:best_of`
+  - `:echo`
+  - `:frequency_penalty`
+  - `:logit_bias`
+  - `:logprobs`
   - `:max_tokens`
+  - `:n`
+  - `:presence_penalty`
+  - `:stop`
+  - `:suffix`
   - `:temperature`
   - `:top_p`
-  - `:n`
-  - `:logprobs`
-  - `:echo`
-  - `:stop`
-  - `:presence_penalty`
-  - `:frequency_penalty`
-  - `:best_of`
-  - `:logit_bias`
   - `:user`
   """
 
   @api_fields [
     :model,
     :prompt,
-    :suffix,
+    :best_of,
+    :echo,
+    :frequency_penalty,
+    :logit_bias,
+    :logprobs,
     :max_tokens,
+    :n,
+    :presence_penalty,
+    :stop,
+    :suffix,
     :temperature,
     :top_p,
-    :n,
-    :logprobs,
-    :echo,
-    :stop,
-    :presence_penalty,
-    :frequency_penalty,
-    :best_of,
-    :logit_bias,
     :user
   ]
 
