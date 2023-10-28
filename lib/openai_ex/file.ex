@@ -14,7 +14,6 @@ defmodule OpenaiEx.File do
   @api_fields [
     :file,
     :purpose,
-
     :file_id
   ]
 
