@@ -6,29 +6,33 @@ defmodule OpenaiEx.ChatCompletion do
 
   The following fields can be used as parameters when creating a new chat completion:
 
-  - `:model`
   - `:messages`
+  - `:model`
+  - `:frequency_penalty`
+  - `:function_call`
+  - `:functions`
+  - `:logit_bias`
+  - `:max_tokens`
+  - `:n`
+  - `:presence_penalty`
+  - `:stop`
   - `:temperature`
   - `:top_p`
-  - `:n`
-  - `:stop`
-  - `:max_tokens`
-  - `:presence_penalty`
-  - `:frequency_penalty`
-  - `:logit_bias`
   - `:user`
   """
   @api_fields [
-    :model,
     :messages,
-    :temperature,
-    :top_p,
-    :n,
-    :stop,
-    :max_tokens,
-    :presence_penalty,
+    :model,
+    :function_call,
+    :functions,
     :frequency_penalty,
     :logit_bias,
+    :max_tokens,
+    :n,
+    :presence_penalty,
+    :stop,
+    :temperature,
+    :top_p,
     :user
   ]
 
