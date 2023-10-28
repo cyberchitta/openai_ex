@@ -52,6 +52,12 @@ defmodule OpenaiEx.Http do
     |> finch_run()
   end
 
+  def get_no_decode(openai = %OpenaiEx{}, url) do
+    :get
+    |> Finch.build(@base_url <> url, headers(openai))
+    |> finch_run_no_decode()
+  end
+
   @doc false
   def delete(openai = %OpenaiEx{}, url) do
     :delete
@@ -62,9 +68,14 @@ defmodule OpenaiEx.Http do
   @doc false
   def finch_run(finch_request) do
     finch_request
+    |> finch_run_no_decode()
+    |> Jason.decode!()
+  end
+
+  def finch_run_no_decode(finch_request) do
+    finch_request
     |> Finch.request!(OpenaiEx.Finch, receive_timeout: 45_000)
     |> Map.get(:body)
-    |> Jason.decode!()
   end
 
   @doc false

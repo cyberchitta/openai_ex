@@ -152,7 +152,7 @@ defmodule OpenaiEx.File do
   """
   def download(openai = %OpenaiEx{}, file_id) do
     openai
-    |> OpenaiEx.Http.get("/files/#{file_id}/content")
+    |> OpenaiEx.Http.get_no_decode("/files/#{file_id}/content")
   end
 
   @doc false
