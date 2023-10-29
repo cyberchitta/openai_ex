@@ -177,9 +177,9 @@ For more information on generating chat completions, see the [OpenAI API Chat Co
 
 ### Function Calling
 
-Here is an example of the use of the function calling feature of the `ChatCompletion` endpoint. The example is taken from [this guide](https://platform.openai.com/docs/guides/gpt/function-calling).
+In OpenAI's `ChatCompletion` endpoint, you can use the function calling feature to call a custom function and pass its result as part of the conversation. Here's an example of how to use the function calling feature:
 
-First we set up the function specification and completion request.
+First, we set up the function specification and completion request. The function specification defines the name, description, and parameters of the function we want to call. In this example, we define a function called `get_current_weather` that takes a `location` parameter and an optional `unit` parameter. The completion request includes the function specification, the conversation history, and the model we want to use.
 
 ```elixir
 function_spec =
@@ -217,22 +217,18 @@ fn_req =
   )
 ```
 
-We then call the OpenAI endpoint
+Next, we call the OpenAI endpoint to get a response that includes the function call.
 
 ```elixir
 fn_response = openai |> ChatCompletion.create(fn_req)
 ```
 
-We check to see what the model returned for the function call
+We extract the function call from the response and call the appropriate function with the given parameters. In this example, we define a map of functions that maps function names to their implementations. We then use the function name and arguments from the function call to look up the appropriate function and call it with the given parameters.
 
 ```elixir
 fn_message = fn_response["choices"] |> Enum.at(0) |> Map.get("message")
 fn_call = fn_message |> Map.get("function_call")
-```
 
-We then call an appropriate function with the given parameters
-
-```elixir
 functions = %{
   "get_current_weather" => fn location, unit ->
     %{
@@ -254,7 +250,7 @@ unit = unless is_nil(fn_args["unit"]), do: fn_args["unit"], else: "fahrenheit"
 fn_value = functions[fn_name].(location, unit)
 ```
 
-This returned value is then passed back to the model with the message history to that point
+We then pass the returned value back to the ChatCompletion endpoint with the conversation history to that point to get the final response.
 
 ```elixir
 latest_msgs = [ChatMessage.function(fn_name, fn_value) | [fn_message | rev_msgs]]
@@ -268,7 +264,7 @@ fn_req_2 =
 fn_response_2 = openai |> ChatCompletion.create(fn_req_2)
 ```
 
-and this gives us the result with the function call value integrated into the response
+The final response includes the result of the function call integrated into the conversation.
 
 ## Image
 
