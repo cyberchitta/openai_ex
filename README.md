@@ -6,7 +6,7 @@
 
 The library closely follows the naming / structure of the [official OpenAI API client libraries](https://platform.openai.com/docs/api-reference) for [Python](https://github.com/openai/openai-python) and [JavaScript](https://github.com/openai/openai-node), making it easy to understand and reuse existing documentation.
 
-**All** of the OpenAI API is implemented, including the **streaming** ChatCompletion and Completion APIs.
+**All** of the OpenAI API (as of October 27, 2023) is implemented, including the **streaming** ChatCompletion and Completion APIs and **function calling** in the ChatCompletion API.
 
 ## Installation and Usage
 
