@@ -8,7 +8,7 @@ defmodule OpenaiEx do
   making it easy to understand and reuse existing documentation and code.
   """
   @enforce_keys [:token]
-  defstruct token: nil, organization: nil
+  defstruct token: nil, organization: nil, beta: nil
 
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.

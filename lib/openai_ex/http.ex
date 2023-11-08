@@ -5,13 +5,13 @@ defmodule OpenaiEx.Http do
 
   @doc false
   def headers(openai = %OpenaiEx{}) do
-    headers = [{"Authorization", "Bearer #{openai.token}"}]
+    base = [{"Authorization", "Bearer #{openai.token}"}]
 
-    if is_nil(openai.organization) do
-      headers
-    else
-      headers ++ [{"OpenAI-Organization", openai.organization}]
-    end
+    org =
+      if is_nil(openai.organization), do: [], else: [{"OpenAI-Organization", openai.organization}]
+
+    beta = if is_nil(openai.beta), do: [], else: [{"OpenAI-Beta", openai.beta}]
+    base ++ org ++ beta
   end
 
   @doc false
