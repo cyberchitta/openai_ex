@@ -106,7 +106,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   @doc """
   Lists the files that belong to the specified assistant.
 
-  https://platform.openai.com/docs/api-reference/files/list
+  https://platform.openai.com/docs/api-reference/assistants/listAssistantFiles
   """
   @list_query_fields [
     :after,
