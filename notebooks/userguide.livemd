@@ -182,7 +182,7 @@ In OpenAI's `ChatCompletion` endpoint, you can use the function calling feature 
 First, we set up the function specification and completion request. The function specification defines the name, description, and parameters of the function we want to call. In this example, we define a function called `get_current_weather` that takes a `location` parameter and an optional `unit` parameter. The completion request includes the function specification, the conversation history, and the model we want to use.
 
 ```elixir
-function_spec =
+tool_spec =
   Jason.decode!("""
       {
         "name": "get_current_weather",
@@ -212,8 +212,8 @@ fn_req =
   ChatCompletion.new(
     model: "gpt-3.5-turbo",
     messages: rev_msgs |> Enum.reverse(),
-    functions: [function_spec],
-    function_call: "auto"
+    tools: [tool_spec],
+    tool_choice: "auto"
   )
 ```
 
