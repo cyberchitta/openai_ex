@@ -46,6 +46,17 @@ defmodule OpenaiEx.Http do
   end
 
   @doc false
+  def get(openai = %OpenaiEx{}, base_url, params) do
+    query =
+      base_url
+      |> URI.new!()
+      |> URI.append_query(params |> URI.encode_query())
+      |> URI.to_string()
+
+    openai |> OpenaiEx.Http.get(query)
+  end
+
+  @doc false
   def get(openai = %OpenaiEx{}, url) do
     :get
     |> Finch.build(@base_url <> url, headers(openai))

@@ -61,13 +61,7 @@ defmodule OpenaiEx.FineTuning.Job do
   https://platform.openai.com/docs/api-reference/fine-tuning/list
   """
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    query =
-      "/fine_tuning/jobs"
-      |> URI.new!()
-      |> URI.append_query(params |> Map.take(@api_fields) |> URI.encode_query())
-      |> URI.to_string()
-
-    openai |> OpenaiEx.Http.get(query)
+    openai |> OpenaiEx.Http.get("/fine_tuning/jobs", params |> Map.take(@api_fields))
   end
 
   @doc """
