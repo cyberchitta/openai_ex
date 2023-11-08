@@ -9,6 +9,8 @@ defmodule OpenaiEx.ChatCompletion do
   - `:messages`
   - `:model`
   - `:frequency_penalty`
+  - `:function_call` [Deprecated]
+  - `:functions` [Deprecated]
   - `:tool_choice`
   - `:tools`
   - `:logit_bias`
@@ -25,6 +27,8 @@ defmodule OpenaiEx.ChatCompletion do
     :model,
     :tool_choice,
     :tools,
+    :function_call,
+    :functions,
     :frequency_penalty,
     :logit_bias,
     :max_tokens,
