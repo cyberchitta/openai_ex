@@ -13,7 +13,6 @@ defmodule OpenaiEx.Beta.Assistant do
   - `:tools`
   - `:file_ids`
   - `:metadata`
-
   """
   @api_fields [
     :model,

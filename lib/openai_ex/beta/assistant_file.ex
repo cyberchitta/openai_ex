@@ -8,7 +8,6 @@ defmodule OpenaiEx.Beta.Assistant.File do
 
   - `:assistant_id`
   - `:file_id`
-
   """
   @api_fields [
     :assistant_id,
