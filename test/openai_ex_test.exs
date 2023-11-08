@@ -6,4 +6,5 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Embedding
   doctest OpenaiEx.Image
   doctest OpenaiEx.Moderation
+  doctest OpenaiEx.Beta.Assistant
 end
