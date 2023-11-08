@@ -253,7 +253,7 @@ fn_value = functions[fn_name].(location, unit)
 We then pass the returned value back to the ChatCompletion endpoint with the conversation history to that point to get the final response.
 
 ```elixir
-latest_msgs = [ChatMessage.function(fn_name, fn_value) | [fn_message | rev_msgs]]
+latest_msgs = [ChatMessage.tool(fn_name, fn_value) | [fn_message | rev_msgs]]
 
 fn_req_2 =
   ChatCompletion.new(

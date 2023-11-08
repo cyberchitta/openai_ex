@@ -60,8 +60,8 @@ defmodule OpenaiEx.ChatMessage do
 
   Example usage:
 
-      iex> _message = OpenaiEx.ChatMessage.function("greet", "Hello, world!")
+      iex> _message = OpenaiEx.ChatMessage.tool("greet", "Hello, world!")
       %{content: "Hello, world!", role: "function", name: "greet"}
   """
-  def function(name, content), do: new(content, "function", nil, name)
+  def tool(name, content), do: new(content, "function", nil, name)
 end
