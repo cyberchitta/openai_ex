@@ -13,7 +13,7 @@ defmodule OpenaiEx.ChatMessage do
   """
 
   defp new(role, content) do
-    new(content, role, nil, nil)
+    new(content, role, nil)
   end
 
   defp new(content, role, name) do
