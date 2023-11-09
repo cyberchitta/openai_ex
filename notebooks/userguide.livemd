@@ -153,6 +153,18 @@ chat_req =
   )
 ```
 
+You are able to pass images to the API by creating a message.
+
+```elixir
+  ChatMessage.user(
+    %{
+      type: "image_url",
+      image_url: %{url: "https://example.com/image.jpg"}
+    }
+  )
+```
+
+
 You can generate a chat completion using the [`ChatCompletion.create()`](https://platform.openai.com/docs/api-reference/chat/completions/create) function:
 
 ```elixir
