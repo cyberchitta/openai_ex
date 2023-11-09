@@ -14,6 +14,10 @@ defmodule OpenaiEx.Beta.Assistant.File do
     :file_id
   ]
 
+  defp ep_url(assistant_id, file_id \\ nil) do
+    "/assistants/#{assistant_id}/files" <> if is_nil(file_id), do: "", else: "/#{file_id}"
+  end
+
   @doc """
   Creates a new assistant file request with the given arguments.
 
@@ -36,10 +40,6 @@ defmodule OpenaiEx.Beta.Assistant.File do
     }
     |> Map.merge(args)
     |> Map.take(@api_fields)
-  end
-
-  defp ep_url(assistant_id, file_id \\ nil) do
-    "/assistants/#{assistant_id}/files" <> if is_nil(file_id), do: "", else: "/#{file_id}"
   end
 
   @doc """

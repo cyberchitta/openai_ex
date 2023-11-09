@@ -14,6 +14,10 @@ defmodule OpenaiEx.Beta.Thread do
     :metadata
   ]
 
+  defp ep_url(thread_id \\ nil) do
+    "/threads" <> if is_nil(thread_id), do: "", else: "/#{thread_id}"
+  end
+
   @doc """
   Creates a new threads request with the given arguments.
 
@@ -33,10 +37,6 @@ defmodule OpenaiEx.Beta.Thread do
   def new(args = %{}) do
     args
     |> Map.take(@api_fields)
-  end
-
-  defp ep_url(thread_id \\ nil) do
-    "/threads" <> if is_nil(thread_id), do: "", else: "/#{thread_id}"
   end
 
   @doc """

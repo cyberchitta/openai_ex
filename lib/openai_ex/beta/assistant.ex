@@ -24,6 +24,10 @@ defmodule OpenaiEx.Beta.Assistant do
     :metadata
   ]
 
+  defp ep_url(assistant_id \\ nil) do
+    "/assistants" <> if is_nil(assistant_id), do: "", else: "/#{assistant_id}"
+  end
+
   @doc """
   Creates a new assistants request with the given arguments.
 
@@ -56,10 +60,6 @@ defmodule OpenaiEx.Beta.Assistant do
     }
     |> Map.merge(args)
     |> Map.take(@api_fields)
-  end
-
-  defp ep_url(assistant_id \\ nil) do
-    "/assistants" <> if is_nil(assistant_id), do: "", else: "/#{assistant_id}"
   end
 
   @doc """
