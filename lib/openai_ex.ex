@@ -36,9 +36,7 @@ defmodule OpenaiEx do
     {path}
   end
 
-  @doc """
-  Global constants for the OpenAI API.
-  """
+  # Global constants used in the library
 
   def assistants_beta_string() do
     "assistants=v1"
