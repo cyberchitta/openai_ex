@@ -120,7 +120,7 @@ defmodule OpenaiEx.Beta.Thread do
     |> OpenaiEx.Http.delete(ep_url(thread_id))
   end
 
-  @doc nil
+  @doc false
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
     openai
     |> Map.put(:beta, OpenaiEx.assistants_beta_string())
