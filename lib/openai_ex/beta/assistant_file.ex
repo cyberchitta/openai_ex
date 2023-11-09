@@ -42,8 +42,6 @@ defmodule OpenaiEx.Beta.Assistant.File do
     "/assistants/#{assistant_id}/files" <> if is_nil(file_id), do: "", else: "/#{file_id}"
   end
 
-  @beta_string "assistants=v1"
-
   @doc """
   Calls the assistant file create endpoint.
 
@@ -60,7 +58,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   """
   def create(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
-    |> Map.put(:beta, @beta_string)
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
     |> OpenaiEx.Http.post(ep_url(assistant_id),
       json: %{file_id: file_id} |> Map.take(@api_fields)
     )
@@ -82,7 +80,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   """
   def retrieve(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
-    |> Map.put(:beta, @beta_string)
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
     |> OpenaiEx.Http.get(ep_url(assistant_id, file_id))
   end
 
@@ -102,7 +100,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   """
   def delete(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
-    |> Map.put(:beta, @beta_string)
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
     |> OpenaiEx.Http.delete(ep_url(assistant_id, file_id))
   end
 
@@ -111,24 +109,18 @@ defmodule OpenaiEx.Beta.Assistant.File do
 
   https://platform.openai.com/docs/api-reference/assistants/listAssistantFiles
   """
-  @list_query_fields [
-    :after,
-    :before,
-    :limit,
-    :order
-  ]
 
   def new_list(args = [_ | _]) do
     args |> Enum.into(%{}) |> new_list()
   end
 
   def new_list(args = %{assistant_id: _assistant_id}) do
-    args |> Map.take([:assistant_id | @list_query_fields])
+    args |> Map.take([:assistant_id | OpenaiEx.list_query_fields()])
   end
 
   def list(openai = %OpenaiEx{}, params = %{assistant_id: assistant_id}) do
     openai
-    |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.get(ep_url(assistant_id), params |> Map.take(@list_query_fields))
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
+    |> OpenaiEx.Http.get(ep_url(assistant_id), params |> Map.take(OpenaiEx.list_query_fields()))
   end
 end

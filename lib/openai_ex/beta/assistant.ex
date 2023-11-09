@@ -62,8 +62,6 @@ defmodule OpenaiEx.Beta.Assistant do
     "/assistants" <> if is_nil(assistant_id), do: "", else: "/#{assistant_id}"
   end
 
-  @beta_string "assistants=v1"
-
   @doc """
   Calls the assistant 'create' endpoint.
 
@@ -80,7 +78,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def create(openai = %OpenaiEx{}, assistant = %{}) do
     openai
-    |> Map.put(:beta, @beta_string)
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
     |> OpenaiEx.Http.post(ep_url(), json: assistant |> Map.take(@api_fields))
   end
 
@@ -100,7 +98,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def retrieve(openai = %OpenaiEx{}, assistant_id) do
     openai
-    |> Map.put(:beta, @beta_string)
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
     |> OpenaiEx.Http.get(ep_url(assistant_id))
   end
 
@@ -110,6 +108,7 @@ defmodule OpenaiEx.Beta.Assistant do
   ## Arguments
 
   - `openai`: The OpenAI configuration.
+  - `assistant_id`: The ID of the assistant to update.
   - `assistant`: The assistant request, as a map with keys corresponding to the API fields.
 
   ## Returns
@@ -120,7 +119,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def update(openai = %OpenaiEx{}, assistant_id, assistant = %{}) do
     openai
-    |> Map.put(:beta, @beta_string)
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
     |> OpenaiEx.Http.post(ep_url(assistant_id), json: assistant |> Map.take(@api_fields))
   end
 
@@ -140,7 +139,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def delete(openai = %OpenaiEx{}, assistant_id) do
     openai
-    |> Map.put(:beta, @beta_string)
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
     |> OpenaiEx.Http.delete(ep_url(assistant_id))
   end
 
@@ -155,12 +154,6 @@ defmodule OpenaiEx.Beta.Assistant do
 
   A map containing the fields of the list assistants request.
   """
-  @list_query_fields [
-    :after,
-    :before,
-    :limit,
-    :order
-  ]
 
   def new_list(args = [_ | _]) do
     args |> Enum.into(%{}) |> new_list()
@@ -168,7 +161,7 @@ defmodule OpenaiEx.Beta.Assistant do
 
   def new_list(args = %{}) do
     args
-    |> Map.take(@list_query_fields)
+    |> Map.take(OpenaiEx.list_query_fields())
   end
 
   @doc """
@@ -178,7 +171,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
     openai
-    |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.get(ep_url(), params |> Map.take(@list_query_fields))
+    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
+    |> OpenaiEx.Http.get(ep_url(), params |> Map.take(OpenaiEx.list_query_fields()))
   end
 end

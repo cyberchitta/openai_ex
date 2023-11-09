@@ -35,4 +35,21 @@ defmodule OpenaiEx do
   def new_file(path: path) do
     {path}
   end
+
+  @doc """
+  Global constants for the OpenAI API.
+  """
+
+  def assistants_beta_string() do
+    "assistants=v1"
+  end
+
+  def list_query_fields() do
+    [
+      :after,
+      :before,
+      :limit,
+      :order
+    ]
+  end
 end
