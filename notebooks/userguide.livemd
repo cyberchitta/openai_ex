@@ -156,12 +156,12 @@ chat_req =
 You are able to pass images to the API by creating a message.
 
 ```elixir
-  ChatMessage.user(
+  ChatMessage.user([
     %{
       type: "image_url",
       image_url: %{url: "https://example.com/image.jpg"}
     }
-  )
+  ])
 ```
 
 
