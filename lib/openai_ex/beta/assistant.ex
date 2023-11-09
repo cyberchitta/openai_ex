@@ -103,7 +103,7 @@ defmodule OpenaiEx.Beta.Assistant do
   end
 
   @doc """
-  Calls the assistant 'update' endpoint.
+  Calls the assistant update endpoint.
 
   ## Arguments
 
