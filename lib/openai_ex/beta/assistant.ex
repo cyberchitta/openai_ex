@@ -58,7 +58,9 @@ defmodule OpenaiEx.Beta.Assistant do
     |> Map.take(@api_fields)
   end
 
-  @completion_url "/assistants"
+  defp ep_url(assistant_id \\ nil) do
+    "/assistants" <> if is_nil(assistant_id), do: "", else: "/#{assistant_id}"
+  end
 
   @beta_string "assistants=v1"
 
@@ -79,7 +81,7 @@ defmodule OpenaiEx.Beta.Assistant do
   def create(openai = %OpenaiEx{}, assistant = %{}) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.post(@completion_url, json: assistant |> Map.take(@api_fields))
+    |> OpenaiEx.Http.post(ep_url(), json: assistant |> Map.take(@api_fields))
   end
 
   @doc """
@@ -99,7 +101,7 @@ defmodule OpenaiEx.Beta.Assistant do
   def retrieve(openai = %OpenaiEx{}, assistant_id) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.get("#{@completion_url}/#{assistant_id}")
+    |> OpenaiEx.Http.get(ep_url(assistant_id))
   end
 
   @doc """
@@ -119,9 +121,7 @@ defmodule OpenaiEx.Beta.Assistant do
   def update(openai = %OpenaiEx{}, assistant_id, assistant = %{}) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.post("#{@completion_url}/#{assistant_id}",
-      json: assistant |> Map.take(@api_fields)
-    )
+    |> OpenaiEx.Http.post(ep_url(assistant_id), json: assistant |> Map.take(@api_fields))
   end
 
   @doc """
@@ -141,7 +141,7 @@ defmodule OpenaiEx.Beta.Assistant do
   def delete(openai = %OpenaiEx{}, assistant_id) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.delete("#{@completion_url}/#{assistant_id}")
+    |> OpenaiEx.Http.delete(ep_url(assistant_id))
   end
 
   @doc """
@@ -179,6 +179,6 @@ defmodule OpenaiEx.Beta.Assistant do
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.get(@completion_url, params |> Map.take(@list_query_fields))
+    |> OpenaiEx.Http.get(ep_url(), params |> Map.take(@list_query_fields))
   end
 end
