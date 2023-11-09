@@ -38,6 +38,10 @@ defmodule OpenaiEx.Beta.Assistant.File do
     |> Map.take(@api_fields)
   end
 
+  defp ep_url(assistant_id, file_id \\ nil) do
+    "/assistants/#{assistant_id}/files" <> if is_nil(file_id), do: "", else: "/#{file_id}"
+  end
+
   @beta_string "assistants=v1"
 
   @doc """
@@ -57,7 +61,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   def create(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.post("/assistants/#{assistant_id}/files",
+    |> OpenaiEx.Http.post(ep_url(assistant_id),
       json: %{file_id: file_id} |> Map.take(@api_fields)
     )
   end
@@ -79,7 +83,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   def retrieve(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.get("/assistants/#{assistant_id}/files/#{file_id}")
+    |> OpenaiEx.Http.get(ep_url(assistant_id, file_id))
   end
 
   @doc """
@@ -99,7 +103,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   def delete(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.delete("/assistants/#{assistant_id}/files/#{file_id}")
+    |> OpenaiEx.Http.delete(ep_url(assistant_id, file_id))
   end
 
   @doc """
@@ -125,9 +129,6 @@ defmodule OpenaiEx.Beta.Assistant.File do
   def list(openai = %OpenaiEx{}, params = %{assistant_id: assistant_id}) do
     openai
     |> Map.put(:beta, @beta_string)
-    |> OpenaiEx.Http.get(
-      "/assistants/#{assistant_id}/files",
-      params |> Map.take(@list_query_fields)
-    )
+    |> OpenaiEx.Http.get(ep_url(assistant_id), params |> Map.take(@list_query_fields))
   end
 end
