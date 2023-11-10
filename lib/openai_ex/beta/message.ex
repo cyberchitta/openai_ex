@@ -111,10 +111,6 @@ defmodule OpenaiEx.Beta.Threads.Message do
     |> OpenaiEx.Http.post(ep_url(thread_id, message_id), json: %{metadata: metadata})
   end
 
-  @spec new_list(
-          nonempty_maybe_improper_list()
-          | %{:thread_id => any(), optional(any()) => any()}
-        ) :: map()
   @doc """
   Lists the messages that belong to the specified thread.
 
