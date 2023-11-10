@@ -9,8 +9,8 @@ defmodule OpenaiEx.ChatCompletion do
   - `:messages`
   - `:model`
   - `:frequency_penalty`
-  - `:function_call`
-  - `:functions`
+  - `:tool_choice`
+  - `:tools`
   - `:logit_bias`
   - `:max_tokens`
   - `:n`
@@ -23,8 +23,8 @@ defmodule OpenaiEx.ChatCompletion do
   @api_fields [
     :messages,
     :model,
-    :function_call,
-    :functions,
+    :tool_choice,
+    :tools,
     :frequency_penalty,
     :logit_bias,
     :max_tokens,
