@@ -5,13 +5,18 @@ defmodule OpenaiEx.Http do
 
   @doc false
   def headers(openai = %OpenaiEx{}) do
-    headers = [{"Authorization", "Bearer #{openai.token}"}]
+    base = [{"Authorization", "Bearer #{openai.token}"}]
 
-    if is_nil(openai.organization) do
-      headers
-    else
-      headers ++ [{"OpenAI-Organization", openai.organization}]
-    end
+    org =
+      if is_nil(openai.organization), do: [], else: [{"OpenAI-Organization", openai.organization}]
+
+    beta = if is_nil(openai.beta), do: [], else: [{"OpenAI-Beta", openai.beta}]
+    base ++ org ++ beta
+  end
+
+  @doc false
+  def post(openai = %OpenaiEx{}, url) do
+    post(openai, url, json: %{})
   end
 
   @doc false
@@ -43,6 +48,17 @@ defmodule OpenaiEx.Http do
       headers(openai) ++ [{"Content-Type", "application/json"}],
       Jason.encode_to_iodata!(json)
     )
+  end
+
+  @doc false
+  def get(openai = %OpenaiEx{}, base_url, params) do
+    query =
+      base_url
+      |> URI.new!()
+      |> URI.append_query(params |> URI.encode_query())
+      |> URI.to_string()
+
+    openai |> OpenaiEx.Http.get(query)
   end
 
   @doc false

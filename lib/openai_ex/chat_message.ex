@@ -1,27 +1,29 @@
 defmodule OpenaiEx.ChatMessage do
   @moduledoc """
-  This module provides an implementation of the OpenAI chat message API. Information about these messages can be found at   https://platform.openai.com/docs/guides/chat/introduction.
-
-  ## API Fields
+  This module provides an elixir map wrapper around the OpenAI message JSON
+  object which is used in the chat completions and assistants APIs.
 
   The following fields can be used as parameters when creating a new chat message:
 
-  - `:content`
-  - `:role`
-  - `:function_call`
-  - `:name`
+  - `content`
+  - `role`
+  - `name`
+  - `file_ids`
   """
+  @map_fields [
+    :content,
+    :role,
+    :name,
+    :file_ids
+  ]
 
-  defp new(role, content) do
-    new(content, role, nil)
-  end
+  defp new(args = [_ | _]), do: args |> Enum.into(%{}) |> new()
 
-  defp new(content, role, name) do
-    %{
-      content: content,
-      role: role
-    }
-    |> (&if(!is_nil(name), do: Map.put(&1, :name, name), else: &1)).()
+  defp new(params = %{}) do
+    params
+    |> Map.take(@map_fields)
+    |> Enum.filter(fn {_, v} -> !is_nil(v) end)
+    |> Enum.into(%{})
   end
 
   @doc """
@@ -32,7 +34,7 @@ defmodule OpenaiEx.ChatMessage do
       iex> _message = OpenaiEx.ChatMessage.system("Hello, world!")
       %{content: "Hello, world!", role: "system"}
   """
-  def system(content), do: new("system", content)
+  def system(content), do: new(role: "system", content: content)
 
   @doc """
   Create a `ChatMessage` map with role `user`.
@@ -42,7 +44,7 @@ defmodule OpenaiEx.ChatMessage do
       iex> _message = OpenaiEx.ChatMessage.user("Hello, world!")
       %{content: "Hello, world!", role: "user"}
   """
-  def user(content), do: new("user", content)
+  def user(content, file_ids \\ nil), do: new(role: "user", content: content, file_ids: file_ids)
 
   @doc """
   Create a `ChatMessage` map with role `assistant`.
@@ -52,7 +54,7 @@ defmodule OpenaiEx.ChatMessage do
       iex> _message = OpenaiEx.ChatMessage.assistant("Hello, world!")
       %{content: "Hello, world!", role: "assistant"}
   """
-  def assistant(content), do: new("assistant", content)
+  def assistant(content), do: new(role: "assistant", content: content)
 
   @doc """
   Create a `ChatMessage` map with role `function`.
@@ -62,5 +64,5 @@ defmodule OpenaiEx.ChatMessage do
       iex> _message = OpenaiEx.ChatMessage.tool("greet", "Hello, world!")
       %{content: "Hello, world!", role: "function", name: "greet"}
   """
-  def tool(name, content), do: new(content, "function", name)
+  def tool(name, content), do: new(role: "function", content: content, name: name)
 end
