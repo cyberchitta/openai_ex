@@ -82,7 +82,7 @@ defmodule OpenaiEx.Beta.Threads.Message do
 
   https://platform.openai.com/docs/api-reference/messages/getMessage
   """
-  def retrieve(openai = %OpenaiEx{}, thread_id: thread_id, message_id: message_id) do
+  def retrieve(openai = %OpenaiEx{}, %{thread_id: thread_id, message_id: message_id}) do
     openai
     |> OpenaiEx.as_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(thread_id, message_id))
@@ -102,7 +102,7 @@ defmodule OpenaiEx.Beta.Threads.Message do
 
   https://platform.openai.com/docs/api-reference/messages/modifyMessage
   """
-  def update(openai = %OpenaiEx{}, thread_id: thread_id, message_id: message_id, metadata: metadata) do
+  def update(openai = %OpenaiEx{}, %{thread_id: thread_id, message_id: message_id, metadata: metadata}) do
     openai
     |> OpenaiEx.as_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(thread_id, message_id), json: %{metadata: metadata})
