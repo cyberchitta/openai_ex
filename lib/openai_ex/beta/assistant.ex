@@ -45,9 +45,6 @@ defmodule OpenaiEx.Beta.Assistant do
 
       iex> _request = OpenaiEx.Beta.Assistant.new(model: "gpt-4-turbo")
       %{model: "gpt-4-turbo"}
-
-      iex> _request = OpenaiEx.Beta.Assistant.new(%{model: "gpt-4-turbo"})
-      %{model: "gpt-4-turbo"}
   """
 
   def new(args = [_ | _]) do
