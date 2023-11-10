@@ -39,9 +39,9 @@ defmodule OpenaiEx.Beta.Threads.Message do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{role: _role, content: _content}) do
+  def new(args = %{thread_id: _, message_id: _}) do
     args
-    |> Map.take(@api_fields)
+    |> Map.take([:thread_id | [:message_id | @api_fields]])
   end
 
   @doc """
