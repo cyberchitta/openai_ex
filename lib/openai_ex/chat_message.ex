@@ -13,15 +13,14 @@ defmodule OpenaiEx.ChatMessage do
   """
 
   defp new(role, content) do
-    new(content, role, nil, nil)
+    new(content, role, nil)
   end
 
-  defp new(content, role, function_call, name) do
+  defp new(content, role, name) do
     %{
       content: content,
       role: role
     }
-    |> (&if(!is_nil(function_call), do: Map.put(&1, :function_call, function_call), else: &1)).()
     |> (&if(!is_nil(name), do: Map.put(&1, :name, name), else: &1)).()
   end
 
@@ -60,8 +59,8 @@ defmodule OpenaiEx.ChatMessage do
 
   Example usage:
 
-      iex> _message = OpenaiEx.ChatMessage.function("greet", "Hello, world!")
+      iex> _message = OpenaiEx.ChatMessage.tool("greet", "Hello, world!")
       %{content: "Hello, world!", role: "function", name: "greet"}
   """
-  def function(name, content), do: new(content, "function", nil, name)
+  def tool(name, content), do: new(content, "function", name)
 end
