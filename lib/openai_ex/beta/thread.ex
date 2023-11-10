@@ -120,6 +120,7 @@ defmodule OpenaiEx.Beta.Thread do
     |> OpenaiEx.Http.delete(ep_url(thread_id))
   end
 
+  # Not (yet) part of the documented API, but the endpoint exists.
   @doc false
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
     openai
