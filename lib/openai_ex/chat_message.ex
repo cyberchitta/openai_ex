@@ -44,7 +44,7 @@ defmodule OpenaiEx.ChatMessage do
       iex> _message = OpenaiEx.ChatMessage.user("Hello, world!")
       %{content: "Hello, world!", role: "user"}
   """
-  def user(content), do: new(role: "user", content: content)
+  def user(content, file_ids \\ nil), do: new(role: "user", content: content, file_ids: file_ids)
 
   @doc """
   Create a `ChatMessage` map with role `assistant`.
