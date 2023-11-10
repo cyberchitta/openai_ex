@@ -38,8 +38,8 @@ defmodule OpenaiEx do
 
   # Global constants used in the library
 
-  def assistants_beta_string() do
-    "assistants=v1"
+  def as_assistants_beta(openai = %OpenaiEx{}) do
+    openai |> Map.put(:beta, "assistants=v1")
   end
 
   def list_query_fields() do

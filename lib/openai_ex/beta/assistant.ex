@@ -78,7 +78,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def create(openai = %OpenaiEx{}, assistant = %{}) do
     openai
-    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
+    |> OpenaiEx.as_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(), json: assistant |> Map.take(@api_fields))
   end
 
@@ -98,7 +98,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def retrieve(openai = %OpenaiEx{}, assistant_id) do
     openai
-    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
+    |> OpenaiEx.as_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(assistant_id))
   end
 
@@ -119,7 +119,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def update(openai = %OpenaiEx{}, assistant_id, assistant = %{}) do
     openai
-    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
+    |> OpenaiEx.as_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(assistant_id), json: assistant |> Map.take(@api_fields))
   end
 
@@ -139,7 +139,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def delete(openai = %OpenaiEx{}, assistant_id) do
     openai
-    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
+    |> OpenaiEx.as_assistants_beta()
     |> OpenaiEx.Http.delete(ep_url(assistant_id))
   end
 
@@ -171,7 +171,7 @@ defmodule OpenaiEx.Beta.Assistant do
   """
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
     openai
-    |> Map.put(:beta, OpenaiEx.assistants_beta_string())
+    |> OpenaiEx.as_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(), params |> Map.take(OpenaiEx.list_query_fields()))
   end
 end
