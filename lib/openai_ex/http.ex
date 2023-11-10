@@ -15,6 +15,11 @@ defmodule OpenaiEx.Http do
   end
 
   @doc false
+  def post(openai = %OpenaiEx{}, url) do
+    post(openai, url, json: %{})
+  end
+
+  @doc false
   def post(openai = %OpenaiEx{}, url, multipart: multipart) do
     :post
     |> Finch.build(

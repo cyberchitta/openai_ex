@@ -79,7 +79,7 @@ defmodule OpenaiEx.FineTuning.Job do
   https://platform.openai.com/docs/api-reference/fine-tuning/cancel
   """
   def cancel(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> OpenaiEx.Http.post("/fine_tuning/jobs/#{fine_tuning_job_id}/cancel", json: %{})
+    openai |> OpenaiEx.Http.post("/fine_tuning/jobs/#{fine_tuning_job_id}/cancel")
   end
 
   @doc """
