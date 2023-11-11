@@ -75,7 +75,7 @@ defmodule OpenaiEx.Completion do
     |> Map.take(@api_fields)
   end
 
-  @completion_url "/completions"
+  @ep_url "/completions"
 
   @doc """
   Calls the completion 'create' endpoint.
@@ -93,12 +93,12 @@ defmodule OpenaiEx.Completion do
   """
   def create(openai = %OpenaiEx{}, completion = %{}, stream: true) do
     openai
-    |> OpenaiEx.HttpSse.post(@completion_url,
+    |> OpenaiEx.HttpSse.post(@ep_url,
       json: completion |> Map.take(@api_fields) |> Map.put(:stream, true)
     )
   end
 
   def create(openai = %OpenaiEx{}, completion = %{}) do
-    openai |> OpenaiEx.Http.post(@completion_url, json: completion |> Map.take(@api_fields))
+    openai |> OpenaiEx.Http.post(@ep_url, json: completion |> Map.take(@api_fields))
   end
 end
