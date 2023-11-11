@@ -40,7 +40,7 @@ defmodule OpenaiEx.File do
     args |> Enum.into(%{}) |> new_upload()
   end
 
-  def new_upload(args = %{file: file, purpose: purpose}) do
+  def new_upload(args = %{file: _, purpose: _}) do
     args |> Map.take(@api_fields)
   end
 
