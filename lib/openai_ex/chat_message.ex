@@ -13,8 +13,9 @@ defmodule OpenaiEx.ChatMessage do
   @map_fields [
     :content,
     :role,
+    :file_ids,
     :name,
-    :file_ids
+    :tool_call_id
   ]
 
   defp new(args = [_ | _]), do: args |> Enum.into(%{}) |> new()
@@ -61,8 +62,9 @@ defmodule OpenaiEx.ChatMessage do
 
   Example usage:
 
-      iex> _message = OpenaiEx.ChatMessage.tool("greet", "Hello, world!")
-      %{content: "Hello, world!", role: "function", name: "greet"}
+      iex> _message = OpenaiEx.ChatMessage.tool("call_sjflkje", "greet", "Hello, world!")
+      %{content: "Hello, world!", role: "tool", name: "greet", tool_call_id: "call_sjflkje"}
   """
-  def tool(name, content), do: new(role: "function", content: content, name: name)
+  def tool(tool_call_id, name, content),
+    do: new(role: "tool", tool_call_id: tool_call_id, content: content, name: name)
 end
