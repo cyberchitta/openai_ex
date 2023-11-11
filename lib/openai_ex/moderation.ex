@@ -43,12 +43,8 @@ defmodule OpenaiEx.Moderation do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{input: input}) do
-    %{
-      input: input
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+  def new(args = %{input: _}) do
+    args |> Map.take(@api_fields)
   end
 
   @doc """

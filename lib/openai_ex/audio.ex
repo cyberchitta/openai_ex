@@ -39,13 +39,8 @@ defmodule OpenaiEx.Audio do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{file: file, model: model}) do
-    %{
-      file: file,
-      model: model
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+  def new(args = %{file: _, model: _}) do
+    args |> Map.take(@api_fields)
   end
 
   @doc """

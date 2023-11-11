@@ -66,13 +66,8 @@ defmodule OpenaiEx.ChatCompletion do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{model: model, messages: messages}) do
-    %{
-      model: model,
-      messages: messages
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+  def new(args = %{model: _, messages: _}) do
+    args |> Map.take(@api_fields)
   end
 
   @ep_url "/chat/completions"

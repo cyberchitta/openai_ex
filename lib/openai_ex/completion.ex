@@ -68,11 +68,7 @@ defmodule OpenaiEx.Completion do
   end
 
   def new(args = %{model: model}) do
-    %{
-      model: model
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+    args |> Map.take(@api_fields)
   end
 
   @ep_url "/completions"

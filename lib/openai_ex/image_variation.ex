@@ -36,12 +36,8 @@ defmodule OpenaiEx.Image.Variation do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{image: image}) do
-    %{
-      image: image
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+  def new(args = %{image: _}) do
+    args |> Map.take(@api_fields)
   end
 
   @doc false

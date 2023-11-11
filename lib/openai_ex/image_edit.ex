@@ -39,13 +39,8 @@ defmodule OpenaiEx.Image.Edit do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{image: image, prompt: prompt}) do
-    %{
-      image: image,
-      prompt: prompt
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+  def new(args = %{image: _, prompt: _}) do
+    args |> Map.take(@api_fields)
   end
 
   @doc false

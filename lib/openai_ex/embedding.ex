@@ -44,13 +44,8 @@ defmodule OpenaiEx.Embedding do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{model: model, input: input}) do
-    %{
-      model: model,
-      input: input
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+  def new(args = %{model: _, input: _}) do
+    args |> Map.take(@api_fields)
   end
 
   @doc """
