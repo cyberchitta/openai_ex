@@ -9,30 +9,34 @@ defmodule OpenaiEx.ChatCompletion do
   - `:messages`
   - `:model`
   - `:frequency_penalty`
-  - `:tool_choice`
-  - `:tools`
   - `:logit_bias`
   - `:max_tokens`
   - `:n`
   - `:presence_penalty`
+  - `:response_format`
+  - `:seed`
   - `:stop`
   - `:temperature`
   - `:top_p`
+  - `:tools`
+  - `:tool_choice`
   - `:user`
   """
   @api_fields [
     :messages,
     :model,
-    :tool_choice,
-    :tools,
     :frequency_penalty,
     :logit_bias,
     :max_tokens,
     :n,
     :presence_penalty,
+    :response_format,
+    :seed,
     :stop,
     :temperature,
     :top_p,
+    :tools,
+    :tool_choice,
     :user
   ]
 
