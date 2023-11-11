@@ -17,6 +17,12 @@ defmodule OpenaiEx.File do
     :file_id
   ]
 
+  defp ep_url(file_id \\ nil, action \\ nil) do
+    "/files" <>
+      if(is_nil(file_id), do: "", else: "/#{file_id}") <>
+      if(is_nil(action), do: "", else: "/#{action}")
+  end
+
   @doc """
   Creates a new file upload request with the given arguments.
 
@@ -35,12 +41,7 @@ defmodule OpenaiEx.File do
   end
 
   def new_upload(args = %{file: file, purpose: purpose}) do
-    %{
-      file: file,
-      purpose: purpose
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+    args |> Map.take(@api_fields)
   end
 
   @doc """
@@ -60,12 +61,8 @@ defmodule OpenaiEx.File do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{file_id: file_id}) do
-    %{
-      file_id: file_id
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+  def new(args = %{file_id: _}) do
+    args |> Map.take(@api_fields)
   end
 
   @doc """
@@ -74,7 +71,7 @@ defmodule OpenaiEx.File do
   https://platform.openai.com/docs/api-reference/files/list
   """
   def list(openai = %OpenaiEx{}) do
-    openai |> OpenaiEx.Http.get("/files")
+    openai |> OpenaiEx.Http.get(ep_url())
   end
 
   @doc """
@@ -93,7 +90,7 @@ defmodule OpenaiEx.File do
   """
   def create(openai = %OpenaiEx{}, upload) do
     openai
-    |> OpenaiEx.Http.post("/files",
+    |> OpenaiEx.Http.post(ep_url(),
       multipart: upload |> OpenaiEx.Http.to_multi_part_form_data(file_fields())
     )
   end
@@ -114,7 +111,7 @@ defmodule OpenaiEx.File do
   """
   def delete(openai = %OpenaiEx{}, file_id) do
     openai
-    |> OpenaiEx.Http.delete("/files/#{file_id}")
+    |> OpenaiEx.Http.delete(ep_url(file_id))
   end
 
   @doc """
@@ -133,7 +130,7 @@ defmodule OpenaiEx.File do
   """
   def retrieve(openai = %OpenaiEx{}, file_id) do
     openai
-    |> OpenaiEx.Http.get("/files/#{file_id}")
+    |> OpenaiEx.Http.get(ep_url(file_id))
   end
 
   @doc """
@@ -152,7 +149,7 @@ defmodule OpenaiEx.File do
   """
   def download(openai = %OpenaiEx{}, file_id) do
     openai
-    |> OpenaiEx.Http.get_no_decode("/files/#{file_id}/content")
+    |> OpenaiEx.Http.get_no_decode(ep_url(file_id, "content"))
   end
 
   @doc false
