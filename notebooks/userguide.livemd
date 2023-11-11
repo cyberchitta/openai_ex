@@ -13,7 +13,7 @@ Mix.install([
 
 `OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client especially for Livebook development.
 
-At this point, all API endpoints and features (as of Oct 27, 2023) are supported, including the **streaming version of the completion and chat completion endpoints**.
+At this point, all API endpoints and features (as of Nov 11, 2023) are supported, including the **Assistants API Beta**, the **tools support** in chat completions, and the **streaming version** of the completion and chat completion endpoints.
 
 There are some differences compared to other elixir openai wrappers.
 
@@ -141,6 +141,7 @@ To generate a chat completion, you need to define a chat completion request stru
 ```elixir
 alias OpenaiEx.ChatCompletion
 alias OpenaiEx.ChatMessage
+alias OpenaiEx.MsgContent
 
 chat_req =
   ChatCompletion.new(
@@ -156,14 +157,12 @@ chat_req =
 You are able to pass images to the API by creating a message.
 
 ```elixir
-  ChatMessage.user([
-    %{
-      type: "image_url",
-      image_url: %{url: "https://example.com/image.jpg"}
-    }
-  ])
+ChatMessage.user(
+  MsgContent.image_url(
+    "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/images/starmask.png"
+  )
+)
 ```
-
 
 You can generate a chat completion using the [`ChatCompletion.create()`](https://platform.openai.com/docs/api-reference/chat/completions/create) function:
 
@@ -187,7 +186,7 @@ For a detailed example of the use of the streaming `ChatCompletion` API, check o
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat).
 
-### Function Calling
+### Function(Tool) Calling
 
 In OpenAI's `ChatCompletion` endpoint, you can use the function calling feature to call a custom function and pass its result as part of the conversation. Here's an example of how to use the function calling feature:
 
@@ -196,7 +195,8 @@ First, we set up the function specification and completion request. The function
 ```elixir
 tool_spec =
   Jason.decode!("""
-      {
+    {"type": "function",
+     "function": {
         "name": "get_current_weather",
         "description": "Get the current weather in a given location",
         "parameters": {
@@ -214,6 +214,7 @@ tool_spec =
           "required": ["location"]
         }
       }
+    }
   """)
 
 rev_msgs = [
@@ -239,7 +240,9 @@ We extract the function call from the response and call the appropriate function
 
 ```elixir
 fn_message = fn_response["choices"] |> Enum.at(0) |> Map.get("message")
-fn_call = fn_message |> Map.get("function_call")
+tool_call = fn_message |> Map.get("tool_calls") |> List.first()
+tool_id = tool_call |> Map.get("id")
+fn_call = tool_call |> Map.get("function")
 
 functions = %{
   "get_current_weather" => fn location, unit ->
@@ -265,7 +268,7 @@ fn_value = functions[fn_name].(location, unit)
 We then pass the returned value back to the ChatCompletion endpoint with the conversation history to that point to get the final response.
 
 ```elixir
-latest_msgs = [ChatMessage.tool(fn_name, fn_value) | [fn_message | rev_msgs]]
+latest_msgs = [ChatMessage.tool(tool_id, fn_name, fn_value) | [fn_message | rev_msgs]]
 
 fn_req_2 =
   ChatCompletion.new(
