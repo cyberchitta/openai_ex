@@ -25,6 +25,12 @@ defmodule OpenaiEx.FineTuning.Job do
     :limit
   ]
 
+  defp ep_url(fine_tuning_job_id \\ nil, action \\ nil) do
+    "/fine_tuning/jobs" <>
+      if(is_nil(fine_tuning_job_id), do: "", else: "/#{fine_tuning_job_id}") <>
+      if(is_nil(action), do: "", else: "/#{action}")
+  end
+
   @doc """
   Creates a new fine-tuning job request with the given arguments.
 
@@ -41,9 +47,7 @@ defmodule OpenaiEx.FineTuning.Job do
   end
 
   def new(args = %{}) do
-    %{}
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+    args |> Map.take(@api_fields)
   end
 
   @doc """
@@ -52,7 +56,7 @@ defmodule OpenaiEx.FineTuning.Job do
   https://platform.openai.com/docs/api-reference/fine-tuning/create
   """
   def create(openai = %OpenaiEx{}, finetuning = %{}) do
-    openai |> OpenaiEx.Http.post("/fine_tuning/jobs", json: finetuning)
+    openai |> OpenaiEx.Http.post(ep_url(), json: finetuning)
   end
 
   @doc """
@@ -61,7 +65,7 @@ defmodule OpenaiEx.FineTuning.Job do
   https://platform.openai.com/docs/api-reference/fine-tuning/list
   """
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai |> OpenaiEx.Http.get("/fine_tuning/jobs", params |> Map.take(@api_fields))
+    openai |> OpenaiEx.Http.get(ep_url(), params |> Map.take(@api_fields))
   end
 
   @doc """
@@ -70,7 +74,7 @@ defmodule OpenaiEx.FineTuning.Job do
   https://platform.openai.com/docs/api-reference/fine-tuning/retrieve
   """
   def retrieve(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> OpenaiEx.Http.get("/fine_tuning/jobs/#{fine_tuning_job_id}")
+    openai |> OpenaiEx.Http.get(ep_url(fine_tuning_job_id))
   end
 
   @doc """
@@ -79,7 +83,7 @@ defmodule OpenaiEx.FineTuning.Job do
   https://platform.openai.com/docs/api-reference/fine-tuning/cancel
   """
   def cancel(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> OpenaiEx.Http.post("/fine_tuning/jobs/#{fine_tuning_job_id}/cancel")
+    openai |> OpenaiEx.Http.post(ep_url(fine_tuning_job_id, "cancel"))
   end
 
   @doc """
@@ -88,6 +92,6 @@ defmodule OpenaiEx.FineTuning.Job do
   https://platform.openai.com/docs/api-reference/fine-tuning/events
   """
   def list_events(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> OpenaiEx.Http.get("/fine_tuning/jobs/#{fine_tuning_job_id}/events")
+    openai |> OpenaiEx.Http.get(ep_url(fine_tuning_job_id, "events"))
   end
 end
