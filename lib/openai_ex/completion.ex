@@ -67,7 +67,7 @@ defmodule OpenaiEx.Completion do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{model: model}) do
+  def new(args = %{model: _}) do
     args |> Map.take(@api_fields)
   end
 
