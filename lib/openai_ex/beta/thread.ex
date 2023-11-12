@@ -55,7 +55,7 @@ defmodule OpenaiEx.Beta.Thread do
   """
   def create(openai = %OpenaiEx{}, params = %{} \\ %{}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(), json: params |> Map.take(@api_fields))
   end
 
@@ -75,7 +75,7 @@ defmodule OpenaiEx.Beta.Thread do
   """
   def retrieve(openai = %OpenaiEx{}, thread_id) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(thread_id))
   end
 
@@ -96,7 +96,7 @@ defmodule OpenaiEx.Beta.Thread do
   """
   def update(openai = %OpenaiEx{}, thread_id, params = %{metadata: _metadata}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(thread_id), json: params |> Map.take([:thread_id, :metadata]))
   end
 
@@ -116,7 +116,7 @@ defmodule OpenaiEx.Beta.Thread do
   """
   def delete(openai = %OpenaiEx{}, thread_id) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.delete(ep_url(thread_id))
   end
 
@@ -124,7 +124,7 @@ defmodule OpenaiEx.Beta.Thread do
   @doc false
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(), params |> Map.take(OpenaiEx.list_query_fields()))
   end
 end

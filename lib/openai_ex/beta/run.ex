@@ -70,7 +70,7 @@ defmodule OpenaiEx.Beta.Threads.Run do
   """
   def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(thread_id), json: run |> Map.take(@api_fields))
   end
 
@@ -90,7 +90,7 @@ defmodule OpenaiEx.Beta.Threads.Run do
   """
   def retrieve(openai = %OpenaiEx{}, %{thread_id: thread_id, run_id: run_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(thread_id, run_id))
   end
 
@@ -110,7 +110,7 @@ defmodule OpenaiEx.Beta.Threads.Run do
   """
   def update(openai = %OpenaiEx{}, %{thread_id: thread_id, run_id: run_id, metadata: metadata}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(thread_id, run_id), json: %{metadata: metadata})
   end
 
@@ -142,7 +142,7 @@ defmodule OpenaiEx.Beta.Threads.Run do
   """
   def list(openai = %OpenaiEx{}, thread_id, params = %{} \\ %{}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(thread_id), params |> Map.take(OpenaiEx.list_query_fields()))
   end
 
@@ -151,7 +151,7 @@ defmodule OpenaiEx.Beta.Threads.Run do
         %{thread_id: thread_id, run_id: run_id, tool_outputs: tool_outputs}
       ) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(
       ep_url(thread_id, run_id, "submit_tool_outputs"),
       json: %{tool_outputs: tool_outputs}
@@ -160,13 +160,13 @@ defmodule OpenaiEx.Beta.Threads.Run do
 
   def cancel(openai = %OpenaiEx{}, %{thread_id: thread_id, run_id: run_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(thread_id, run_id, "cancel"))
   end
 
   def create_and_run(openai = %OpenaiEx{}, params = %{assistant_id: _}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post("/threads/runs",
       json: params |> Map.take([:assistant_id | [:thread | @api_fields]])
     )

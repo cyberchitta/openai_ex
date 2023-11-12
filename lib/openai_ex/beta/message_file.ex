@@ -27,7 +27,7 @@ defmodule OpenaiEx.Beta.Threads.Messages.File do
         _params = %{thread_id: thread_id, message_id: message_id, file_id: file_id}
       ) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(thread_id, message_id, file_id))
   end
 
@@ -39,7 +39,7 @@ defmodule OpenaiEx.Beta.Threads.Messages.File do
 
   def list(openai = %OpenaiEx{}, params = %{thread_id: thread_id, message_id: message_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(
       ep_url(thread_id, message_id),
       params |> Map.take(OpenaiEx.list_query_fields())

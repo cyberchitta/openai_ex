@@ -64,7 +64,7 @@ defmodule OpenaiEx.Beta.Threads.Message do
         params = %{role: _role, content: _content}
       ) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(thread_id), json: params |> Map.take(@api_fields))
   end
 
@@ -84,7 +84,7 @@ defmodule OpenaiEx.Beta.Threads.Message do
   """
   def retrieve(openai = %OpenaiEx{}, %{thread_id: thread_id, message_id: message_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(thread_id, message_id))
   end
 
@@ -107,7 +107,7 @@ defmodule OpenaiEx.Beta.Threads.Message do
         %{thread_id: thread_id, message_id: message_id, metadata: metadata}
       ) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(thread_id, message_id), json: %{metadata: metadata})
   end
 
@@ -127,7 +127,7 @@ defmodule OpenaiEx.Beta.Threads.Message do
 
   def list(openai = %OpenaiEx{}, thread_id, params = %{} \\ %{}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(thread_id), params |> Map.take(OpenaiEx.list_query_fields()))
   end
 end

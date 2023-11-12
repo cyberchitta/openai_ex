@@ -36,9 +36,9 @@ defmodule OpenaiEx do
     {path}
   end
 
-  # Global constants used in the library
+  # Globals for internal library use, **not** for public use.
 
-  def as_assistants_beta(openai = %OpenaiEx{}) do
+  def with_assistants_beta(openai = %OpenaiEx{}) do
     openai |> Map.put(:beta, "assistants=v1")
   end
 

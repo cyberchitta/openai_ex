@@ -58,7 +58,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   """
   def create(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.post(ep_url(assistant_id),
       json: %{file_id: file_id} |> Map.take(@api_fields)
     )
@@ -80,7 +80,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   """
   def retrieve(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(assistant_id, file_id))
   end
 
@@ -100,7 +100,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
   """
   def delete(openai = %OpenaiEx{}, _params = %{assistant_id: assistant_id, file_id: file_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.delete(ep_url(assistant_id, file_id))
   end
 
@@ -120,7 +120,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
 
   def list(openai = %OpenaiEx{}, params = %{assistant_id: assistant_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(assistant_id), params |> Map.take(OpenaiEx.list_query_fields()))
   end
 end

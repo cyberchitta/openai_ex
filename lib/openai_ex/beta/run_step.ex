@@ -7,13 +7,13 @@ defmodule OpenaiEx.Beta.Runs.Step do
 
   def retrieve(openai = %OpenaiEx{}, %{thread_id: thread_id, run_id: run_id, step_id: step_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(ep_url(thread_id, run_id, step_id))
   end
 
   def list(openai = %OpenaiEx{}, params = %{thread_id: thread_id, run_id: run_id}) do
     openai
-    |> OpenaiEx.as_assistants_beta()
+    |> OpenaiEx.with_assistants_beta()
     |> OpenaiEx.Http.get(
       ep_url(thread_id, run_id),
       params |> Map.take(OpenaiEx.list_query_fields())
