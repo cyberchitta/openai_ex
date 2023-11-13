@@ -53,7 +53,7 @@ defmodule OpenaiEx.Image do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{prompt: prompt}) do
+  def new(args = %{prompt: _}) do
     args |> Map.take(@api_fields)
   end
 
