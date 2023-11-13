@@ -747,3 +747,58 @@ list_req = Assistant.File.new_list(assistant_id: asst_f.assistant_id)
 
 openai |> Assistant.File.list(list_req)
 ```
+## Thread
+
+### Create thread
+
+Use the [`Thread.create()`] function create threads. A thread can be created empty or with messages.
+
+```elixir
+alias OpenaiEx.Beta.Thread
+alias OpenaiEx.ChatMessage
+
+empty_thread = openai |> Thread.create()
+
+file_id = upload_res["id"]
+
+thrd_req =
+  Thread.new(
+    messages: [
+      ChatMessage.user("What company do we work at?", [file_id]),
+      ChatMessage.user("How does AI work? Explain it in simple terms.")
+    ]
+  )
+
+thread = openai |> Thread.create(thrd_req)
+```
+
+### Retrieve thread
+
+[`Thread.retrieve`](https://platform.openai.com/docs/api-reference/threads/getThread) can be used to get the thread parameters give the id.
+
+```elixir
+thread_id = thread["id"]
+openai |> Thread.retrieve(thread_id)
+```
+
+### Modify thread
+
+The metadata for a thread can be modified using [`Thread.update()`](https://platform.openai.com/docs/api-reference/threads/modifyThread)
+
+```elixir
+openai |> Thread.update(thread_id, %{metadata: %{modified: "true", user: "abc123"}})
+```
+
+### Delete thread
+
+Use [`Thread.delete()`](https://platform.openai.com/docs/api-reference/threads/deleteThread) to delete a thread
+
+```elixir
+openai |> Thread.delete(thread_id)
+```
+
+Verify deletion
+
+```elixir
+openai |> Thread.retrieve(thread_id)
+```
