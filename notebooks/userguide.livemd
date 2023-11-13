@@ -2,7 +2,6 @@
 
 ```elixir
 Mix.install([
-  #  {:openai_ex, git: "https://github.com/restlessronin/openai_ex.git", tag: "v0.4.0"},
   {:openai_ex, "~> 0.4.0"},
   #  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.11.0"}
@@ -39,7 +38,7 @@ Add the following code to the first connection cell:
 Mix.install(
   [
     {:openai_ex, "~> 0.4.0"}
-  ],
+  ]
 )
 ```
 
@@ -595,3 +594,156 @@ mod_res = openai |> Moderation.create(mod_req)
 ```
 
 For more information on the moderation endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/moderations)
+
+## Assistant
+
+```elixir
+alias OpenaiEx.Beta.Assistant
+```
+
+### Create Assistant
+
+To create an assistant with model and instructions, call the [`Assistant.create()`](https://platform.openai.com/docs/api-reference/assistants/createAssistant) function.
+
+First, we setup the create request parameters. This request sets up an Assistant with a code interpreter tool.
+
+```elixir
+assistant_req =
+  Assistant.new(
+    instructions:
+      "You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
+    name: "Math Tutor",
+    tools: [%{type: "code_interpreter"}],
+    model: "gpt-4"
+  )
+```
+
+Then we call the create function
+
+```elixir
+asst = openai |> Assistant.create(assistant_req)
+```
+
+### Retrieve Assistant
+
+Extract the id field for the assistant
+
+```elixir
+assistant_id = asst["id"]
+```
+
+which can then be used to retrieve the Assistant fields, using the [`Assistant.retrieve()`](https://platform.openai.com/docs/api-reference/assistants/getAssistant) function.
+
+```elixir
+openai |> Assistant.retrieve(assistant_id)
+```
+
+### Modify Assistant
+
+Once created, an assistant can be modified using the [`Assistant.update()`](https://platform.openai.com/docs/api-reference/assistants/modifyAssistant) function.
+
+Now we will show an example assistant request using the retrieval tool with a set of files. First we set up the files (in this case an image) by uploading using the `File` API.
+
+```elixir
+alias OpenaiEx.File
+
+txt_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/cyberdyne.txt"))
+upload_req = File.new_upload(file: txt_file, purpose: "assistants")
+upload_res = openai |> File.create(upload_req)
+```
+
+Next we create the update request
+
+```elixir
+upd_req =
+  Assistant.new(
+    instructions:
+      "You are an HR bot, and you have access to files to answer employee questions about company policies. Always response with info from either of the files.",
+    name: "HR Helper",
+    tools: [%{type: "retrieval"}],
+    model: "gpt-3.5-turbo-1106",
+    file_ids: [upload_res["id"]]
+  )
+```
+
+Finally we call the endpoint to modify the `Assistant`
+
+```elixir
+upd_asst = openai |> Assistant.update(assistant_id, upd_req)
+```
+
+### Delete Assistant
+
+Finally we can delete assistants using the [`Assistant.delete()`](https://platform.openai.com/docs/api-reference/assistants/deleteAssistant) function
+
+```elixir
+openai |> Assistant.delete(upd_asst["id"])
+```
+
+### List Assistants
+
+We use [`Assistant.list()`](https://platform.openai.com/docs/api-reference/assistants/listAssistants) to get a list of assistants
+
+```elixir
+assts = openai |> Assistant.list()
+```
+
+### Create Assistant File
+
+Use [`Assistants.File.create()`](https://platform.openai.com/docs/api-reference/assistants/createAssistantFile) to attach a file to an assistant.
+
+Let us re-create the first assistant above
+
+```elixir
+math_asst = openai |> Assistant.create(assistant_req)
+```
+
+Now we can attach the file that we used earlier to this new assistant.
+
+```elixir
+asst_f =
+  Assistant.File.new(
+    assistant_id: math_asst["id"],
+    file_id: upload_res["id"]
+  )
+
+asst_file = openai |> Assistant.File.create(asst_f)
+```
+
+Let's retrieve the assistant to see if it was updated with the file id  (check `file_ids` field value).
+
+```elixir
+openai |> Assistant.retrieve(asst_file["assistant_id"])
+```
+
+### Retreive Assistant File
+
+We can retrieve an assistant file by using [`Assistants.File.retrieve()`](https://platform.openai.com/docs/api-reference/assistants/getAssistantFile)
+
+```elixir
+openai |> Assistant.File.retrieve(asst_f)
+```
+
+### Delete Assistant File
+
+[`Assistant.File.delete()`] can be used to detach a file from the assistant.
+
+```elixir
+openai |> Assistant.File.delete(asst_f)
+```
+
+Verify detatch by retrieving the assistant again (check `file_ids` field value)
+
+```elixir
+openai |> Assistant.retrieve(asst_f.assistant_id)
+```
+
+### List Assistant Files
+
+We can list all files attached to an assistant with [`Assistant.File.list()`](https://platform.openai.com/docs/api-reference/assistants/listAssistantFiles)
+
+```elixir
+list_req = Assistant.File.new_list(assistant_id: asst_f.assistant_id)
+
+openai |> Assistant.File.list(list_req)
+```
