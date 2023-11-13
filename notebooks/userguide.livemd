@@ -3,7 +3,7 @@
 ```elixir
 Mix.install([
   {:openai_ex, "~> 0.4.0"},
-  #  {:openai_ex, path: Path.join(__DIR__, "..")},
+  # {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.11.0"}
 ])
 ```
@@ -289,7 +289,7 @@ We define the image creation request structure using the `Image.new` function
 ```elixir
 alias OpenaiEx.Image
 
-img_req = Image.new(prompt: "A cute baby sea otter", size: "256x256", n: 2)
+img_req = Image.new(prompt: "An adorable baby sea otter", size: "256x256", n: 1)
 ```
 
 Then call the [`Image.create()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the images.
@@ -332,6 +332,7 @@ img_to_expmt = fetched_images |> List.first()
 We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. For the image, we will use the one that we received. Let's load the mask from a URL.
 
 ```elixir
+# if you're having problems downloading raw github content, you may need to manually set your DNS server to "8.8.8.8" (google)
 star_mask =
   fetch_blob.(
     "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/images/starmask.png"
@@ -421,8 +422,8 @@ To define an Audio request structure, we need to create a file parameter using `
 ```elixir
 alias OpenaiEx.Audio
 
+# if you're having problems downloading raw github content, you may need to manually set your DNS server to "8.8.8.8" (google)
 audio_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/transcribe.mp3"
-
 audio_file = OpenaiEx.new_file(name: audio_url, content: fetch_blob.(audio_url))
 
 # audio_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/transcribe.mp3"))
@@ -463,10 +464,12 @@ openai |> File.list()
 To upload a file, we need to create a file parameter, and then the upload request
 
 ```elixir
-# fine_tune_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/fine-tune.jsonl"))
+# if you're having problems downloading raw github content, you may need to manually set your DNS server to "8.8.8.8" (google)
 ftf_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/fine-tune.jsonl"
-
 fine_tune_file = OpenaiEx.new_file(name: ftf_url, content: fetch_blob.(ftf_url))
+
+# fine_tune_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/fine-tune.jsonl"))
+
 upload_req = File.new_upload(file: fine_tune_file, purpose: "fine-tune")
 ```
 
