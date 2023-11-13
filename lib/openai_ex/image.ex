@@ -7,16 +7,22 @@ defmodule OpenaiEx.Image do
   The following fields can be used as parameters when creating a new image:
 
   - `:prompt`
+  - `:model`
   - `:n`
+  - `:quality`
   - `:response_format`
   - `:size`
+  - `:style`
   - `:user`
   """
   @api_fields [
     :prompt,
+    :model,
     :n,
+    :quality,
     :response_format,
     :size,
+    :style,
     :user
   ]
 
@@ -48,11 +54,7 @@ defmodule OpenaiEx.Image do
   end
 
   def new(args = %{prompt: prompt}) do
-    %{
-      prompt: prompt
-    }
-    |> Map.merge(args)
-    |> Map.take(@api_fields)
+    args |> Map.take(@api_fields)
   end
 
   @doc """
