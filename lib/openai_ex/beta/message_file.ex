@@ -24,7 +24,7 @@ defmodule OpenaiEx.Beta.Thread.Message.File do
   """
   def retrieve(
         openai = %OpenaiEx{},
-        _params = %{thread_id: thread_id, message_id: message_id, file_id: file_id}
+        %{thread_id: thread_id, message_id: message_id, file_id: file_id}
       ) do
     openai
     |> OpenaiEx.with_assistants_beta()
