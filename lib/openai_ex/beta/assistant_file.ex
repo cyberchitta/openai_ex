@@ -114,7 +114,7 @@ defmodule OpenaiEx.Beta.Assistant.File do
     args |> Enum.into(%{}) |> new_list()
   end
 
-  def new_list(args = %{assistant_id: _assistant_id}) do
+  def new_list(args = %{assistant_id: _}) do
     args |> Map.take([:assistant_id | OpenaiEx.list_query_fields()])
   end
 
