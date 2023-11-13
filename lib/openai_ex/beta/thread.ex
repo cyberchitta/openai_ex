@@ -35,8 +35,7 @@ defmodule OpenaiEx.Beta.Thread do
   end
 
   def new(args = %{}) do
-    args
-    |> Map.take(@api_fields)
+    args |> Map.take(@api_fields)
   end
 
   @doc """
