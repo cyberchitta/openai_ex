@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Beta.Threads.Message do
+defmodule OpenaiEx.Beta.Thread.Message do
   @moduledoc """
   This module provides an implementation of the OpenAI messages API. The API
   reference can be found at https://platform.openai.com/docs/api-reference/messages.

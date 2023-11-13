@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Beta.Threads.Messages.File do
+defmodule OpenaiEx.Beta.Thread.Message.File do
   @moduledoc """
   This module provides an implementation of the OpenAI messages files API. The API reference can be found at https://platform.openai.com/docs/api-reference/messages.
   """
@@ -24,7 +24,7 @@ defmodule OpenaiEx.Beta.Threads.Messages.File do
   """
   def retrieve(
         openai = %OpenaiEx{},
-        _params = %{thread_id: thread_id, message_id: message_id, file_id: file_id}
+        %{thread_id: thread_id, message_id: message_id, file_id: file_id}
       ) do
     openai
     |> OpenaiEx.with_assistants_beta()
