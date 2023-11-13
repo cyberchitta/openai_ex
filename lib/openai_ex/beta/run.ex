@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Beta.Threads.Run do
+defmodule OpenaiEx.Beta.Thread.Run do
   @moduledoc """
   This module provides an implementation of the OpenAI run API. The API
   reference can be found at https://platform.openai.com/docs/api-reference/runs.
@@ -42,7 +42,7 @@ defmodule OpenaiEx.Beta.Threads.Run do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Beta.Threads.Run.new(thread_id: "thread_foo", assistant_id: "assistant_bar")
+      iex> _request = OpenaiEx.Beta.Thread.Run.new(thread_id: "thread_foo", assistant_id: "assistant_bar")
       %{assistant_id: "assistant_bar", thread_id: "thread_foo"}
   """
 
