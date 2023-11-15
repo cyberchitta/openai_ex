@@ -4,7 +4,7 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Completion
   doctest OpenaiEx.ChatMessage
   doctest OpenaiEx.Embedding
-  doctest OpenaiEx.Image
+  doctest OpenaiEx.Image.Generate
   doctest OpenaiEx.Moderation
   doctest OpenaiEx.MsgContent
   doctest OpenaiEx.Beta.Assistant
