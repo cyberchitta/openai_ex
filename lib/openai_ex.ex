@@ -38,10 +38,12 @@ defmodule OpenaiEx do
 
   # Globals for internal library use, **not** for public use.
 
+  @doc false
   def with_assistants_beta(openai = %OpenaiEx{}) do
     openai |> Map.put(:beta, "assistants=v1")
   end
 
+  @doc false
   def list_query_fields() do
     [
       :after,
