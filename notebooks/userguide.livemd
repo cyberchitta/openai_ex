@@ -415,13 +415,43 @@ For more information on generating embeddings, see the [OpenAI API Embedding ref
 
 ## Audio
 
-### Transcription
-
-To define an Audio request structure, we need to create a file parameter using `Audio.File.new()`.
-
 ```elixir
 alias OpenaiEx.Audio
+```
 
+### Create speech
+
+<!-- livebook:{"break_markdown":true} -->
+
+For text to speech, we create an `Audio.Speech` request structure as follows
+
+```elixir
+speech_req =
+  Audio.Speech.new(
+    model: "tts-1",
+    voice: "alloy",
+    input: "The quick brown fox jumped over the lazy dog",
+    response_format: "mp3"
+  )
+```
+
+We then call the [`Audio.Speech.create()`](https://platform.openai.com/docs/api-reference/audio/createSpeech) function to create the audio response
+
+```elixir
+speech_response = openai |> Audio.Speech.create(speech_req)
+```
+
+We can play the response using the `Kino` Audio widget.
+
+```elixir
+speech_response |> Kino.Audio.new(:mp3)
+```
+
+### Create transcription
+
+To define an audio transcription request structure, we need to create a file parameter using `Audio.File.new()`.
+
+```elixir
 # if you're having problems downloading raw github content, you may need to manually set your DNS server to "8.8.8.8" (google)
 audio_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/transcribe.mp3"
 audio_file = OpenaiEx.new_file(name: audio_url, content: fetch_blob.(audio_url))
@@ -429,21 +459,21 @@ audio_file = OpenaiEx.new_file(name: audio_url, content: fetch_blob.(audio_url))
 # audio_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/transcribe.mp3"))
 ```
 
-The file parameter is used to create the Audio request structure
+The file parameter is used to create the Audio.Transcription request structure
 
 ```elixir
-audio_req = Audio.new(file: audio_file, model: "whisper-1")
+translation_req = Audio.Transcription.new(file: audio_file, model: "whisper-1")
 ```
 
-We then call the [`Audio.transcribe()`](https://platform.openai.com/docs/api-reference/audio/create) function to create a transcription.
+We then call the [`Audio.Transcription.create()`](https://platform.openai.com/docs/api-reference/audio/createTranscription) function to create a transcription.
 
 ```elixir
-audio_response = openai |> Audio.transcribe(audio_req)
+translation_response = openai |> Audio.Transcription.create(translation_req)
 ```
 
-### Translation
+### Create translation
 
-The translation call uses practically the same request structure, but calls the `Audio.translate()` endpoint
+The translation call uses practically the same request structure, but calls the [`Audio.Translation.create()`](https://platform.openai.com/docs/api-reference/audio/createTranslation) endpoint
 
 For more information on the audio endpoints see the [Openai API Audio Reference](https://platform.openai.com/docs/api-reference/audio)
 
