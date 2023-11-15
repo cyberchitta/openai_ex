@@ -289,13 +289,13 @@ We define the image creation request structure using the `Image.new` function
 ```elixir
 alias OpenaiEx.Image
 
-img_req = Image.new(prompt: "An adorable baby sea otter", size: "256x256", n: 1)
+img_req = Image.Generate.new(prompt: "An adorable baby sea otter", size: "256x256", n: 1)
 ```
 
 Then call the [`Image.create()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the images.
 
 ```elixir
-img_response = openai |> Image.create(img_req)
+img_response = openai |> Image.generate(img_req)
 ```
 
 For more information on generating images, see the [OpenAI API Image reference](https://platform.openai.com/docs/api-reference/images).
@@ -356,7 +356,7 @@ img_edit_req =
 We then call the [`Image.create_edit()`]() function
 
 ```elixir
-img_edit_response = openai |> Image.create_edit(img_edit_req)
+img_edit_response = openai |> Image.edit(img_edit_req)
 ```
 
 and view the result
@@ -390,6 +390,7 @@ img_var_response["data"]
 ```
 
 For more information on images variations, see the [OpenAI API Image Variations reference](https://platform.openai.com/docs/api-reference/images/create-variation).
+
 
 ## Embedding
 
