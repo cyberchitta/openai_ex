@@ -52,7 +52,7 @@ defmodule OpenaiEx.Audio.Translation do
 
   ## Returns
 
-  A map containing the audio response.
+  A map containing the audio translation response.
 
   See https://platform.openai.com/docs/api-reference/audio/createTranslation for more information.
   """
