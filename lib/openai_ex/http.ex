@@ -41,6 +41,12 @@ defmodule OpenaiEx.Http do
   end
 
   @doc false
+  def post_no_decode(openai = %OpenaiEx{}, url, json: json) do
+    build_post(openai, url, json: json)
+    |> finch_run_no_decode()
+  end
+
+  @doc false
   def build_post(openai = %OpenaiEx{}, url, json: json) do
     :post
     |> Finch.build(
