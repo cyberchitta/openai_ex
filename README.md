@@ -6,7 +6,7 @@
 
 The library closely follows the naming / structure of the official OpenAI API client library for [Python](https://github.com/openai/openai-python), making it easy to understand and reuse existing documentation.
 
-All API endpoints and features (as of Nov 11, 2023) are supported, including the **Assistants API Beta**, the **tools support** in chat completions, and the **streaming version** of the completion and chat completion endpoints.
+All API endpoints and features (as of Nov 15, 2023) are supported, including the **Assistants API Beta**, DALL-E-3, Text-To-Speech, the **tools support** in chat completions, and the **streaming version** of the completion and chat completion endpoints.
 
 ## Installation and Usage
 
