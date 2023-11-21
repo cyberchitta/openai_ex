@@ -22,7 +22,14 @@ In this notebook, you will explore how you can utilize the chat format to have e
 ### Setup
 
 ```elixir
-openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
+openai =
+  System.fetch_env!("LB_OPENAI_API_KEY")
+  |> OpenaiEx.new()
+
+# uncomment the line at the end of this block comment when working with a local LLM with a 
+# proxy such as llama.cpp-python in the example below, our development livebook server is 
+# running in a docker dev container while the local llm is running on the host machine
+# |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
 ```
 
 ```elixir
@@ -166,3 +173,5 @@ Kino.listen(
   end
 )
 ```
+
+<!-- livebook:{"offset":5189,"stamp":{"token":"XCP.BW4jh9R3XOcYacfW9G9Cws2KPP7-LFcjgbrzhAlTL9c9JwldGdePtKTuDQlIe4lpb-3bir6XzqgOk4t4qtAL9CxI9AKY72X4sqAYci71c2OoUpenaB3XeDk","version":2}} -->

@@ -15,7 +15,14 @@ alias OpenaiEx.Completion
 ## Model Choices
 
 ```elixir
-openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
+openai =
+  System.fetch_env!("LB_OPENAI_API_KEY")
+  |> OpenaiEx.new()
+
+# uncomment the line at the end of this block comment when working with a local LLM with a 
+# proxy such as llama.cpp-python in the example below, our development livebook server is 
+# running in a docker dev container while the local llm is running on the host machine
+# |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
 ```
 
 ```elixir
@@ -138,3 +145,5 @@ Create the form for the streaming completion API, and use it.
 ```elixir
 create_form.("## Streaming Chatbot", completion_stream)
 ```
+
+<!-- livebook:{"offset":3587,"stamp":{"token":"XCP.68_LJbeUk6F4BpQA1Wzojpg0rTxRlhSNCl7VPR97rQ8BkiJDowZdc0TIsCOJsURS-er1oOcekzNDlnsglBaG3OS3aJlG0TKbqYLRNjvLcHaKXv66lRgW6y8","version":2}} -->
