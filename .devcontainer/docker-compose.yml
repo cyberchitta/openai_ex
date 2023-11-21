@@ -14,3 +14,5 @@ services:
     ports:
       - 8080:8080
       - 8081:8081
+      # port for llama.cpp-python server to work with local LLMs
+      - 8000:8000
