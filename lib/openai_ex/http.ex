@@ -1,8 +1,6 @@
 defmodule OpenaiEx.Http do
   @moduledoc false
 
-  @base_url "https://api.openai.com/v1"
-
   @doc false
   def headers(openai = %OpenaiEx{}) do
     base = [{"Authorization", "Bearer #{openai.token}"}]
@@ -23,7 +21,7 @@ defmodule OpenaiEx.Http do
   def post(openai = %OpenaiEx{}, url, multipart: multipart) do
     :post
     |> Finch.build(
-      @base_url <> url,
+      openai.base_url <> url,
       headers(openai) ++
         [
           {"Content-Type", Multipart.content_type(multipart, "multipart/form-data")},
@@ -50,7 +48,7 @@ defmodule OpenaiEx.Http do
   def build_post(openai = %OpenaiEx{}, url, json: json) do
     :post
     |> Finch.build(
-      @base_url <> url,
+      openai.base_url <> url,
       headers(openai) ++ [{"Content-Type", "application/json"}],
       Jason.encode_to_iodata!(json)
     )
@@ -70,20 +68,20 @@ defmodule OpenaiEx.Http do
   @doc false
   def get(openai = %OpenaiEx{}, url) do
     :get
-    |> Finch.build(@base_url <> url, headers(openai))
+    |> Finch.build(openai.base_url <> url, headers(openai))
     |> finch_run()
   end
 
   def get_no_decode(openai = %OpenaiEx{}, url) do
     :get
-    |> Finch.build(@base_url <> url, headers(openai))
+    |> Finch.build(openai.base_url <> url, headers(openai))
     |> finch_run_no_decode()
   end
 
   @doc false
   def delete(openai = %OpenaiEx{}, url) do
     :delete
-    |> Finch.build(@base_url <> url, headers(openai))
+    |> Finch.build(openai.base_url <> url, headers(openai))
     |> finch_run()
   end
 

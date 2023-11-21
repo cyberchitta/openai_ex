@@ -8,7 +8,7 @@ defmodule OpenaiEx do
   making it easy to understand and reuse existing documentation and code.
   """
   @enforce_keys [:token]
-  defstruct token: nil, organization: nil, beta: nil
+  defstruct token: nil, organization: nil, beta: nil, base_url: "https://api.openai.com/v1"
 
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.
@@ -41,6 +41,10 @@ defmodule OpenaiEx do
   @doc false
   def with_assistants_beta(openai = %OpenaiEx{}) do
     openai |> Map.put(:beta, "assistants=v1")
+  end
+
+  def with_base_url(openai = %OpenaiEx{}, base_url) do
+    openai |> Map.put(:base_url, base_url)
   end
 
   @doc false
