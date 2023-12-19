@@ -8,6 +8,8 @@ The library closely follows the naming / structure of the official OpenAI API cl
 
 All API endpoints and features (as of Nov 15, 2023) are supported, including the **Assistants API Beta**, DALL-E-3, Text-To-Speech, the **tools support** in chat completions, and the **streaming version** of the completion and chat completion endpoints.
 
+Discussion and announcements are on [this thread in Elixir Forum](https://elixirforum.com/t/openai-ex-openai-api-client-library/)
+
 ## Installation and Usage
 
 For installation instructions and detailed usage examples, please look at the [User Guide on hexdocs](https://hexdocs.pm/openai_ex/userguide.html). The guide is a Livebook, and you can run all of the code in it without creating a new project. Practically every API call has a running example in the User Guide.
@@ -19,8 +21,6 @@ There are also Livebook examples for
 * An [Image Generation UI](https://hexdocs.pm/openai_ex/images.html)
 
 These are hosted on [hexdocs](https://hexdocs.pm/openai_ex) and can be used as inspiration / starters for your own projects.
-
-Discussion and announcements are on [this thread in Elixir Forum](https://elixirforum.com/t/openai-ex-openai-api-client-library/)
 
 ## Development
 
