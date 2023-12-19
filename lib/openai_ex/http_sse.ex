@@ -45,27 +45,41 @@ defmodule OpenaiEx.HttpSse do
 
   @doc false
   defp tokenize_data(evt_data, acc) do
-    if String.contains?(evt_data, "\n\n") do
-      {remaining, token_chunks} = (acc <> evt_data) |> String.split("\n\n") |> List.pop_at(-1)
+    combined_data = acc <> evt_data
+
+    if contains_terminator?(combined_data) do
+      {remaining, token_chunks} = split_on_terminators(combined_data)
 
       tokens =
         token_chunks
-        |> Enum.map(fn chunk -> extract_token(chunk) end)
+        |> Enum.map(&extract_token/1)
         |> Enum.filter(fn %{data: data} -> data != "[DONE]" end)
         |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
 
       {tokens, remaining}
     else
-      {[], acc <> evt_data}
+      {[], combined_data}
     end
   end
 
-  @doc false
+  defp contains_terminator?(data) do
+    String.contains?(data, "\n\n") or String.contains?(data, "\r\n\r\n")
+  end
+
+  defp split_on_terminators(data) do
+    data
+    |> String.replace("\r\n\r\n", "\n\n")
+    |> String.split("\n\n")
+    |> List.pop_at(-1)
+  end
+
+  # and here just added a default handler for when it doesn't come in as `data:`
   defp extract_token(line) do
     [field | rest] = String.split(line, ": ", parts: 2)
 
     case field do
       "data" -> %{data: Enum.join(rest, "") |> String.replace_prefix(" ", "")}
+      _ -> %{data: ""}
     end
   end
 end
