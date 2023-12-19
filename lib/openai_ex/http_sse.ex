@@ -45,41 +45,38 @@ defmodule OpenaiEx.HttpSse do
 
   @doc false
   defp tokenize_data(evt_data, acc) do
-    combined_data = acc <> evt_data
+    all_data = acc <> evt_data
 
-    if contains_terminator?(combined_data) do
-      {remaining, token_chunks} = split_on_terminators(combined_data)
+    # finds 2 (repeated) EOL characters
+    if Regex.match?(~r/(\r?\n|\r){2}/, evt_data) do
+      {remaining, token_chunks} = all_data |> String.split(~r/(\r?\n|\r){2}/) |> List.pop_at(-1)
 
       tokens =
         token_chunks
         |> Enum.map(&extract_token/1)
-        |> Enum.filter(fn %{data: data} -> data != "[DONE]" end)
+        |> Enum.filter(fn
+          %{data: "[DONE]"} -> false
+          %{data: _} -> true
+          _ -> false # we can pass other events through but the clients will need to be rewritten
+        end)
         |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
 
       {tokens, remaining}
     else
-      {[], combined_data}
+      {[], all_data}
     end
   end
 
-  defp contains_terminator?(data) do
-    String.contains?(data, "\n\n") or String.contains?(data, "\r\n\r\n")
-  end
-
-  defp split_on_terminators(data) do
-    data
-    |> String.replace("\r\n\r\n", "\n\n")
-    |> String.split("\n\n")
-    |> List.pop_at(-1)
-  end
-
-  # and here just added a default handler for when it doesn't come in as `data:`
   defp extract_token(line) do
-    [field | rest] = String.split(line, ": ", parts: 2)
+    [field | rest] = String.split(line, ":", parts: 2)
+    value = Enum.join(rest, "") |> String.replace_prefix(" ", "")
 
     case field do
-      "data" -> %{data: Enum.join(rest, "") |> String.replace_prefix(" ", "")}
-      _ -> %{data: ""}
+      "data" -> %{data: value}
+      "event" -> %{eventType: value}
+      "id" -> %{lastEventId: value}
+      "retry" -> %{retry: value}
+      _ -> nil # comment
     end
   end
 end
