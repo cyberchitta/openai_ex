@@ -45,27 +45,40 @@ defmodule OpenaiEx.HttpSse do
 
   @doc false
   defp tokenize_data(evt_data, acc) do
-    if String.contains?(evt_data, "\n\n") do
-      {remaining, token_chunks} = (acc <> evt_data) |> String.split("\n\n") |> List.pop_at(-1)
+    all_data = acc <> evt_data
+
+    # finds 2 (repeated) EOL characters
+    if Regex.match?(~r/(\r?\n|\r){2}/, evt_data) do
+      {remaining, token_chunks} = all_data |> String.split(~r/(\r?\n|\r){2}/) |> List.pop_at(-1)
 
       tokens =
         token_chunks
-        |> Enum.map(fn chunk -> extract_token(chunk) end)
-        |> Enum.filter(fn %{data: data} -> data != "[DONE]" end)
+        |> Enum.map(&extract_token/1)
+        |> Enum.filter(fn
+          %{data: "[DONE]"} -> false
+          %{data: _} -> true
+          # we can pass other events through but the clients will need to be rewritten
+          _ -> false
+        end)
         |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
 
       {tokens, remaining}
     else
-      {[], acc <> evt_data}
+      {[], all_data}
     end
   end
 
-  @doc false
   defp extract_token(line) do
-    [field | rest] = String.split(line, ": ", parts: 2)
+    [field | rest] = String.split(line, ":", parts: 2)
+    value = Enum.join(rest, "") |> String.replace_prefix(" ", "")
 
     case field do
-      "data" -> %{data: Enum.join(rest, "") |> String.replace_prefix(" ", "")}
+      "data" -> %{data: value}
+      "event" -> %{eventType: value}
+      "id" -> %{lastEventId: value}
+      "retry" -> %{retry: value}
+      # comment
+      _ -> nil
     end
   end
 end
