@@ -57,7 +57,8 @@ defmodule OpenaiEx.HttpSse do
         |> Enum.filter(fn
           %{data: "[DONE]"} -> false
           %{data: _} -> true
-          _ -> false # we can pass other events through but the clients will need to be rewritten
+          # we can pass other events through but the clients will need to be rewritten
+          _ -> false
         end)
         |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
 
@@ -76,7 +77,8 @@ defmodule OpenaiEx.HttpSse do
       "event" -> %{eventType: value}
       "id" -> %{lastEventId: value}
       "retry" -> %{retry: value}
-      _ -> nil # comment
+      # comment
+      _ -> nil
     end
   end
 end
