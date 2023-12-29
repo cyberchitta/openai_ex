@@ -74,6 +74,28 @@ You can also specify an organization if you are a member of more than one:
 
 For more information on authentication, see the [OpenAI API Authentication reference](https://platform.openai.com/docs/api-reference/authentication).
 
+### Configuration
+
+There are a few places where configuration seemed necessary.
+
+#### Receive Timeout
+
+The default receive timeout was set to 2 minutes to cover (hopefully) 99% of common usage scenarios. If you are seeing longer latencies, you can override the default with
+
+```elixir
+# set receive timeout to 10 minutes
+# openai = OpenaiEx.new(apikey) |> OpenaiEx.with_receive_timeout(600_000)
+```
+
+#### Base Url
+
+There are times, such as when using a local LLM (like Ollama) with an OpenAI proxy, when you need to reset the base url of the API. This is generally only applicable for chat and chat completion endpoints. This can be accomplished by
+
+```elixir
+# point to local LLM proxy
+# openai = OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://localhost:8000/v1")
+```
+
 ## Model
 
 ### List Models
@@ -91,47 +113,10 @@ openai |> Model.list()
 To retrieve information about a specific model, use the [`Model.retrieve()`](https://platform.openai.com/docs/api-reference/models/retrieve) function:
 
 ```elixir
-openai |> Model.retrieve("text-davinci-003")
+openai |> Model.retrieve("gpt-3.5-turbo")
 ```
 
 For more information on using models, see the [OpenAI API Models reference](https://platform.openai.com/docs/api-reference/models).
-
-## Completion
-
-To generate a completion, you first need to define a completion request structure using the `Completion.new()` function. This function takes several parameters, such as the model ID, the prompt, the maximum number of tokens, etc.
-
-```elixir
-alias OpenaiEx.Completion
-
-completion_req =
-  Completion.new(
-    model: "text-davinci-003",
-    prompt:
-      "Give me some background on the elixir language. Why was it created? What is it used for? What distinguishes it from other languages? How popular is it?",
-    max_tokens: 500,
-    temperature: 0
-  )
-```
-
-Once you have defined the completion request structure, you can generate a completion using the [`Completion.create()`](https://platform.openai.com/docs/api-reference/completions/create) function:
-
-```elixir
-comp_response = openai |> Completion.create(completion_req)
-```
-
-You can also call the endpoint and have it return a stream. This returns the result as a series of tokens, which have to be put together in code.
-
-To use the stream option, call the `Completion.create()` function with `stream: true`
-
-```elixir
-completion_stream = openai |> Completion.create(completion_req, stream: true)
-
-completion_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
-```
-
-For an example of how to programmatically work with this stream, check out the [Completions Bot livebook](https://hexdocs.pm/openai_ex/completions.html) which builds a ChatBot UI using the Completion API (with and without streaming).
-
-For more information on generating completions, see the [OpenAI API Completions reference](https://platform.openai.com/docs/api-reference/completions).
 
 ## Chat Completion
 
@@ -390,7 +375,6 @@ img_var_response["data"]
 ```
 
 For more information on images variations, see the [OpenAI API Image Variations reference](https://platform.openai.com/docs/api-reference/images/create-variation).
-
 
 ## Embedding
 
@@ -970,3 +954,5 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
+
+<!-- livebook:{"offset":27830,"stamp":{"token":"XCP.LGt_y97YDJpC93OeoNN9jsWZ0N7uv5yT4QPiCYCfUSxSHdeKJ7Ez5SMrdTf_M1XweX78Qg2mC1GAnK1ex3gKgrWkyvKwpmBRkIgIpSwT-0yuZW1qlTolESA","version":2}} -->
