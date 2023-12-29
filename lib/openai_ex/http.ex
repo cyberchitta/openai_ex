@@ -12,6 +12,14 @@ defmodule OpenaiEx.Http do
     base ++ org ++ beta
   end
 
+  def options(openai = %OpenaiEx{}) do
+    [receive_timeout: openai |> Map.get(:receive_timeout)]
+  end
+
+  def build_finch(method, openai = %OpenaiEx{}, url) do
+    Finch.build(method, openai.base_url <> url, headers(openai), nil, options(openai))
+  end
+
   @doc false
   def post(openai = %OpenaiEx{}, url) do
     post(openai, url, json: %{})
@@ -27,7 +35,8 @@ defmodule OpenaiEx.Http do
           {"Content-Type", Multipart.content_type(multipart, "multipart/form-data")},
           {"Content-Length", to_string(Multipart.content_length(multipart))}
         ],
-      {:stream, Multipart.body_stream(multipart)}
+      {:stream, Multipart.body_stream(multipart)},
+      options(openai)
     )
     |> finch_run()
   end
@@ -50,7 +59,8 @@ defmodule OpenaiEx.Http do
     |> Finch.build(
       openai.base_url <> url,
       headers(openai) ++ [{"Content-Type", "application/json"}],
-      Jason.encode_to_iodata!(json)
+      Jason.encode_to_iodata!(json),
+      options(openai)
     )
   end
 
@@ -62,40 +72,30 @@ defmodule OpenaiEx.Http do
       |> URI.append_query(params |> URI.encode_query())
       |> URI.to_string()
 
-    openai |> OpenaiEx.Http.get(query)
+    openai |> get(query)
   end
 
   @doc false
   def get(openai = %OpenaiEx{}, url) do
-    :get
-    |> Finch.build(openai.base_url <> url, headers(openai))
-    |> finch_run()
+    :get |> build_finch(openai, url) |> finch_run()
   end
 
   def get_no_decode(openai = %OpenaiEx{}, url) do
-    :get
-    |> Finch.build(openai.base_url <> url, headers(openai))
-    |> finch_run_no_decode()
+    :get |> build_finch(openai, url) |> finch_run_no_decode()
   end
 
   @doc false
   def delete(openai = %OpenaiEx{}, url) do
-    :delete
-    |> Finch.build(openai.base_url <> url, headers(openai))
-    |> finch_run()
+    :delete |> build_finch(openai, url) |> finch_run()
   end
 
   @doc false
   def finch_run(finch_request) do
-    finch_request
-    |> finch_run_no_decode()
-    |> Jason.decode!()
+    finch_request |> finch_run_no_decode() |> Jason.decode!()
   end
 
   def finch_run_no_decode(finch_request) do
-    finch_request
-    |> Finch.request!(OpenaiEx.Finch, receive_timeout: 120_000)
-    |> Map.get(:body)
+    finch_request |> Finch.request!(OpenaiEx.Finch) |> Map.get(:body)
   end
 
   @doc false
