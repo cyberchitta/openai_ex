@@ -173,5 +173,3 @@ Kino.listen(
   end
 )
 ```
-
-<!-- livebook:{"offset":5189,"stamp":{"token":"XCP.BW4jh9R3XOcYacfW9G9Cws2KPP7-LFcjgbrzhAlTL9c9JwldGdePtKTuDQlIe4lpb-3bir6XzqgOk4t4qtAL9CxI9AKY72X4sqAYci71c2OoUpenaB3XeDk","version":2}} -->

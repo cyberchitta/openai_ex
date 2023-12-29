@@ -4,7 +4,7 @@
 Mix.install([
   {:openai_ex, "~> 0.5.2"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.11.0"}
+  {:kino, "~> 0.12.0"}
 ])
 ```
 
@@ -92,8 +92,10 @@ The default receive timeout was set to 2 minutes to cover (hopefully) 99% of com
 There are times, such as when using a local LLM (like Ollama) with an OpenAI proxy, when you need to reset the base url of the API. This is generally only applicable for chat and chat completion endpoints. This can be accomplished by
 
 ```elixir
-# point to local LLM proxy
-# openai = OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://localhost:8000/v1")
+# uncomment the line at the end of this block comment when working with a local LLM with a 
+# proxy such as llama.cpp-python in the example below, our development livebook server is 
+# running in a docker dev container while the local llm is running on the host machine
+# openai = OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
 ```
 
 ## Model
@@ -954,5 +956,3 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
-
-<!-- livebook:{"offset":27830,"stamp":{"token":"XCP.LGt_y97YDJpC93OeoNN9jsWZ0N7uv5yT4QPiCYCfUSxSHdeKJ7Ez5SMrdTf_M1XweX78Qg2mC1GAnK1ex3gKgrWkyvKwpmBRkIgIpSwT-0yuZW1qlTolESA","version":2}} -->

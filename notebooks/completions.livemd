@@ -5,12 +5,18 @@
 ```elixir
 Mix.install([
   {:openai_ex, "~> 0.5.2"},
-  {:kino, "~> 0.11.0"}
+  {:kino, "~> 0.12.0"}
 ])
 
 alias OpenaiEx
 alias OpenaiEx.Completion
 ```
+
+## Deprecation Notice
+
+Note that OpenAI has deprecated the models that use the Completion API. The newer models all use the Chat Completion API. As such, this livebook will **stop working** when the models are discontinued.
+
+It is still being left in the documentation in case people want to use it with non OpenAI models through an OpenAI API proxy.
 
 ## Model Choices
 
@@ -146,4 +152,4 @@ Create the form for the streaming completion API, and use it.
 create_form.("## Streaming Chatbot", completion_stream)
 ```
 
-<!-- livebook:{"offset":3587,"stamp":{"token":"XCP.68_LJbeUk6F4BpQA1Wzojpg0rTxRlhSNCl7VPR97rQ8BkiJDowZdc0TIsCOJsURS-er1oOcekzNDlnsglBaG3OS3aJlG0TKbqYLRNjvLcHaKXv66lRgW6y8","version":2}} -->
+<!-- livebook:{"offset":3939,"stamp":{"token":"XCP.sAEjGhTxlV5meiScw7XfbDuWrTZDYIOPxVCtwP4RjsicjmXp9SCUc3Kl29N1DP9RhN2CdlyQaXRq3_aBthbTatw5U3JwJO7WXlUsxDhOcVaJ574qRbQygnc","version":2}} -->
