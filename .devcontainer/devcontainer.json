@@ -7,11 +7,10 @@
     "customizations": {
         "vscode": {
             "extensions": [
-				"jakebecker.elixir-ls",
-				"eamodio.gitlens",
-				"GitHub.copilot-chat",
-				"GitHub.copilot"
-			]
+                "jakebecker.elixir-ls",
+                "eamodio.gitlens",
+                "Continue.continue"
+            ]
         }
     }
 }
