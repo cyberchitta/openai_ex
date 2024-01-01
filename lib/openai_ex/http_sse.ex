@@ -14,17 +14,38 @@ defmodule OpenaiEx.HttpSse do
 
     task =
       Task.async(fn ->
-        on_chunk = fn chunk, _acc -> send(me, {:chunk, chunk, ref}) end
+        on_chunk = create_chunk_handler(me, ref)
         request |> Finch.stream(OpenaiEx.Finch, nil, on_chunk)
         send(me, {:done, ref})
       end)
 
-    _status = receive(do: ({:chunk, {:status, status}, ^ref} -> status))
-    _headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
+    status = receive(do: ({:chunk, {:status, status}, ^ref} -> status))
+    headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
-    Stream.resource(fn -> {"", ref, task} end, &next_sse/1, fn {_data, _ref, task} ->
-      Task.shutdown(task)
-    end)
+    body_stream =
+      Stream.resource(fn -> {"", ref, task} end, &next_sse/1, fn {_data, _ref, task} ->
+        Task.shutdown(task)
+      end)
+
+    %{task_pid: task.pid, status: status, headers: headers, body_stream: body_stream}
+  end
+
+  @doc false
+  def cancel_request(task_pid) when is_pid(task_pid) do
+    send(task_pid, :cancel_request)
+  end
+
+  @doc false
+  defp create_chunk_handler(me, ref) do
+    fn chunk, _acc ->
+      receive do
+        :cancel_request ->
+          send(me, {:canceled, ref})
+          throw(:cancel_request)
+      after
+        0 -> send(me, {:chunk, chunk, ref})
+      end
+    end
   end
 
   @doc false
@@ -39,6 +60,10 @@ defmodule OpenaiEx.HttpSse do
           Logger.warning(inspect(Jason.decode!(acc)))
         end
 
+        {:halt, {acc, ref, task}}
+
+      {:canceled, ^ref} ->
+        Logger.warning("Request canceled by user")
         {:halt, {acc, ref, task}}
     end
   end
