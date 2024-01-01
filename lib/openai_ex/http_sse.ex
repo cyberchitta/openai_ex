@@ -56,10 +56,7 @@ defmodule OpenaiEx.HttpSse do
         {[tokens], {next_acc, ref, task}}
 
       {:done, ^ref} ->
-        if acc != "" do
-          Logger.warning(inspect(Jason.decode!(acc)))
-        end
-
+        if acc != "", do: Logger.warning(inspect(Jason.decode!(acc)))
         {:halt, {acc, ref, task}}
 
       {:canceled, ^ref} ->
