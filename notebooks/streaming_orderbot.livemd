@@ -20,9 +20,23 @@ openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
 ```
 
 ```elixir
+# We need to make the request task pid available to the cancel button by sharing state
+{:ok, pid} = Agent.start_link(fn -> nil end, name: :shared_task_pid)
+```
+
+```elixir
 defmodule OpenaiEx.Notebooks.StreamingOrderbot do
   alias OpenaiEx
   alias OpenaiEx.ChatCompletion
+  require Logger
+
+  def set_task_pid(task_pid) do
+    Agent.update(:shared_task_pid, fn _ -> task_pid end)
+  end
+
+  def get_task_pid do
+    Agent.get(:shared_task_pid, fn pid -> pid end)
+  end
 
   def create_chat_req(args = [_ | _]) do
     args
@@ -33,18 +47,21 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
     |> ChatCompletion.new()
   end
 
-  def get_completion_stream(openai = %OpenaiEx{}, cc_req = %{}) do
-    openai
-    |> ChatCompletion.create(cc_req, stream: true)
+  def get_stream(openai = %OpenaiEx{}, messages) do
+    openai |> ChatCompletion.create(create_chat_req(messages: messages), stream: true)
+  end
+
+  def stream_to_completions(%{body_stream: body_stream}) do
+    body_stream
     |> Stream.flat_map(& &1)
     |> Stream.map(fn %{data: d} -> d |> Map.get("choices") |> Enum.at(0) |> Map.get("delta") end)
     |> Stream.filter(fn map -> map |> Map.has_key?("content") end)
     |> Stream.map(fn map -> map |> Map.get("content") end)
   end
 
-  def stream_completion_to_frame(openai = %OpenaiEx{}, messages, frame) do
-    openai
-    |> get_completion_stream(create_chat_req(messages: messages))
+  def stream_completion_to_frame(stream, frame) do
+    stream
+    |> stream_to_completions()
     |> Enum.reduce("", fn token, text ->
       next = text <> token
       Kino.Frame.render(frame, Kino.Text.new(next))
@@ -57,10 +74,14 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
     last_frame = Kino.Frame.new()
     inputs = [prompt: Kino.Input.textarea("You")]
     form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
+    cancel_button = Kino.Control.button("Cancel")
     Kino.Frame.render(chat_frame, Kino.Markdown.new("### Orderbot Chat"))
-    Kino.Layout.grid([chat_frame, last_frame, form], boxed: true, gap: 16) |> Kino.render()
 
-    bot_says = openai |> stream_completion_to_frame(context, last_frame)
+    Kino.Layout.grid([chat_frame, cancel_button, last_frame, form], boxed: true, gap: 16)
+    |> Kino.render()
+
+    stream_o = openai |> get_stream(context)
+    bot_says = stream_o |> stream_completion_to_frame(last_frame)
 
     Kino.listen(
       form,
@@ -70,10 +91,18 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
         Kino.Frame.append(chat_frame, Kino.Text.new(List.last(history).content))
         Kino.Frame.append(chat_frame, Kino.Markdown.new("**You** #{you_say}"))
 
-        bot_says =
-          openai |> stream_completion_to_frame(history ++ [ChatMessage.user(you_say)], last_frame)
-
+        stream = openai |> get_stream(history ++ [ChatMessage.user(you_say)])
+        set_task_pid(stream.task_pid)
+        bot_says = stream |> stream_completion_to_frame(last_frame)
         {:cont, history ++ [ChatMessage.user(you_say), ChatMessage.assistant(bot_says)]}
+      end
+    )
+
+    Kino.listen(
+      cancel_button,
+      fn _event ->
+        pid = get_task_pid()
+        OpenaiEx.HttpSse.cancel_request(pid)
       end
     )
   end

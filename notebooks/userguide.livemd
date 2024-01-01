@@ -156,19 +156,22 @@ You can generate a chat completion using the [`ChatCompletion.create()`](https:/
 chat_response = openai |> ChatCompletion.create(chat_req)
 ```
 
+For a more in-depth example of `ChatCompletion`, check out the [Deeplearning.AI OrderBot Livebook](https://hexdocs.pm/openai_ex/dlai_orderbot.html).
+
 You can also call the endpoint and have it stream the response. This returns the result as a series of tokens, which have to be put together in code.
 
 To use the stream option, call the `ChatCompletion.create()` function with `stream: true`
 
 ```elixir
 chat_stream = openai |> ChatCompletion.create(chat_req, stream: true)
-
-chat_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
+IO.puts(inspect(chat_stream))
+IO.puts(inspect(chat_stream.task_pid))
+chat_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
 ```
 
-For a more in-depth example of `ChatCompletion`, check out the [Deeplearning.AI OrderBot Livebook](https://hexdocs.pm/openai_ex/dlai_orderbot.html).
+The `chat_stream.task_pid` can be used in conjunction with `OpenaiEx.HttpSse.cancel_request/1` to cancel an ongoing request.
 
-For a detailed example of the use of the streaming `ChatCompletion` API, check out [Streaming Orderbot](https://hexdocs.pm/openai_ex/streaming_orderbot.html), the streaming equivalent of the prior example.
+For a detailed example of the use of the streaming `ChatCompletion` API, **including how to cancel an ongoing request**, check out [Streaming Orderbot](https://hexdocs.pm/openai_ex/streaming_orderbot.html), the streaming equivalent of the prior example.
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat).
 
