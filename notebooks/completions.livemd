@@ -70,7 +70,7 @@ This function calls the streaming completion API and continously updates the Kin
 
 ```elixir
 completion_stream = fn model, prompt, max_tokens, temperature, last_frame ->
-  token_stream =
+  stream =
     openai
     |> Completion.create(
       %{
@@ -81,6 +81,9 @@ completion_stream = fn model, prompt, max_tokens, temperature, last_frame ->
       },
       stream: true
     )
+
+  token_stream =
+    stream.body_stream
     |> Stream.flat_map(& &1)
     |> Stream.map(fn %{data: data} ->
       data |> Map.get("choices") |> Enum.at(0) |> Map.get("text")
@@ -151,5 +154,3 @@ Create the form for the streaming completion API, and use it.
 ```elixir
 create_form.("## Streaming Chatbot", completion_stream)
 ```
-
-<!-- livebook:{"offset":3939,"stamp":{"token":"XCP.sAEjGhTxlV5meiScw7XfbDuWrTZDYIOPxVCtwP4RjsicjmXp9SCUc3Kl29N1DP9RhN2CdlyQaXRq3_aBthbTatw5U3JwJO7WXlUsxDhOcVaJ574qRbQygnc","version":2}} -->

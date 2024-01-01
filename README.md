@@ -37,3 +37,7 @@ After the container is up and running in VS Code, you can access livebook at htt
 To set environment variables for devcontainer development, you can create a `.env` file in the `.devcontainer` folder. Any secrets, such as `OPENAI_API_KEY` and `LIVEBOOK_PASSWORD`, can be defined in this file as environment variables. Note that this `.env` file should not be included in version control, and it is already included in the .gitignore file for this reason.
 
 You can find a sample `env` file in the same folder, which you can use as a template for your own `.env` file. These variables will be passed to Livebook via `docker-compose.yml`.
+
+## Acknowledgements
+
+Portions of this project were developed with assistance from OpenAI's ChatGPT.
