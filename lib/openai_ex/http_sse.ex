@@ -43,13 +43,14 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
+  @double_eol ~r/(\r?\n|\r){2}/
+
   @doc false
   defp tokenize_data(evt_data, acc) do
     all_data = acc <> evt_data
 
-    # finds 2 (repeated) EOL characters
-    if Regex.match?(~r/(\r?\n|\r){2}/, evt_data) do
-      {remaining, token_chunks} = all_data |> String.split(~r/(\r?\n|\r){2}/) |> List.pop_at(-1)
+    if Regex.match?(@double_eol, evt_data) do
+      {remaining, token_chunks} = all_data |> String.split(@double_eol) |> List.pop_at(-1)
 
       tokens =
         token_chunks
