@@ -1,5 +1,6 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
+  alias OpenaiEx.Http
   require Logger
 
   # based on
@@ -15,7 +16,7 @@ defmodule OpenaiEx.HttpSse do
     task =
       Task.async(fn ->
         on_chunk = create_chunk_handler(me, ref)
-        request |> Finch.stream(OpenaiEx.Finch, nil, on_chunk)
+        request |> Finch.stream(OpenaiEx.Finch, nil, on_chunk, Http.request_options(openai))
         send(me, {:done, ref})
       end)
 
