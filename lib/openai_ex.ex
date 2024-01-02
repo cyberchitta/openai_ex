@@ -12,7 +12,8 @@ defmodule OpenaiEx do
             organization: nil,
             beta: nil,
             base_url: "https://api.openai.com/v1",
-            receive_timeout: 120_000
+            receive_timeout: 120_000,
+            finch_name: OpenaiEx.Finch
 
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.
@@ -53,6 +54,10 @@ defmodule OpenaiEx do
 
   def with_receive_timeout(openai = %OpenaiEx{}, receive_timeout) do
     openai |> Map.put(:receive_timeout, receive_timeout)
+  end
+
+  def with_finch_name(openai = %OpenaiEx{}, finch_name) do
+    openai |> Map.put(:finch_name, finch_name)
   end
 
   @doc false
