@@ -93,7 +93,9 @@ defmodule OpenaiEx.Http do
   end
 
   def finch_run_no_decode(finch_request, openai = %OpenaiEx{}) do
-    finch_request |> Finch.request!(Map.get(openai, :finch_name), request_options(openai)) |> Map.get(:body)
+    finch_request
+    |> Finch.request!(Map.get(openai, :finch_name), request_options(openai))
+    |> Map.get(:body)
   end
 
   @doc false
