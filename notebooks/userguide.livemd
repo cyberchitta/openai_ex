@@ -80,22 +80,45 @@ There are a few places where configuration seemed necessary.
 
 #### Receive Timeout
 
-The default receive timeout was set to 2 minutes to cover (hopefully) 99% of common usage scenarios. If you are seeing longer latencies, you can override the default with
+The default receive timeout is 15 seconds. If you are seeing longer latencies, you can override the default with
 
 ```elixir
-# set receive timeout to 10 minutes
-# openai = OpenaiEx.new(apikey) |> OpenaiEx.with_receive_timeout(600_000)
+# set receive timeout to 45 seconds
+openai = OpenaiEx.new(apikey) |> OpenaiEx.with_receive_timeout(45_000)
 ```
+
+#### Finch Instance
+
+In production scenarios where you want to explicitly tweak the Finch pool, you can create a new Finch instance using
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+Finch.start_link(
+    name: MyConfguredFinch,
+    pools: ...
+)
+```
+
+You can use this instance of Finch (instead of the default `OpenaiEx.Finch`) by setting the finch name
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+openai_with_custom_finch = openai |> with_finch_name(MyConfiguredFinch)
+```
+
+<!-- livebook:{"break_markdown":true} -->
 
 #### Base Url
 
-There are times, such as when using a local LLM (like Ollama) with an OpenAI proxy, when you need to reset the base url of the API. This is generally only applicable for chat and chat completion endpoints. This can be accomplished by
+There are times, such as when using a local LLM (like Ollama) with an OpenAI proxy, when you need to reset the base url of the API. This is generally only applicable for chat and chat completion endpoints and can be accomplished by
 
 ```elixir
-# uncomment the line at the end of this block comment when working with a local LLM with a 
-# proxy such as llama.cpp-python in the example below, our development livebook server is 
-# running in a docker dev container while the local llm is running on the host machine
-# openai = OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
+# in this example, our development livebook server is running in a docker dev container while 
+# the local llm is running on the host machine
+proxy_openai =
+  OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
 ```
 
 ## Model
@@ -959,3 +982,5 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
+
+<!-- livebook:{"offset":28728,"stamp":{"token":"XCP.RsPvistvcF5ls1xYzW3MeZZCfvLnigZLcTK3v8VZcb_8MMsymNHN79hFmigd7U4gYASgLAK3ienP3zQEtdieP5tmLLCERpjgOyBfUf4ulFLTmChamEiBkD4","version":2}} -->
