@@ -988,5 +988,3 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
-
-<!-- livebook:{"offset":28728,"stamp":{"token":"XCP.RsPvistvcF5ls1xYzW3MeZZCfvLnigZLcTK3v8VZcb_8MMsymNHN79hFmigd7U4gYASgLAK3ienP3zQEtdieP5tmLLCERpjgOyBfUf4ulFLTmChamEiBkD4","version":2}} -->
