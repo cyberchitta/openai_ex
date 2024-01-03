@@ -12,7 +12,7 @@ Mix.install([
 
 `OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client especially for Livebook development.
 
-Portions of this project were developed with assistance from ChatGPT 4.
+Portions of this project were developed with assistance from ChatGPT 3.5 and 4.
 
 At this point, all API endpoints and features (as of Nov 15, 2023) are supported, including the **Assistants API Beta**, DALL-E-3, Text-to-Speech, the **tools support** in chat completions, and the **streaming version** of the chat completion endpoint. Streaming request **cancellation** is also supported.
 
