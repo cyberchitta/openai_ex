@@ -4,9 +4,19 @@
 
 `OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client especially for Livebook development.
 
-The library closely follows the naming / structure of the official OpenAI API client library for [Python](https://github.com/openai/openai-python), making it easy to understand and reuse existing documentation.
+Portions of this project were developed with assistance from ChatGPT 4.
 
 All API endpoints and features (as of Nov 15, 2023) are supported, including the **Assistants API Beta**, DALL-E-3, Text-To-Speech, the **tools support** in chat completions, and the **streaming version** of the chat completion endpoint. Streaming request **cancellation** is also supported.
+
+Configuration of Finch pools and API base url are supported.
+
+There are some differences compared to other elixir openai wrappers.
+
+* I tried to faithfully mirror the naming/structure of the [official python api](https://github.com/openai/openai-python). For example, content that is already in memory can be uploaded as part of a request, it doesn't have to be read from a file at a local path.
+* I was developing for a livebook use-case, so I don't have any config, only environment variables.
+* Streaming API versions, with request cancellation, are supported.
+* The underlying transport is finch, rather than httpoison
+* Local LLMs with an OpenAI proxy are on the radar as a legitimate use case
 
 Discussion and announcements are on [this thread in Elixir Forum](https://elixirforum.com/t/openai-ex-openai-api-client-library/)
 
@@ -37,7 +47,3 @@ After the container is up and running in VS Code, you can access livebook at htt
 To set environment variables for devcontainer development, you can create a `.env` file in the `.devcontainer` folder. Any secrets, such as `OPENAI_API_KEY` and `LIVEBOOK_PASSWORD`, can be defined in this file as environment variables. Note that this `.env` file should not be included in version control, and it is already included in the .gitignore file for this reason.
 
 You can find a sample `env` file in the same folder, which you can use as a template for your own `.env` file. These variables will be passed to Livebook via `docker-compose.yml`.
-
-## Acknowledgements
-
-Portions of this project were developed with assistance from OpenAI's ChatGPT.

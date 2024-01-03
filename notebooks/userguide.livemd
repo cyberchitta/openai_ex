@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.5.5"},
+  {:openai_ex, "~> 0.5.6"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.12.0"}
 ])
@@ -12,13 +12,19 @@ Mix.install([
 
 `OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client especially for Livebook development.
 
+Portions of this project were developed with assistance from ChatGPT 4.
+
 At this point, all API endpoints and features (as of Nov 15, 2023) are supported, including the **Assistants API Beta**, DALL-E-3, Text-to-Speech, the **tools support** in chat completions, and the **streaming version** of the chat completion endpoint. Streaming request **cancellation** is also supported.
+
+Configuration of Finch pools and API base url are supported.
 
 There are some differences compared to other elixir openai wrappers.
 
 * I tried to faithfully mirror the naming/structure of the official python api. For example, content that is already in memory can be uploaded as part of a request, it doesn't have to be read from a file at a local path.
 * I was developing for a livebook use-case, so I don't have any config, only environment variables.
-* Streaming API versions are fully supported.
+* Streaming API versions, with request cancellation, are supported.
+* The underlying transport is finch, rather than httpoison
+* Local LLMs with an OpenAI proxy are on the radar as a legitimate use case
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
@@ -37,7 +43,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.5.5"}
+    {:openai_ex, "~> 0.5.6"}
   ]
 )
 ```
@@ -51,7 +57,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.5.5"}
+    {:openai_ex, "~> 0.5.6"}
   ]
 end
 ```
@@ -80,22 +86,45 @@ There are a few places where configuration seemed necessary.
 
 #### Receive Timeout
 
-The default receive timeout was set to 2 minutes to cover (hopefully) 99% of common usage scenarios. If you are seeing longer latencies, you can override the default with
+The default receive timeout is 15 seconds. If you are seeing longer latencies, you can override the default with
 
 ```elixir
-# set receive timeout to 10 minutes
-# openai = OpenaiEx.new(apikey) |> OpenaiEx.with_receive_timeout(600_000)
+# set receive timeout to 45 seconds
+openai = OpenaiEx.new(apikey) |> OpenaiEx.with_receive_timeout(45_000)
 ```
+
+#### Finch Instance
+
+In production scenarios where you want to explicitly tweak the Finch pool, you can create a new Finch instance using
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+Finch.start_link(
+    name: MyConfguredFinch,
+    pools: ...
+)
+```
+
+You can use this instance of Finch (instead of the default `OpenaiEx.Finch`) by setting the finch name
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+openai_with_custom_finch = openai |> with_finch_name(MyConfiguredFinch)
+```
+
+<!-- livebook:{"break_markdown":true} -->
 
 #### Base Url
 
-There are times, such as when using a local LLM (like Ollama) with an OpenAI proxy, when you need to reset the base url of the API. This is generally only applicable for chat and chat completion endpoints. This can be accomplished by
+There are times, such as when using a local LLM (like Ollama) with an OpenAI proxy, when you need to reset the base url of the API. This is generally only applicable for chat and chat completion endpoints and can be accomplished by
 
 ```elixir
-# uncomment the line at the end of this block comment when working with a local LLM with a 
-# proxy such as llama.cpp-python in the example below, our development livebook server is 
-# running in a docker dev container while the local llm is running on the host machine
-# openai = OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
+# in this example, our development livebook server is running in a docker dev container while 
+# the local llm is running on the host machine
+proxy_openai =
+  OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
 ```
 
 ## Model

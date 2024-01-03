@@ -12,7 +12,7 @@ defmodule OpenaiEx do
             organization: nil,
             beta: nil,
             base_url: "https://api.openai.com/v1",
-            receive_timeout: 120_000,
+            receive_timeout: 15_000,
             finch_name: OpenaiEx.Finch
 
   @doc """
