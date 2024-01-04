@@ -16,7 +16,7 @@ There are some differences compared to other elixir openai wrappers.
 * I was developing for a livebook use-case, so I don't have any config, only environment variables.
 * Streaming API versions, with request cancellation, are supported.
 * The underlying transport is finch, rather than httpoison
-* 3rd Party, including local, LLMs with an OpenAI proxy are on the radar as a legitimate use case
+* 3rd Party (including local) LLMs with an OpenAI proxy are on the radar as a legitimate use case
 
 Discussion and announcements are on [this thread in Elixir Forum](https://elixirforum.com/t/openai-ex-openai-api-client-library/)
 
