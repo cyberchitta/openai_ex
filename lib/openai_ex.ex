@@ -13,7 +13,8 @@ defmodule OpenaiEx do
             beta: nil,
             base_url: "https://api.openai.com/v1",
             receive_timeout: 15_000,
-            finch_name: OpenaiEx.Finch
+            finch_name: OpenaiEx.Finch,
+            _ep_path_mapping: &OpenaiEx._identity_ep_path_mapping/1
 
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.
@@ -47,6 +48,19 @@ defmodule OpenaiEx do
   def with_assistants_beta(openai = %OpenaiEx{}) do
     openai |> Map.put(:beta, "assistants=v1")
   end
+
+  # Globals to allow slight changes to API
+  # Not public, and with no guarantee that they will continue to be supported.
+
+  @doc false
+  def _identity_ep_path_mapping(x), do: x
+
+  @doc false
+  def _with_ep_path_mapping(openai = %OpenaiEx{}, ep_path_mapping) when is_function(ep_path_mapping, 1) do
+    openai |> Map.put(:_ep_path_mapping, ep_path_mapping)
+  end
+
+  # Globals for public use.
 
   def with_base_url(openai = %OpenaiEx{}, base_url) do
     openai |> Map.put(:base_url, base_url)
