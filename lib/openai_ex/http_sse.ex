@@ -64,7 +64,7 @@ defmodule OpenaiEx.HttpSse do
         {:halt, {acc, ref, task}}
 
       {:canceled, ^ref} ->
-        Logger.warning("Request canceled by user")
+        Logger.info("Request canceled by user")
         {:halt, {acc, ref, task}}
     end
   end
