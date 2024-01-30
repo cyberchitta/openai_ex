@@ -14,7 +14,7 @@ defmodule OpenaiEx do
             base_url: "https://api.openai.com/v1",
             receive_timeout: 15_000,
             finch_name: OpenaiEx.Finch,
-            _ep_path_mapping: &OpenaiEx._identity_ep_path_mapping/1
+            _ep_path_mapping: &OpenaiEx._identity/1
 
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.
@@ -53,7 +53,7 @@ defmodule OpenaiEx do
   # Not public, and with no guarantee that they will continue to be supported.
 
   @doc false
-  def _identity_ep_path_mapping(x), do: x
+  def _identity(x), do: x
 
   @doc false
   def _with_ep_path_mapping(openai = %OpenaiEx{}, ep_path_mapping) when is_function(ep_path_mapping, 1) do
