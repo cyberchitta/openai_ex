@@ -14,7 +14,8 @@ defmodule OpenaiEx do
             base_url: "https://api.openai.com/v1",
             receive_timeout: 15_000,
             finch_name: OpenaiEx.Finch,
-            _ep_path_mapping: &OpenaiEx._identity/1
+            _ep_path_mapping: &OpenaiEx._identity/1,
+            _http_headers: nil
 
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.
@@ -22,9 +23,17 @@ defmodule OpenaiEx do
   See https://platform.openai.com/docs/api-reference/authentication for details.
   """
   def new(token, organization \\ nil) do
+    headers =
+      [{"Authorization", "Bearer #{token}"}] ++
+        if(is_nil(organization),
+          do: [],
+          else: [{"OpenAI-Organization", organization}]
+        )
+
     %OpenaiEx{
       token: token,
-      organization: organization
+      organization: organization,
+      _http_headers: headers
     }
   end
 
@@ -44,9 +53,17 @@ defmodule OpenaiEx do
 
   # Globals for internal library use, **not** for public use.
 
+  @assistants_beta_string "assistants=v1"
   @doc false
   def with_assistants_beta(openai = %OpenaiEx{}) do
-    openai |> Map.put(:beta, "assistants=v1")
+    {_old_headers, new_openai} =
+      openai
+      |> Map.put(:beta, @assistants_beta_string)
+      |> Map.get_and_update(:_http_headers, fn headers ->
+        {headers, headers ++ [{"OpenAI-Beta", @assistants_beta_string}]}
+      end)
+
+    new_openai
   end
 
   # Globals to allow slight changes to API
@@ -56,7 +73,8 @@ defmodule OpenaiEx do
   def _identity(x), do: x
 
   @doc false
-  def _with_ep_path_mapping(openai = %OpenaiEx{}, ep_path_mapping) when is_function(ep_path_mapping, 1) do
+  def _with_ep_path_mapping(openai = %OpenaiEx{}, ep_path_mapping)
+      when is_function(ep_path_mapping, 1) do
     openai |> Map.put(:_ep_path_mapping, ep_path_mapping)
   end
 
