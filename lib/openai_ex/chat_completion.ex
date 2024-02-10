@@ -96,7 +96,9 @@ defmodule OpenaiEx.ChatCompletion do
   end
 
   def create(openai = %OpenaiEx{}, chat_completion = %{}) do
+    ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
+
     openai
-    |> OpenaiEx.Http.post(@ep_url, json: chat_completion |> Map.take(@api_fields))
+    |> OpenaiEx.Http.post(ep, json: chat_completion |> Map.take(@api_fields))
   end
 end

@@ -97,6 +97,8 @@ defmodule OpenaiEx.Completion do
   end
 
   def create(openai = %OpenaiEx{}, completion = %{}) do
-    openai |> OpenaiEx.Http.post(@ep_url, json: completion |> Map.take(@api_fields))
+    ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
+
+    openai |> OpenaiEx.Http.post(ep, json: completion |> Map.take(@api_fields))
   end
 end
