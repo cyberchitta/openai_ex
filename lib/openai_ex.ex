@@ -76,6 +76,8 @@ defmodule OpenaiEx do
     openai |> Map.put(:_ep_path_mapping, ep_path_mapping)
   end
 
+  # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference
+  @doc false
   def _azure_ep_path_mapping(api_version) do
     fn ep ->
       case ep do
