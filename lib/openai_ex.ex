@@ -92,7 +92,7 @@ defmodule OpenaiEx do
   def _for_azure(openai = %OpenaiEx{}, resource_name, deployment_id, api_version) do
     openai
     |> with_base_url(
-      "https://#{resource_name}.openai.azure.com/openai/deployments/#{deployment_id}/"
+      "https://#{resource_name}.openai.azure.com/openai/deployments/#{deployment_id}"
     )
     |> _with_ep_path_mapping(_azure_ep_path_mapping(api_version))
   end
