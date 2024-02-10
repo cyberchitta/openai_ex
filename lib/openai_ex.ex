@@ -7,7 +7,6 @@ defmodule OpenaiEx do
   and [JavaScript](https://github.com/openai/openai-node),
   making it easy to understand and reuse existing documentation and code.
   """
-  @enforce_keys [:token]
   defstruct token: nil,
             organization: nil,
             beta: nil,
@@ -73,9 +72,37 @@ defmodule OpenaiEx do
   def _identity(x), do: x
 
   @doc false
-  def _with_ep_path_mapping(openai = %OpenaiEx{}, ep_path_mapping)
-      when is_function(ep_path_mapping, 1) do
+  def _with_ep_path_mapping(openai = %OpenaiEx{}, ep_path_mapping) do
     openai |> Map.put(:_ep_path_mapping, ep_path_mapping)
+  end
+
+  def _azure_ep_path_mapping(api_version) do
+    fn ep ->
+      case ep do
+        "/chat/completions" -> "/chat/completions?api-version=#{api_version}"
+        "/completions" -> "/completions?api-version=#{api_version}"
+        "/embeddings" -> "/embeddings?api-version=#{api_version}"
+        _ -> ep
+      end
+    end
+  end
+
+  # Azure Support (non Entra Id). This is made available for convenience with no
+  # guarantee of continued support.
+  @doc false
+  def _for_azure(openai = %OpenaiEx{}, resource_name, deployment_id, api_version) do
+    openai
+    |> with_base_url(
+      "https://#{resource_name}.openai.azure.com/openai/deployments/#{deployment_id}/"
+    )
+    |> _with_ep_path_mapping(_azure_ep_path_mapping(api_version))
+  end
+
+  def _for_azure(azure_api_key, resource_name, deployment_id, api_version) do
+    %OpenaiEx{
+      _http_headers: [{"api-key", "#{azure_api_key}"}]
+    }
+    |> _for_azure(resource_name, deployment_id, api_version)
   end
 
   # Globals for public use.

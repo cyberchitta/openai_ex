@@ -88,8 +88,10 @@ defmodule OpenaiEx.Completion do
   See https://platform.openai.com/docs/api-reference/completions/create for more information.
   """
   def create(openai = %OpenaiEx{}, completion = %{}, stream: true) do
+    ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
+
     openai
-    |> OpenaiEx.HttpSse.post(@ep_url,
+    |> OpenaiEx.HttpSse.post(ep,
       json: completion |> Map.take(@api_fields) |> Map.put(:stream, true)
     )
   end
