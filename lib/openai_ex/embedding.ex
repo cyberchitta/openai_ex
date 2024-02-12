@@ -48,6 +48,8 @@ defmodule OpenaiEx.Embedding do
     args |> Map.take(@api_fields)
   end
 
+  @ep_url "/embeddings"
+
   @doc """
   Calls the embedding endpoint.
 
@@ -63,6 +65,7 @@ defmodule OpenaiEx.Embedding do
   See https://platform.openai.com/docs/api-reference/embeddings/create for more information.
   """
   def create(openai = %OpenaiEx{}, embedding = %{}) do
-    openai |> OpenaiEx.Http.post("/embeddings", json: embedding)
+    ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
+    openai |> OpenaiEx.Http.post(ep, json: embedding)
   end
 end

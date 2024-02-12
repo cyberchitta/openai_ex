@@ -87,14 +87,18 @@ defmodule OpenaiEx.ChatCompletion do
   See https://platform.openai.com/docs/api-reference/chat/completions/create for more information.
   """
   def create(openai = %OpenaiEx{}, chat_completion = %{}, stream: true) do
+    ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
+
     openai
-    |> OpenaiEx.HttpSse.post(@ep_url,
+    |> OpenaiEx.HttpSse.post(ep,
       json: chat_completion |> Map.take(@api_fields) |> Map.put(:stream, true)
     )
   end
 
   def create(openai = %OpenaiEx{}, chat_completion = %{}) do
+    ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
+
     openai
-    |> OpenaiEx.Http.post(@ep_url, json: chat_completion |> Map.take(@api_fields))
+    |> OpenaiEx.Http.post(ep, json: chat_completion |> Map.take(@api_fields))
   end
 end

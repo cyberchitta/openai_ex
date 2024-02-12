@@ -2,9 +2,9 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.5.6"},
+  {:openai_ex, "~> 0.5.7"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.12.0"}
+  {:kino, "~> 0.12.3"}
 ])
 ```
 
@@ -24,7 +24,7 @@ There are some differences compared to other elixir openai wrappers.
 * I was developing for a livebook use-case, so I don't have any config, only environment variables.
 * Streaming API versions, with request cancellation, are supported.
 * The underlying transport is finch, rather than httpoison
-* 3rd Party (including local) LLMs with an OpenAI proxy are on the radar as a legitimate use case
+* 3rd Party (including local) LLMs with an OpenAI proxy, as well as the Azure OpenAI API, are on the radar as a legitimate use case
 
 To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
 
@@ -43,7 +43,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.5.6"}
+    {:openai_ex, "~> 0.5.7"}
   ]
 )
 ```
@@ -57,7 +57,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.5.6"}
+    {:openai_ex, "~> 0.5.7"}
   ]
 end
 ```
@@ -126,6 +126,30 @@ There are times, such as when using a local LLM (like Ollama) with an OpenAI pro
 proxy_openai =
   OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
 ```
+
+#### Azure OpenAI
+
+The Azure OpenAI API replicates the Completion, Chat Completion and Embeddings endpoints from OpenAI.
+
+However, it modifies the base URL as well as the endpoint path, and adds a parameter to the URL query. These modifications are accommodated with the following calls:
+
+for non Entra Id
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+openai = OpenaiEx._for_azure(azure_api_id, resource_name, deployment_id, api_version)
+```
+
+and for Entra Id
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+openai = OpenaiEx.new(entraId) |> OpenaiEx._for_azure(resource_name, deployment_id, api_version)
+```
+
+These methods will be supported as long as the Azure version does not deviate too far from the base OpenAI API.
 
 ## Model
 
@@ -988,3 +1012,5 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
+
+<!-- livebook:{"offset":29821,"stamp":{"token":"XCP.Xfqp-TpuTxYGWSi1SOTwAyaEJOk15w1Jd-fS_nDEAuPIdVrLGZGEs4iWAxjjr5KjIYPbffoPUfvQ2svKFtCfC-3XthXLNh6qyjvkVM_XL_nDlJmO5xBEh7U","version":2}} -->

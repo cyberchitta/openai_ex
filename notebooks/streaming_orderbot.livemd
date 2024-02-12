@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.5.6"},
-  {:kino, "~> 0.12.0"}
+  {:openai_ex, "~> 0.5.7"},
+  {:kino, "~> 0.12.3"}
 ])
 
 alias OpenaiEx

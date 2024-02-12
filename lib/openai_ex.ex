@@ -7,13 +7,14 @@ defmodule OpenaiEx do
   and [JavaScript](https://github.com/openai/openai-node),
   making it easy to understand and reuse existing documentation and code.
   """
-  @enforce_keys [:token]
   defstruct token: nil,
             organization: nil,
             beta: nil,
             base_url: "https://api.openai.com/v1",
             receive_timeout: 15_000,
-            finch_name: OpenaiEx.Finch
+            finch_name: OpenaiEx.Finch,
+            _ep_path_mapping: &OpenaiEx._identity/1,
+            _http_headers: nil
 
   @doc """
   Creates a new OpenaiEx struct with the specified token and organization.
@@ -21,9 +22,17 @@ defmodule OpenaiEx do
   See https://platform.openai.com/docs/api-reference/authentication for details.
   """
   def new(token, organization \\ nil) do
+    headers =
+      [{"Authorization", "Bearer #{token}"}] ++
+        if(is_nil(organization),
+          do: [],
+          else: [{"OpenAI-Organization", organization}]
+        )
+
     %OpenaiEx{
       token: token,
-      organization: organization
+      organization: organization,
+      _http_headers: headers
     }
   end
 
@@ -43,10 +52,61 @@ defmodule OpenaiEx do
 
   # Globals for internal library use, **not** for public use.
 
+  @assistants_beta_string "assistants=v1"
   @doc false
   def with_assistants_beta(openai = %OpenaiEx{}) do
-    openai |> Map.put(:beta, "assistants=v1")
+    {_old_headers, new_openai} =
+      openai
+      |> Map.put(:beta, @assistants_beta_string)
+      |> Map.get_and_update(:_http_headers, fn headers ->
+        {headers, headers ++ [{"OpenAI-Beta", @assistants_beta_string}]}
+      end)
+
+    new_openai
   end
+
+  # Globals to allow slight changes to API
+  # Not public, and with no guarantee that they will continue to be supported.
+
+  @doc false
+  def _identity(x), do: x
+
+  @doc false
+  def _with_ep_path_mapping(openai = %OpenaiEx{}, ep_path_mapping) do
+    openai |> Map.put(:_ep_path_mapping, ep_path_mapping)
+  end
+
+  # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference
+  @doc false
+  def _azure_ep_path_mapping(api_version) do
+    fn ep ->
+      case ep do
+        "/chat/completions" -> "/chat/completions?api-version=#{api_version}"
+        "/completions" -> "/completions?api-version=#{api_version}"
+        "/embeddings" -> "/embeddings?api-version=#{api_version}"
+        _ -> ep
+      end
+    end
+  end
+
+  # Azure OpenAI. Not public and with no guarantee of continued support.
+  @doc false
+  def _for_azure(openai = %OpenaiEx{}, resource_name, deployment_id, api_version) do
+    openai
+    |> with_base_url(
+      "https://#{resource_name}.openai.azure.com/openai/deployments/#{deployment_id}"
+    )
+    |> _with_ep_path_mapping(_azure_ep_path_mapping(api_version))
+  end
+
+  def _for_azure(azure_api_key, resource_name, deployment_id, api_version) do
+    %OpenaiEx{
+      _http_headers: [{"api-key", "#{azure_api_key}"}]
+    }
+    |> _for_azure(resource_name, deployment_id, api_version)
+  end
+
+  # Globals for public use.
 
   def with_base_url(openai = %OpenaiEx{}, base_url) do
     openai |> Map.put(:base_url, base_url)
