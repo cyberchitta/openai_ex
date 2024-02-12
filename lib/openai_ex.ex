@@ -55,14 +55,12 @@ defmodule OpenaiEx do
   @assistants_beta_string "assistants=v1"
   @doc false
   def with_assistants_beta(openai = %OpenaiEx{}) do
-    {_old_headers, new_openai} =
-      openai
-      |> Map.put(:beta, @assistants_beta_string)
-      |> Map.get_and_update(:_http_headers, fn headers ->
-        {headers, headers ++ [{"OpenAI-Beta", @assistants_beta_string}]}
-      end)
-
-    new_openai
+    openai
+    |> Map.put(:beta, @assistants_beta_string)
+    |> Map.get_and_update(:_http_headers, fn headers ->
+      {headers, headers ++ [{"OpenAI-Beta", @assistants_beta_string}]}
+    end)
+    |> elem(1)
   end
 
   # Globals to allow slight changes to API
