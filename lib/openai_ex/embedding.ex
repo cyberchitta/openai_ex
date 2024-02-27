@@ -8,16 +8,16 @@ defmodule OpenaiEx.Embedding do
 
   - `:input`
   - `:model`
+  - `:dimensions`
   - `:encoding_format`
   - `:user`
-  - `:dimensions` 
   """
   @api_fields [
     :input,
     :model,
+    :dimensions,
     :encoding_format,
-    :user,
-    :dimensions
+    :user
   ]
 
   @doc """
