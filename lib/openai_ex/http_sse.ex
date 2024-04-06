@@ -60,7 +60,7 @@ defmodule OpenaiEx.HttpSse do
         {[tokens], {next_acc, ref, task}}
 
       {:done, ^ref} ->
-        if acc != "", do: Logger.warning(inspect(Jason.decode!(acc)))
+        if acc != "", do: Logger.warning(%{message: "Unexpected value in sse 'acc' after ':done' event received", value: acc})
         {:halt, {acc, ref, task}}
 
       {:canceled, ^ref} ->
