@@ -59,7 +59,7 @@ defmodule OpenaiEx.HttpSse do
         {tokens, next_acc} = tokenize_data(evt_data, acc)
         {[tokens], {next_acc, ref, task}}
 
-      {:done, ^ref} when acc = "data: [DONE]" ->
+      {:done, ^ref} when acc == "data: [DONE]" ->
         {:halt, {acc, ref, task}}
       
       {:done, ^ref} ->
