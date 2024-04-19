@@ -61,9 +61,15 @@ defmodule OpenaiEx.HttpSse do
 
       {:done, ^ref} when acc == "data: [DONE]" ->
         {:halt, {acc, ref, task}}
-      
+
       {:done, ^ref} ->
-        if acc != "", do: Logger.warning(%{message: "Unexpected value in sse 'acc' after ':done' event received", value: acc})
+        if acc != "",
+          do:
+            Logger.warning(%{
+              message: "Unexpected value in sse 'acc' after ':done' event received",
+              value: acc
+            })
+
         {:halt, {acc, ref, task}}
 
       {:canceled, ^ref} ->
