@@ -59,17 +59,8 @@ defmodule OpenaiEx.HttpSse do
         {tokens, next_acc} = tokenize_data(evt_data, acc)
         {[tokens], {next_acc, ref, task}}
 
-      {:done, ^ref} when acc == "data: [DONE]" ->
-        {:halt, {acc, ref, task}}
-
       {:done, ^ref} ->
-        if acc != "",
-          do:
-            Logger.warning(%{
-              message: "Unexpected value in sse 'acc' after ':done' event received",
-              value: acc
-            })
-
+        if acc != "", do: Logger.warning(inspect(Jason.decode!(acc)))
         {:halt, {acc, ref, task}}
 
       {:canceled, ^ref} ->
@@ -79,31 +70,41 @@ defmodule OpenaiEx.HttpSse do
   end
 
   @double_eol ~r/(\r?\n|\r){2}/
+  @double_eol_eos ~r/(\r?\n|\r){2}$/
 
   @doc false
   defp tokenize_data(evt_data, acc) do
     all_data = acc <> evt_data
 
-    if Regex.match?(@double_eol, evt_data) do
-      {remaining, token_chunks} = all_data |> String.split(@double_eol) |> List.pop_at(-1)
-
-      tokens =
-        token_chunks
-        |> Enum.map(&extract_token/1)
-        |> Enum.filter(fn
-          %{data: "[DONE]"} -> false
-          %{data: _} -> true
-          # we can pass other events through but the clients will need to be rewritten
-          _ -> false
-        end)
-        |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
-
+    if Regex.match?(@double_eol, all_data) do
+      {remaining, token_chunks} = extract_lines(all_data)
+      tokens = extract_tokens_json(token_chunks)
       {tokens, remaining}
     else
       {[], all_data}
     end
   end
 
+  @doc false
+  defp extract_lines(data) do
+    lines = String.split(data, @double_eol)
+    incomplete_line = !Regex.match?(@double_eol_eos, data)
+    if incomplete_line, do: lines |> List.pop_at(-1), else: {"", lines}
+  end
+
+  defp extract_tokens_json(token_chunks) do
+    token_chunks
+    |> Enum.map(&extract_token/1)
+    |> Enum.filter(fn
+      %{data: "[DONE]"} -> false
+      %{data: _} -> true
+      # we can pass other events through but the clients will need to be rewritten
+      _ -> false
+    end)
+    |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
+  end
+
+  @doc false
   defp extract_token(line) do
     [field | rest] = String.split(line, ":", parts: 2)
     value = Enum.join(rest, "") |> String.replace_prefix(" ", "")
