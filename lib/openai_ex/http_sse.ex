@@ -92,6 +92,7 @@ defmodule OpenaiEx.HttpSse do
     if incomplete_line, do: lines |> List.pop_at(-1), else: {"", lines}
   end
 
+  @doc false
   defp extract_tokens_json(token_chunks) do
     token_chunks
     |> Enum.map(&extract_token/1)
