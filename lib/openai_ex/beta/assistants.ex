@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Beta.Assistant do
+defmodule OpenaiEx.Beta.Assistants do
   @moduledoc """
   This module provides an implementation of the OpenAI assistants API. The API reference can be found at https://platform.openai.com/docs/api-reference/assistants.
 
@@ -43,7 +43,7 @@ defmodule OpenaiEx.Beta.Assistant do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Beta.Assistant.new(model: "gpt-4-turbo")
+      iex> _request = OpenaiEx.Beta.Assistants.new(model: "gpt-4-turbo")
       %{model: "gpt-4-turbo"}
   """
 

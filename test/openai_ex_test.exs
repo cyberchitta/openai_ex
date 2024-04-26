@@ -1,12 +1,12 @@
 defmodule OpenaiExTest do
   use ExUnit.Case
-  doctest OpenaiEx.ChatCompletion
+  doctest OpenaiEx.Chat.Completions
   doctest OpenaiEx.Completion
   doctest OpenaiEx.ChatMessage
-  doctest OpenaiEx.Embedding
-  doctest OpenaiEx.Image.Generate
-  doctest OpenaiEx.Moderation
+  doctest OpenaiEx.Embeddings
+  doctest OpenaiEx.Images.Generate
+  doctest OpenaiEx.Moderations
   doctest OpenaiEx.MsgContent
-  doctest OpenaiEx.Beta.Assistant
-  doctest OpenaiEx.Beta.Thread.Run
+  doctest OpenaiEx.Beta.Assistants
+  doctest OpenaiEx.Beta.Threads.Runs
 end

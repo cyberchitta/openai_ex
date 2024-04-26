@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Image.Edit do
+defmodule OpenaiEx.Images.Edit do
   @moduledoc """
   This module provides constructors for OpenAI Image Edit API request structure. The API reference can be found at https://platform.openai.com/docs/api-reference/images/create-edit.
 

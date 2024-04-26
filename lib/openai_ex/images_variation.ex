@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Image.Variation do
+defmodule OpenaiEx.Images.Variation do
   @moduledoc """
   This module provides constructors for OpenAI Image Variation API request structure. The API reference can be found at https://platform.openai.com/docs/api-reference/images/create-variation.
 

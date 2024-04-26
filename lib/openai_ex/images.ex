@@ -1,8 +1,8 @@
-defmodule OpenaiEx.Image do
+defmodule OpenaiEx.Images do
   @moduledoc """
   This module provides an implementation of the OpenAI images API. The API reference can be found at https://platform.openai.com/docs/api-reference/images.
   """
-  alias OpenaiEx.Image
+  alias OpenaiEx.Images
 
   @doc """
   Calls the image generation endpoint.
@@ -39,7 +39,7 @@ defmodule OpenaiEx.Image do
   def edit(openai = %OpenaiEx{}, image_edit = %{}) do
     openai
     |> OpenaiEx.Http.post("/images/edits",
-      multipart: image_edit |> OpenaiEx.Http.to_multi_part_form_data(Image.Edit.file_fields())
+      multipart: image_edit |> OpenaiEx.Http.to_multi_part_form_data(Images.Edit.file_fields())
     )
   end
 
@@ -61,7 +61,7 @@ defmodule OpenaiEx.Image do
     openai
     |> OpenaiEx.Http.post("/images/variations",
       multipart:
-        image_variation |> OpenaiEx.Http.to_multi_part_form_data(Image.Variation.file_fields())
+        image_variation |> OpenaiEx.Http.to_multi_part_form_data(Images.Variation.file_fields())
     )
   end
 end

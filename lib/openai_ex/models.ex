@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Model do
+defmodule OpenaiEx.Models do
   @moduledoc """
   This module provides an implementation of the OpenAI Models API. Information about these models can be found at https://platform.openai.com/docs/models.
   """

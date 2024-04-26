@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Beta.Run.Step do
+defmodule OpenaiEx.Beta.Threads.Runs.Steps do
   @moduledoc false
   defp ep_url(thread_id, run_id, step_id \\ nil) do
     "/threads/#{thread_id}/runs/#{run_id}/steps" <>

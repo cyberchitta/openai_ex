@@ -9,7 +9,7 @@ Mix.install([
 ])
 
 alias OpenaiEx
-alias OpenaiEx.Image
+alias OpenaiEx.Images
 ```
 
 ## Simple Kino UI

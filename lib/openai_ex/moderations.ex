@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Moderation do
+defmodule OpenaiEx.Moderations do
   @moduledoc """
   This module provides an implementation of the OpenAI moderation API. The API reference can be found at https://platform.openai.com/docs/api-reference/moderations.
 
@@ -29,12 +29,12 @@ defmodule OpenaiEx.Moderation do
 
   Example usage:
 
-      iex> OpenaiEx.Moderation.new(input: "This is a test")
+      iex> OpenaiEx.Moderations.new(input: "This is a test")
       %{
         input: "This is a test"
       }
 
-      iex> OpenaiEx.Moderation.new(%{input: "This is a test"})
+      iex> OpenaiEx.Moderations.new(%{input: "This is a test"})
       %{
         input: "This is a test"
       }

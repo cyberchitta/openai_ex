@@ -7,7 +7,7 @@ Mix.install([
 ])
 
 alias OpenaiEx
-alias OpenaiEx.ChatCompletion
+alias OpenaiEx.Chat.Completions
 alias OpenaiEx.ChatMessage
 ```
 
@@ -27,7 +27,7 @@ openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
 ```elixir
 defmodule OpenaiEx.Notebooks.StreamingOrderbot do
   alias OpenaiEx
-  alias OpenaiEx.ChatCompletion
+  alias OpenaiEx.Chat.Completions
   require Logger
 
   def set_task_pid(task_pid) do
