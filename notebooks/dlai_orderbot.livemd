@@ -7,7 +7,7 @@ Mix.install([
 ])
 
 alias OpenaiEx
-alias OpenaiEx.ChatCompletion
+alias OpenaiEx.Chat.Completions
 alias OpenaiEx.ChatMessage
 ```
 
@@ -35,7 +35,7 @@ openai =
 ```elixir
 defmodule OpenaiEx.Notebooks.DlaiOrderbot do
   alias OpenaiEx
-  alias OpenaiEx.ChatCompletion
+  alias OpenaiEx.Chat.Completions
 
   def create_chat_req(args = [_ | _]) do
     args

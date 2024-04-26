@@ -158,7 +158,7 @@ These methods will be supported as long as the Azure version does not deviate to
 To list all available models, use the [`Model.list()`](https://platform.openai.com/docs/api-reference/models/list) function:
 
 ```elixir
-alias OpenaiEx.Model
+alias OpenaiEx.Models
 
 openai |> Model.list()
 ```
