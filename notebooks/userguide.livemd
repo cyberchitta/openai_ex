@@ -372,7 +372,7 @@ img_to_expmt = fetched_images |> List.first()
 
 ### Edit Image
 
-We define an image edit request structure using the `Image.Edit.new()` function. This function requires an image and a mask. For the image, we will use the one that we received. Let's load the mask from a URL.
+We define an image edit request structure using the `Images.Edit.new()` function. This function requires an image and a mask. For the image, we will use the one that we received. Let's load the mask from a URL.
 
 ```elixir
 # if you're having problems downloading raw github content, you may need to manually set your DNS server to "8.8.8.8" (google)
@@ -388,7 +388,7 @@ Set up the image edit request with image, mask and prompt.
 
 ```elixir
 img_edit_req =
-  Image.Edit.new(
+  Images.Edit.new(
     image: img_to_expmt,
     mask: star_mask,
     size: "256x256",
@@ -411,10 +411,10 @@ img_edit_response["data"]
 
 ### Image Variations
 
-We define an image variation request structure using the `Image.Variation.new()` function. This function requires an image.
+We define an image variation request structure using the `Images.Variation.new()` function. This function requires an image.
 
 ```elixir
-img_var_req = Image.Variation.new(image: img_to_expmt, size: "256x256")
+img_var_req = Images.Variation.new(image: img_to_expmt, size: "256x256")
 ```
 
 Then call the [`Image.create_variation()`](https://platform.openai.com/docs/api-reference/images/create-variation) function to generate the images.
@@ -527,7 +527,7 @@ For more information on the audio endpoints see the [Openai API Audio Reference]
 To request all files that belong to the user organization, call the [`File.list()`](https://platform.openai.com/docs/api-reference/files/list) function
 
 ```elixir
-alias OpenaiEx.File
+alias OpenaiEx.Files
 
 openai |> File.list()
 ```
@@ -721,7 +721,7 @@ Once created, an assistant can be modified using the [`Assistant.update()`](http
 Now we will show an example assistant request using the retrieval tool with a set of files. First we set up the files (in this case a sample HR document) by uploading using the `File` API.
 
 ```elixir
-alias OpenaiEx.File
+alias OpenaiEx.Files
 
 hr_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/cyberdyne.txt"))
 hr_upload_req = File.new_upload(file: hr_file, purpose: "assistants")

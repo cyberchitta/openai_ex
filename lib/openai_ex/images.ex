@@ -39,7 +39,7 @@ defmodule OpenaiEx.Images do
   def edit(openai = %OpenaiEx{}, image_edit = %{}) do
     openai
     |> OpenaiEx.Http.post("/images/edits",
-      multipart: image_edit |> OpenaiEx.Http.to_multi_part_form_data(Image.Edit.file_fields())
+      multipart: image_edit |> OpenaiEx.Http.to_multi_part_form_data(Images.Edit.file_fields())
     )
   end
 
@@ -61,7 +61,7 @@ defmodule OpenaiEx.Images do
     openai
     |> OpenaiEx.Http.post("/images/variations",
       multipart:
-        image_variation |> OpenaiEx.Http.to_multi_part_form_data(Image.Variation.file_fields())
+        image_variation |> OpenaiEx.Http.to_multi_part_form_data(Images.Variation.file_fields())
     )
   end
 end
