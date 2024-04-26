@@ -658,7 +658,7 @@ For more information on the fine tune endpoints see the [Openai API Moderation R
 We use the moderation API by calling `Moderation.new()` to create a new request
 
 ```elixir
-alias OpenaiEx.Moderation
+alias OpenaiEx.Moderations
 
 mod_req = Moderation.new(input: "I want to kill people")
 ```
