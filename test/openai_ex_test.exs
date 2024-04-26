@@ -8,5 +8,5 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Moderations
   doctest OpenaiEx.MsgContent
   doctest OpenaiEx.Beta.Assistants
-  doctest OpenaiEx.Beta.Thread.Run
+  doctest OpenaiEx.Beta.Threads.Runs
 end

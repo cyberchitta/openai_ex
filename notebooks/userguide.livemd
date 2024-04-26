@@ -827,7 +827,7 @@ openai |> Assistant.File.list(list_req)
 ## Thread
 
 ```elixir
-alias OpenaiEx.Beta.Thread
+alias OpenaiEx.Beta.Threads
 ```
 
 ### Create thread
@@ -881,7 +881,7 @@ openai |> Thread.retrieve(thread_id)
 ## Messages
 
 ```elixir
-alias OpenaiEx.Beta.Thread.Message
+alias OpenaiEx.Beta.Threads.Messages
 ```
 
 ### Create message
@@ -941,7 +941,7 @@ openai |> Message.File.list(%{thread_id: thread_id, message_id: message_id})
 ## Runs
 
 ```elixir
-alias OpenaiEx.Beta.Thread.Run
+alias OpenaiEx.Beta.Threads.Runs
 ```
 
 ### Create run
