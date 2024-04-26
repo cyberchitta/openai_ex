@@ -674,7 +674,7 @@ For more information on the moderation endpoints see the [Openai API Moderation 
 ## Assistant
 
 ```elixir
-alias OpenaiEx.Beta.Assistant
+alias OpenaiEx.Beta.Assistants
 ```
 
 ### Create Assistant

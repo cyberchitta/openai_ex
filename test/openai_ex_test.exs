@@ -7,6 +7,6 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Images.Generate
   doctest OpenaiEx.Moderations
   doctest OpenaiEx.MsgContent
-  doctest OpenaiEx.Beta.Assistant
+  doctest OpenaiEx.Beta.Assistants
   doctest OpenaiEx.Beta.Thread.Run
 end
