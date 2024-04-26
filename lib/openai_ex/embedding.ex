@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Embedding do
+defmodule OpenaiEx.Embeddings do
   @moduledoc """
   This module provides an implementation of the OpenAI embeddings API. The API reference can be found at https://platform.openai.com/docs/api-reference/embeddings.
 
@@ -35,10 +35,10 @@ defmodule OpenaiEx.Embedding do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Embedding.new(model: "davinci", input: "This is a test")
+      iex> _request = OpenaiEx.Embeddings.new(model: "davinci", input: "This is a test")
       %{input: "This is a test", model: "davinci"}
 
-      iex> _request = OpenaiEx.Embedding.new(%{model: "davinci", input: "This is a test"})
+      iex> _request = OpenaiEx.Embeddings.new(%{model: "davinci", input: "This is a test"})
       %{input: "This is a test", model: "davinci"}
   """
 

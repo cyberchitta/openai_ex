@@ -439,7 +439,7 @@ For more information on images variations, see the [OpenAI API Image Variations 
 Define the embedding request structure using `Embedding.new`.
 
 ```elixir
-alias OpenaiEx.Embedding
+alias OpenaiEx.Embeddings
 
 emb_req =
   Embedding.new(
