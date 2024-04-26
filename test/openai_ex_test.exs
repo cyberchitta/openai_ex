@@ -1,6 +1,6 @@
 defmodule OpenaiExTest do
   use ExUnit.Case
-  doctest OpenaiEx.ChatCompletion
+  doctest OpenaiEx.Chat.Completions
   doctest OpenaiEx.Completion
   doctest OpenaiEx.ChatMessage
   doctest OpenaiEx.Embeddings

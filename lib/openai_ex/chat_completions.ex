@@ -1,4 +1,4 @@
-defmodule OpenaiEx.ChatCompletion do
+defmodule OpenaiEx.Chat.Completions do
   @moduledoc """
   This module provides an implementation of the OpenAI chat completions API. The API reference can be found at https://platform.openai.com/docs/api-reference/chat/completions.
 
@@ -55,10 +55,10 @@ defmodule OpenaiEx.ChatCompletion do
 
   Example usage:
 
-      iex> _request = OpenaiEx.ChatCompletion.new(model: "davinci", messages: [OpenaiEx.ChatMessage.user("Hello, world!")])
+      iex> _request = OpenaiEx.Chat.Completions.new(model: "davinci", messages: [OpenaiEx.ChatMessage.user("Hello, world!")])
       %{messages: [%{content: "Hello, world!", role: "user"}], model: "davinci"}
 
-      iex> _request = OpenaiEx.ChatCompletion.new(%{model: "davinci", messages: [OpenaiEx.ChatMessage.user("Hello, world!")]})
+      iex> _request = OpenaiEx.Chat.Completions.new(%{model: "davinci", messages: [OpenaiEx.ChatMessage.user("Hello, world!")]})
       %{messages: [%{content: "Hello, world!", role: "user"}], model: "davinci"}
   """
 

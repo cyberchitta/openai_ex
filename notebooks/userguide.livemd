@@ -178,7 +178,7 @@ For more information on using models, see the [OpenAI API Models reference](http
 To generate a chat completion, you need to define a chat completion request structure using the `ChatCompletion.new()` function. This function takes several parameters, such as the model ID and a list of chat messages. We have a module `ChatMessage` which helps create messages in the [chat format](https://platform.openai.com/docs/guides/chat/introduction).
 
 ```elixir
-alias OpenaiEx.ChatCompletion
+alias OpenaiEx.Chat.Completions
 alias OpenaiEx.ChatMessage
 alias OpenaiEx.MsgContent
 
