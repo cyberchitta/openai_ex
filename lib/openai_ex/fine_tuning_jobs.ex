@@ -1,4 +1,4 @@
-defmodule OpenaiEx.FineTuning.Job do
+defmodule OpenaiEx.FineTuning.Jobs do
   @moduledoc """
   This module provides an implementation of the OpenAI fine-tuning job API. The API reference can be found at https://platform.openai.com/docs/api-reference/fine-tuning.
 

@@ -602,43 +602,43 @@ To run a fine-tuning job, we minimally need a training file. We will re-run the 
 upload_res = openai |> File.create(upload_req)
 ```
 
-Next we call `FineTuning.Job.new()` to create a new request structure
+Next we call `FineTuning.Jobs.new()` to create a new request structure
 
 ```elixir
 alias OpenaiEx.FineTuning
 
-ft_req = FineTuning.Job.new(model: "davinci-002", training_file: upload_res["id"])
+ft_req = FineTuning.Jobs.new(model: "davinci-002", training_file: upload_res["id"])
 ```
 
-To begin the fine tune, we call the [`FineTune.create()`](https://platform.openai.com/docs/api-reference/fine-tunes/create) function
+To begin the fine tune, we call the [`FineTuning.Jobs.create()`](https://platform.openai.com/docs/api-reference/fine-tunes/create) function
 
 ```elixir
-ft_res = openai |> FineTuning.Job.create(ft_req)
+ft_res = openai |> FineTuning.Jobs.create(ft_req)
 ```
 
-We can list all fine tunes by calling [`FineTune.list()`](https://platform.openai.com/docs/api-reference/fine-tunes/list)
+We can list all fine tunes by calling [`FineTuning.Jobs.list()`](https://platform.openai.com/docs/api-reference/fine-tunes/list)
 
 ```elixir
-openai |> FineTuning.Job.list()
+openai |> FineTuning.Jobs.list()
 ```
 
 The function [`FineTune.retrieve()`](https://platform.openai.com/docs/api-reference/fine-tunes/retrieve) gets the details of a particular fine tune.
 
 ```elixir
 ft_id = ft_res["id"]
-openai |> FineTuning.Job.retrieve(fine_tuning_job_id: ft_id)
+openai |> FineTuning.Jobs.retrieve(fine_tuning_job_id: ft_id)
 ```
 
-and [`FineTune.list_events()`](https://platform.openai.com/docs/api-reference/fine-tunes/events) can be called to get the events
+and [`FineTuning.Jobs.list_events()`](https://platform.openai.com/docs/api-reference/fine-tunes/events) can be called to get the events
 
 ```elixir
-openai |> FineTuning.Job.list_events(fine_tuning_job_id: ft_id)
+openai |> FineTuning.Jobs.list_events(fine_tuning_job_id: ft_id)
 ```
 
-To cancel a Fine Tune job, call [`FineTune.cancel()`](https://platform.openai.com/docs/api-reference/fine-tunes/cancel)
+To cancel a Fine Tune job, call [`FineTuning.Jobs.cancel()`](https://platform.openai.com/docs/api-reference/fine-tunes/cancel)
 
 ```elixir
-openai |> FineTuning.Job.cancel(fine_tuning_job_id: ft_id)
+openai |> FineTuning.Jobs.cancel(fine_tuning_job_id: ft_id)
 ```
 
 A fine tuned model can be deleted by calling the [`Model.delete()`](https://platform.openai.com/docs/api-reference/fine-tunes/delete-model)
