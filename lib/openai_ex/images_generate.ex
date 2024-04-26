@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Image.Generate do
+defmodule OpenaiEx.Images.Generate do
   @moduledoc """
   This module provides constructors for the OpenAI image generation API. The API
   reference can be found at https://platform.openai.com/docs/api-reference/images/create.
@@ -42,10 +42,10 @@ defmodule OpenaiEx.Image.Generate do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Image.Generate.new(prompt: "This is a test")
+      iex> _request = OpenaiEx.Images.Generate.new(prompt: "This is a test")
       %{prompt: "This is a test"}
 
-      iex> _request = OpenaiEx.Image.Generate.new(%{prompt: "This is a test"})
+      iex> _request = OpenaiEx.Images.Generate.new(%{prompt: "This is a test"})
       %{prompt: "This is a test"}
   """
   def new(args = [_ | _]) do

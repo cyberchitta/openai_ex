@@ -330,7 +330,7 @@ The final response includes the result of the function call integrated into the 
 We define the image creation request structure using the `Image.new` function
 
 ```elixir
-alias OpenaiEx.Image
+alias OpenaiEx.Images
 
 img_req = Image.Generate.new(prompt: "An adorable baby sea otter", size: "256x256", n: 1)
 ```
