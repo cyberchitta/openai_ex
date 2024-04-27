@@ -13,6 +13,7 @@ defmodule OpenaiEx.Audio.Transcription do
   - `:prompt`
   - `:response_format`
   - `:temperature`
+  - `:timestamp_granularities`
   """
   @api_fields [
     :file,
@@ -20,7 +21,8 @@ defmodule OpenaiEx.Audio.Transcription do
     :language,
     :prompt,
     :response_format,
-    :temperature
+    :temperature,
+    :timestamp_granularities
   ]
 
   @doc """
