@@ -10,6 +10,7 @@ defmodule OpenaiEx.Chat.Completions do
   - `:model`
   - `:frequency_penalty`
   - `:logit_bias`
+  - `:logprobs`
   - `:max_tokens`
   - `:n`
   - `:presence_penalty`
@@ -17,6 +18,7 @@ defmodule OpenaiEx.Chat.Completions do
   - `:seed`
   - `:stop`
   - `:temperature`
+  - `:top_logprobs`
   - `:top_p`
   - `:tools`
   - `:tool_choice`
@@ -27,6 +29,7 @@ defmodule OpenaiEx.Chat.Completions do
     :model,
     :frequency_penalty,
     :logit_bias,
+    :logprobs,
     :max_tokens,
     :n,
     :presence_penalty,
@@ -35,6 +38,7 @@ defmodule OpenaiEx.Chat.Completions do
     :stop,
     :temperature,
     :top_p,
+    :top_logprobs,
     :tools,
     :tool_choice,
     :user
