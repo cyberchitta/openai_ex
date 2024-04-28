@@ -18,7 +18,9 @@ defmodule OpenaiEx.FineTuning.Jobs do
   @api_fields [
     :model,
     :hyperparameters,
+    :integrations,
     :suffix,
+    :seed,
     :training_file,
     :validation_file,
     :after,
@@ -91,7 +93,8 @@ defmodule OpenaiEx.FineTuning.Jobs do
 
   https://platform.openai.com/docs/api-reference/fine-tuning/events
   """
-  def list_events(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> OpenaiEx.Http.get(ep_url(fine_tuning_job_id, "events"))
+  def list_events(openai = %OpenaiEx{}, opts = [fine_tuning_job_id: fine_tuning_job_id]) do
+    params = opts |> Enum.into(%{}) |> Map.take([:after, :limit])
+    openai |> OpenaiEx.Http.get(ep_url(fine_tuning_job_id, "events"), params)
   end
 end

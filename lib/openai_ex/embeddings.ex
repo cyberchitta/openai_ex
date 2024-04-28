@@ -35,11 +35,11 @@ defmodule OpenaiEx.Embeddings do
 
   Example usage:
 
-      iex> _request = OpenaiEx.Embeddings.new(model: "davinci", input: "This is a test")
-      %{input: "This is a test", model: "davinci"}
+      iex> _request = OpenaiEx.Embeddings.new(model: "text-embedding-ada-002", input: "This is a test")
+      %{input: "This is a test", model: "text-embedding-ada-002"}
 
-      iex> _request = OpenaiEx.Embeddings.new(%{model: "davinci", input: "This is a test"})
-      %{input: "This is a test", model: "davinci"}
+      iex> _request = OpenaiEx.Embeddings.new(%{model: "text-embedding-ada-002", input: "This is a test"})
+      %{input: "This is a test", model: "text-embedding-ada-002"}
   """
 
   def new(args = [_ | _]) do

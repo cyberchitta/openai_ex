@@ -1,0 +1,29 @@
+# Cleaning up after testing various API calls
+
+```elixir
+Mix.install([
+  {:openai_ex, path: Path.join(__DIR__, "..")},
+  {:kino, "~> 0.12.3"}
+])
+```
+
+## Files cleanup
+
+```elixir
+apikey = System.fetch_env!("LB_OPENAI_API_KEY")
+openai = OpenaiEx.new(apikey)
+```
+
+```elixir
+all_files = openai |> OpenaiEx.Files.list()
+```
+
+```elixir
+Enum.each(all_files["data"], fn file -> OpenaiEx.Files.delete(openai, file["id"]) end)
+```
+
+```elixir
+OpenaiEx.Files.list(openai)
+```
+
+<!-- livebook:{"offset":464,"stamp":{"token":"XCP.u__czdrSAAT1jlbfOdKG9I-zXCOZHzbc0AUG4MFcHJyJjXqfnQsjVufYKNDnUv0Z3cvJG1LZrYff7OC8G32hvVPF3VH_pTDPWJJ07nuHXmIKtYtpkgM_6rQ","version":2}} -->

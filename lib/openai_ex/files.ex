@@ -147,7 +147,7 @@ defmodule OpenaiEx.Files do
 
   https://platform.openai.com/docs/api-reference/files/retrieve-content
   """
-  def download(openai = %OpenaiEx{}, file_id) do
+  def content(openai = %OpenaiEx{}, file_id) do
     openai
     |> OpenaiEx.Http.get_no_decode(ep_url(file_id, "content"))
   end

@@ -77,8 +77,8 @@ defmodule OpenaiEx.HttpSse do
     all_data = acc <> evt_data
 
     if Regex.match?(@double_eol, all_data) do
-      {remaining, token_chunks} = extract_lines(all_data)
-      tokens = extract_tokens_json(token_chunks)
+      {remaining, lines} = extract_lines(all_data)
+      tokens = extract_json_tokens(lines)
       {tokens, remaining}
     else
       {[], all_data}
@@ -93,8 +93,8 @@ defmodule OpenaiEx.HttpSse do
   end
 
   @doc false
-  defp extract_tokens_json(token_chunks) do
-    token_chunks
+  defp extract_json_tokens(lines) do
+    lines
     |> Enum.map(&extract_token/1)
     |> Enum.filter(fn
       %{data: "[DONE]"} -> false
