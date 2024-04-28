@@ -574,10 +574,10 @@ openai |> Files.retrieve(file_id)
 
 ### Retrieve file content
 
-Similarly to download the file contents, we call [`File.download()`]()
+Similarly to download the file contents, we call [`File.content()`]()
 
 ```elixir
-openai |> Files.download(file_id)
+openai |> Files.content(file_id)
 ```
 
 ### Delete file
