@@ -2,12 +2,13 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.5.9"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
+  # {:openai_ex, "~> 0.5.9"},
   {:kino, "~> 0.12.3"}
 ])
 
 alias OpenaiEx
-alias OpenaiEx.Chat.Completions
+alias OpenaiEx.Chat
 alias OpenaiEx.ChatMessage
 ```
 
@@ -44,11 +45,11 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
       model: "gpt-3.5-turbo",
       temperature: 0
     })
-    |> ChatCompletion.new()
+    |> Chat.Completions.new()
   end
 
   def get_stream(openai = %OpenaiEx{}, messages) do
-    openai |> ChatCompletion.create(create_chat_req(messages: messages), stream: true)
+    openai |> Chat.Completions.create(create_chat_req(messages: messages), stream: true)
   end
 
   def stream_to_completions(%{body_stream: body_stream}) do
@@ -150,3 +151,5 @@ context = [
 ```elixir
 openai |> StreamingOrderbot.create_orderbot(context)
 ```
+
+<!-- livebook:{"offset":4437,"stamp":{"token":"XCP.Iy1xAMVioeT-9KvIvaXPp4xWkNvzlDsHezN22TKU4QXLwrIWP_72QVzVCOfaN9WH62y_SuTNi7_Dy3CUN253EXroFQBEgESzHXBGKvtylahgkk1j49u-jLU","version":2}} -->

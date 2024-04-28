@@ -2,12 +2,13 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.5.9"},
+  #  {:openai_ex, "~> 0.5.9"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.11.0"}
 ])
 
 alias OpenaiEx
-alias OpenaiEx.Chat.Completions
+alias OpenaiEx.Chat
 alias OpenaiEx.ChatMessage
 ```
 
@@ -35,7 +36,7 @@ openai =
 ```elixir
 defmodule OpenaiEx.Notebooks.DlaiOrderbot do
   alias OpenaiEx
-  alias OpenaiEx.Chat.Completions
+  alias OpenaiEx.Chat
 
   def create_chat_req(args = [_ | _]) do
     args
@@ -43,12 +44,12 @@ defmodule OpenaiEx.Notebooks.DlaiOrderbot do
       model: "gpt-3.5-turbo",
       temperature: 0
     })
-    |> ChatCompletion.new()
+    |> Chat.Completions.new()
   end
 
   def get_completion(openai = %OpenaiEx{}, cc_req = %{}) do
     openai
-    |> ChatCompletion.create(cc_req)
+    |> Chat.Completions.create(cc_req)
     # for debugging
     #    |> IO.inspect()
     |> Map.get("choices")
@@ -173,3 +174,5 @@ Kino.listen(
   end
 )
 ```
+
+<!-- livebook:{"offset":5224,"stamp":{"token":"XCP.x32LYqzk3RpFi-uvrDTBhX4aeFFvVabDbVHxfvvYuhphXZIPN9Szd0RhrkpG97gEF0dKkQl3DHlRkzkC7jQlJrMx2zzF34w5zz718rmOy6J_WO-IKfetc0A","version":2}} -->
