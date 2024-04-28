@@ -653,6 +653,81 @@ end
 
 For more information on the fine tune endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/fine-tunes)
 
+## Batch
+
+```elixir
+alias OpenaiEx.Batches
+```
+
+### Create batch
+
+Use the [`Batch.create()`](https://platform.openai.com/docs/api-reference/batches/createBatch) function to create and execute a batch from an uploaded file of requests.
+
+First, we need to upload a file containing the batch requests using the `File` API.
+
+```elixir
+batch_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/batch-requests.jsonl"))
+batch_upload_req = Files.new_upload(file: batch_file, purpose: "batch")
+batch_upload_res = openai |> Files.create(batch_upload_req)
+```
+
+Then, we create the batch request using `Batch.new()` and specify the necessary parameters.
+
+```elixir
+batch_req =
+  Batches.new(
+    input_file_id: batch_upload_res["id"],
+    endpoint: "/v1/chat/completions",
+    completion_window: "24h"
+  )
+```
+
+Finally, we call the [`Batch.create()`](https://platform.openai.com/docs/api-reference/batch/create) function to create and execute the batch.
+
+```elixir
+batch = openai |> Batches.create(batch_req)
+```
+
+### Retrieve batch
+
+Use the [`Batch.retrieve()`](https://platform.openai.com/docs/api-reference/batch/retrieve) function to retrieve information about a specific batch.
+
+```elixir
+batch_id = batch["id"]
+batch_job = openai |> Batches.retrieve(batch_id: batch_id)
+```
+
+```elixir
+batch_job_output_file_id = batch_job["output_file_id"]
+batch_job_output_file = openai |> Files.retrieve(batch_job_output_file_id)
+```
+
+```elixir
+batch_result = batch_output_content = openai |> Files.content(batch_job_output_file["id"])
+```
+
+Note that the string is not valid json (it's a sequence of json objects without the commas or the array '[' ']' delimiters), so it cannot be parsed as such.
+
+<!-- livebook:{"break_markdown":true} -->
+
+### Cancel batch
+
+Use the [`Batch.cancel()`](https://platform.openai.com/docs/api-reference/batch/cancel) function to cancel an in-progress batch.
+
+```elixir
+cancel_result = openai |> Batches.cancel(batch_id: batch_id)
+```
+
+### List batches
+
+Use the [`Batch.list()`](https://platform.openai.com/docs/api-reference/batch/list) function to list your organization's batches.
+
+```elixir
+openai |> Batches.list()
+```
+
+For more information on the Batch API, see the [OpenAI API Batch Reference](https://platform.openai.com/docs/api-reference/batch).
+
 ## Moderation
 
 We use the moderation API by calling `Moderation.new()` to create a new request
