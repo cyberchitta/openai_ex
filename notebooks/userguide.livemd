@@ -178,12 +178,12 @@ For more information on using models, see the [OpenAI API Models reference](http
 To generate a chat completion, you need to define a chat completion request structure using the `ChatCompletion.new()` function. This function takes several parameters, such as the model ID and a list of chat messages. We have a module `ChatMessage` which helps create messages in the [chat format](https://platform.openai.com/docs/guides/chat/introduction).
 
 ```elixir
-alias OpenaiEx.Chat.Completions
+alias OpenaiEx.Chat
 alias OpenaiEx.ChatMessage
 alias OpenaiEx.MsgContent
 
 chat_req =
-  Completions.new(
+  Chat.Completions.new(
     model: "gpt-3.5-turbo",
     messages: [
       ChatMessage.user(
@@ -206,7 +206,7 @@ ChatMessage.user(
 You can generate a chat completion using the [`ChatCompletion.create()`](https://platform.openai.com/docs/api-reference/chat/completions/create) function:
 
 ```elixir
-chat_response = openai |> Completions.create(chat_req)
+chat_response = openai |> Chat.Completions.create(chat_req)
 ```
 
 For a more in-depth example of `ChatCompletion`, check out the [Deeplearning.AI OrderBot Livebook](https://hexdocs.pm/openai_ex/dlai_orderbot.html).
@@ -216,7 +216,7 @@ You can also call the endpoint and have it stream the response. This returns the
 To use the stream option, call the `ChatCompletion.create()` function with `stream: true`
 
 ```elixir
-chat_stream = openai |> Completions.create(chat_req, stream: true)
+chat_stream = openai |> Chat.Completions.create(chat_req, stream: true)
 IO.puts(inspect(chat_stream))
 IO.puts(inspect(chat_stream.task_pid))
 chat_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
@@ -264,7 +264,7 @@ rev_msgs = [
 ]
 
 fn_req =
-  Completions.new(
+  Chat.Completions.new(
     model: "gpt-3.5-turbo",
     messages: rev_msgs |> Enum.reverse(),
     tools: [tool_spec],
@@ -275,7 +275,7 @@ fn_req =
 Next, we call the OpenAI endpoint to get a response that includes the function call.
 
 ```elixir
-fn_response = openai |> Completions.create(fn_req)
+fn_response = openai |> Chat.Completions.create(fn_req)
 ```
 
 We extract the function call from the response and call the appropriate function with the given parameters. In this example, we define a map of functions that maps function names to their implementations. We then use the function name and arguments from the function call to look up the appropriate function and call it with the given parameters.
@@ -313,12 +313,12 @@ We then pass the returned value back to the ChatCompletion endpoint with the con
 latest_msgs = [ChatMessage.tool(tool_id, fn_name, fn_value) | [fn_message | rev_msgs]]
 
 fn_req_2 =
-  Completions.new(
+  Chat.Completions.new(
     model: "gpt-3.5-turbo",
     messages: latest_msgs |> Enum.reverse()
   )
 
-fn_response_2 = openai |> Completions.create(fn_req_2)
+fn_response_2 = openai |> Chat.Completions.create(fn_req_2)
 ```
 
 The final response includes the result of the function call integrated into the conversation.
@@ -666,7 +666,12 @@ Use the [`Batch.create()`](https://platform.openai.com/docs/api-reference/batche
 First, we need to upload a file containing the batch requests using the `File` API.
 
 ```elixir
-batch_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/batch-requests.jsonl"))
+batch_url =
+  "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/batch-requests.jsonl"
+
+batch_file = OpenaiEx.new_file(name: batch_url, content: fetch_blob.(batch_url))
+
+# batch_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/batch-requests.jsonl"))
 batch_upload_req = Files.new_upload(file: batch_file, purpose: "batch")
 batch_upload_res = openai |> Files.create(batch_upload_req)
 ```
@@ -955,10 +960,6 @@ openai |> Threads.retrieve(thread_id)
 
 ## Messages
 
-```elixir
-alias OpenaiEx.Beta.Threads.Messages
-```
-
 ### Create message
 
 You can create a single message for a thread using [`Message.create()`](https://platform.openai.com/docs/api-reference/messages/createMessage)
@@ -966,7 +967,7 @@ You can create a single message for a thread using [`Message.create()`](https://
 ```elixir
 thread_id = empty_thread["id"]
 
-message = openai |> Messages.create(thread_id, msg_hr)
+message = openai |> Threads.Messages.create(thread_id, msg_hr)
 ```
 
 ### Retrieve message
@@ -975,7 +976,7 @@ Use [`Message.retrieve()`] to retrieve a message
 
 ```elixir
 message_id = message["id"]
-openai |> Messages.retrieve(%{thread_id: thread_id, message_id: message_id})
+openai |> Threads.Messages.retrieve(%{thread_id: thread_id, message_id: message_id})
 ```
 
 ### Modify message
@@ -984,9 +985,11 @@ The metadata for a message can be modified by [`Message.update()`]
 
 ```elixir
 metadata = %{modified: "true", user: "abc123"}
-upd_msg_req = Messages.new(thread_id: thread_id, message_id: message_id, metadata: metadata)
 
-message = openai |> Messages.update(upd_msg_req)
+upd_msg_req =
+  Threads.Messages.new(thread_id: thread_id, message_id: message_id, metadata: metadata)
+
+message = openai |> Threads.Messages.update(upd_msg_req)
 ```
 
 ### List messages
@@ -994,7 +997,7 @@ message = openai |> Messages.update(upd_msg_req)
 Use [`Message.list()`] to get all the messages for a given thread
 
 ```elixir
-openai |> Messages.list(thread_id)
+openai |> Threads.Messages.list(thread_id)
 ```
 
 ### Retrieve message file
@@ -1003,7 +1006,11 @@ Retrieve a message file using [`Message.File.retrieve()`]
 
 ```elixir
 openai
-|> Messages.File.retrieve(%{thread_id: thread_id, message_id: message_id, file_id: file_id})
+|> Threads.Messages.File.retrieve(%{
+  thread_id: thread_id,
+  message_id: message_id,
+  file_id: file_id
+})
 ```
 
 ### List message files
@@ -1011,7 +1018,7 @@ openai
 You can list all message files using [`Message.File.list()`]
 
 ```elixir
-openai |> Messages.File.list(%{thread_id: thread_id, message_id: message_id})
+openai |> Threads.Messages.File.list(%{thread_id: thread_id, message_id: message_id})
 ```
 
 ## Runs
@@ -1089,4 +1096,4 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 
 ```
 
-<!-- livebook:{"offset":29911,"stamp":{"token":"XCP.rVVvvGrXo18n3oG-jm9hKmnLEVgoE_vzeLpcG4kaqNglXlcKUzVuweX-n8hYzgdwj4JaCjt-dktwRrjXnVXXEJPimmv_VLoHxFdKRdhc9_DRI4_DSrGDuWQ","version":2}} -->
+<!-- livebook:{"offset":32414,"stamp":{"token":"XCP.l7uH3AHdKdO9e6rfDz1BC7fH6WbhHNaI9Y-hPtOfNqKQnyI-XGnM1tAq2fn-MPMyiuL3QDpEj-griZucrQRwClDm-tUKbyB1_JLMMz3PfHxm7LrupoWMXE4","version":2}} -->
