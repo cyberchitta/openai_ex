@@ -26,4 +26,4 @@ Enum.each(all_files["data"], fn file -> OpenaiEx.Files.delete(openai, file["id"]
 OpenaiEx.Files.list(openai)
 ```
 
-<!-- livebook:{"offset":464,"stamp":{"token":"XCP.u__czdrSAAT1jlbfOdKG9I-zXCOZHzbc0AUG4MFcHJyJjXqfnQsjVufYKNDnUv0Z3cvJG1LZrYff7OC8G32hvVPF3VH_pTDPWJJ07nuHXmIKtYtpkgM_6rQ","version":2}} -->
+## Assistants
