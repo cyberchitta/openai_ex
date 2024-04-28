@@ -26,4 +26,18 @@ Enum.each(all_files["data"], fn file -> OpenaiEx.Files.delete(openai, file["id"]
 OpenaiEx.Files.list(openai)
 ```
 
-## Assistants
+## Assistants cleanup
+
+```elixir
+all_assistants = OpenaiEx.Beta.Assistants.list(openai)
+```
+
+```elixir
+Enum.each(all_assistants["data"], fn a -> OpenaiEx.Beta.Assistants.delete(openai, a["id"]) end)
+```
+
+```elixir
+OpenaiEx.Beta.Assistants.list(openai)
+```
+
+<!-- livebook:{"offset":701,"stamp":{"token":"XCP.AcSzF3VBlMvV7fo-e3QZ2RjoICcWZSJgJRLann5XUjAd0mYlgDKUEy62oICUi-anB5nYi6AyniVR7kT-5k0BFNZnodgjLEknT8lsLcmUxncJ6JAfVg1emmI","version":2}} -->
