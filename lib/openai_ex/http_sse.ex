@@ -5,6 +5,8 @@ defmodule OpenaiEx.HttpSse do
 
   # based on
   # https://gist.github.com/zachallaun/88aed2a0cef0aed6d68dcc7c12531649
+  # and
+  # https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream
 
   @doc false
   def post(openai = %OpenaiEx{}, url, json: json) do
@@ -58,6 +60,12 @@ defmodule OpenaiEx.HttpSse do
       {:chunk, {:data, evt_data}, ^ref} ->
         {tokens, next_acc} = tokenize_data(evt_data, acc)
         {[tokens], {next_acc, ref, task}}
+
+      # some 3rd party providers seem to be ending the stream with eof,
+      # rather than 2 line terminators. Hopefully those will be fixed and this
+      # can be removed in the future
+      {:done, ^ref} when acc == "data: [DONE]" ->
+        {:halt, {acc, ref, task}}
 
       {:done, ^ref} ->
         if acc != "", do: Logger.warning(inspect(Jason.decode!(acc)))
