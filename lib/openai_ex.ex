@@ -52,7 +52,7 @@ defmodule OpenaiEx do
 
   # Globals for internal library use, **not** for public use.
 
-  @assistants_beta_string "assistants=v1"
+  @assistants_beta_string "assistants=v2"
   @doc false
   def with_assistants_beta(openai = %OpenaiEx{}) do
     openai

@@ -11,6 +11,7 @@ defmodule OpenaiEx.Beta.Threads do
   """
   @api_fields [
     :messages,
+    :tool_resources,
     :metadata
   ]
 

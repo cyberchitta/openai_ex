@@ -11,6 +11,7 @@ defmodule OpenaiEx.Beta.Assistants do
   - `:description`
   - `:instructions`
   - `:tools`
+  - `:tool_resources`
   - `:file_ids`
   - `:metadata`
   """
@@ -20,8 +21,11 @@ defmodule OpenaiEx.Beta.Assistants do
     :description,
     :instructions,
     :tools,
-    :file_ids,
-    :metadata
+    :tool_resources,
+    :metadata,
+    :temperature,
+    :top_p,
+    :response_format
   ]
 
   defp ep_url(assistant_id \\ nil) do

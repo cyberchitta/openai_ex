@@ -17,8 +17,17 @@ defmodule OpenaiEx.Beta.Threads.Runs do
     :assistant_id,
     :model,
     :instructions,
+    :additional_instructions,
+    :additional_messages,
     :tools,
-    :metadata
+    :metadata,
+    :temperature,
+    :top_p,
+    :max_prompt_tokens,
+    :max_completion_tokens,
+    :truncation_strategy,
+    :tool_choice,
+    :response_format
   ]
 
   defp ep_url(thread_id, run_id \\ nil, action \\ nil) do
@@ -164,11 +173,26 @@ defmodule OpenaiEx.Beta.Threads.Runs do
     |> OpenaiEx.Http.post(ep_url(thread_id, run_id, "cancel"))
   end
 
+  @car_fields [
+    :assistant_id,
+    :thread,
+    :model,
+    :instructions,
+    :tools,
+    :tool_resources,
+    :metadata,
+    :temperature,
+    :top_p,
+    :max_prompt_tokens,
+    :max_completion_tokens,
+    :truncation_strategy,
+    :tool_choice,
+    :response_format
+  ]
+
   def create_and_run(openai = %OpenaiEx{}, params = %{assistant_id: _}) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post("/threads/runs",
-      json: params |> Map.take([:assistant_id | [:thread | @api_fields]])
-    )
+    |> OpenaiEx.Http.post("/threads/runs", json: params |> Map.take(@car_fields))
   end
 end

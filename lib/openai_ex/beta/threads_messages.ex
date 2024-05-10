@@ -9,13 +9,13 @@ defmodule OpenaiEx.Beta.Threads.Messages do
 
   - `:role`
   - `:content`
-  - `:file_ids`
+  - `:attachments`
   - `:metadata`
   """
   @api_fields [
     :role,
     :content,
-    :file_ids,
+    :attachments,
     :metadata
   ]
 
@@ -111,6 +111,12 @@ defmodule OpenaiEx.Beta.Threads.Messages do
     |> OpenaiEx.Http.post(ep_url(thread_id, message_id), json: %{metadata: metadata})
   end
 
+  def delete(openai = %OpenaiEx{}, thread_id, message_id) do
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.Http.delete(ep_url(thread_id, message_id))
+  end
+
   @doc """
   Lists the messages that belong to the specified thread.
 
@@ -128,6 +134,9 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   def list(openai = %OpenaiEx{}, thread_id, params = %{} \\ %{}) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.get(ep_url(thread_id), params |> Map.take(OpenaiEx.list_query_fields()))
+    |> OpenaiEx.Http.get(
+      ep_url(thread_id),
+      params |> Map.take([:run_id | OpenaiEx.list_query_fields()])
+    )
   end
 end
