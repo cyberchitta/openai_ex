@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.6.0"},
-  # {:openai_ex, path: Path.join(__DIR__, "..")},
+  # {:openai_ex, "~> 0.6.0"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.12.3"}
 ])
 ```
@@ -770,7 +770,7 @@ math_assistant_req =
       "You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
     name: "Math Tutor",
     tools: [%{type: "code_interpreter"}],
-    model: "gpt-4"
+    model: "gpt-3.5-turbo"
   )
 ```
 
@@ -820,9 +820,9 @@ hr_assistant_req =
     instructions:
       "You are an HR bot, and you have access to files to answer employee questions about company policies. Always respond with info from one of the files.",
     name: "HR Helper",
-    tools: [%{type: "retrieval"}],
-    model: "gpt-3.5-turbo-1106",
-    file_ids: [file_id]
+    tools: [%{type: "code_interpreter"}],
+    model: "gpt-3.5-turbo",
+    tool_resources: %{code_interpreter: %{file_ids: [file_id]}}
   )
 ```
 
@@ -847,6 +847,8 @@ We use [`Assistant.list()`](https://platform.openai.com/docs/api-reference/assis
 ```elixir
 assts = openai |> Assistants.list()
 ```
+
+## Vector Stores
 
 ### Create Assistant File
 
@@ -1096,4 +1098,4 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 
 ```
 
-<!-- livebook:{"offset":32414,"stamp":{"token":"XCP.l7uH3AHdKdO9e6rfDz1BC7fH6WbhHNaI9Y-hPtOfNqKQnyI-XGnM1tAq2fn-MPMyiuL3QDpEj-griZucrQRwClDm-tUKbyB1_JLMMz3PfHxm7LrupoWMXE4","version":2}} -->
+<!-- livebook:{"offset":32482,"stamp":{"token":"XCP.0nqlbzj6PJ1QNvoq8vKsiH1U0XS5G-SWpHp9AmiuYJVZQd5ZhcGsE21Uagg03qcr-pE2aF65DoYxkjMOWm2Uuup-bcxRnawrwj5kwkTyiBsazNafLh2ZaOA","version":2}} -->
