@@ -764,12 +764,12 @@ To create an assistant with model and instructions, call the [`Assistant.create(
 First, we setup the create request parameters. This request sets up an Assistant with a code interpreter tool.
 
 ```elixir
-math_assistant_req =
+hr_assistant_req =
   Assistants.new(
     instructions:
-      "You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
-    name: "Math Tutor",
-    tools: [%{type: "code_interpreter"}],
+      "You are an HR bot, and you have access to files to answer employee questions about company policies.",
+    name: "HR Helper",
+    tools: [%{type: "file_search"}],
     model: "gpt-3.5-turbo"
   )
 ```
@@ -777,7 +777,7 @@ math_assistant_req =
 Then we call the create function
 
 ```elixir
-asst = openai |> Assistants.create(math_assistant_req)
+asst = openai |> Assistants.create(hr_assistant_req)
 ```
 
 ### Retrieve Assistant
@@ -815,11 +815,11 @@ file_id = hr_upload_res["id"]
 Next we create the update request
 
 ```elixir
-hr_assistant_req =
+math_assistant_req =
   Assistants.new(
     instructions:
-      "You are an HR bot, and you have access to files to answer employee questions about company policies. Always respond with info from one of the files.",
-    name: "HR Helper",
+      "You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
+    name: "Math Tutor",
     tools: [%{type: "code_interpreter"}],
     model: "gpt-3.5-turbo",
     tool_resources: %{code_interpreter: %{file_ids: [file_id]}}
@@ -850,7 +850,131 @@ assts = openai |> Assistants.list()
 
 ## Vector Stores
 
-### Create Assistant File
+```elixir
+alias OpenaiEx.Beta.VectorStores
+```
+
+### Create vector store
+
+Use [`VectorStores.create()`](https://platform.openai.com/docs/api-reference/vector-stores/create) to create a vector store.
+
+```elixir
+vector_store_req = VectorStores.new(name: "HR Documents")
+vector_store = openai |> VectorStores.create(vector_store_req)
+vector_store_id = vector_store["id"]
+```
+
+### Retrieve vector store
+
+Use [`VectorStores.retrieve()`](https://platform.openai.com/docs/api-reference/vector-stores/retrieve) to retrieve a vector store.
+
+```elixir
+openai |> VectorStores.retrieve(vector_store_id)
+```
+
+### Update vector store
+
+Use [`VectorStores.update()`](https://platform.openai.com/docs/api-reference/vector-stores/modify) to modify the vector store.
+
+```elixir
+openai |> VectorStores.update(vector_store_id, %{name: "HR Documents 2"})
+```
+
+### Delete vector store
+
+[`VectorStores.delete()`](https://platform.openai.com/docs/api-reference/vector-stores/delete) can be used to delete a vector store.
+
+```elixir
+openai |> VectorStores.delete(vector_store_id)
+```
+
+### List vector stores
+
+We use [`VectorStores.list()`](https://platform.openai.com/docs/api-reference/vector-stores/list) to get a list of vectorstores.
+
+```elixir
+openai |> VectorStores.list()
+```
+
+## Vector Store Files
+
+### Create vector store file
+
+We can create a vector store file by attaching a file to a vector store using [`VectorStores.Files.create()`](https://platform.openai.com/docs/api-reference/vector-stores-files/createFile).
+
+First we recreate the vector store above
+
+```elixir
+vector_store = openai |> VectorStores.create(VectorStores.new(name: "HR Documents"))
+```
+
+then attach the file id from earlier
+
+```elixir
+vector_store_id = vector_store["id"]
+vs_file = openai |> VectorStores.Files.create(vector_store_id, file_id)
+```
+
+### Retrieve vector store file
+
+Retrieve a vector store file using the [`VectorStores.Files.retrieve()`](https://platform.openai.com/docs/api-reference/vector-stores-files/getFile) function
+
+```elixir
+openai |> VectorStores.Files.retrieve(vector_store_id, file_id)
+```
+
+### Delete vector store file
+
+Detach a file from the vector store using [`VectorStores.Files.delete()`](https://platform.openai.com/docs/api-reference/vector-stores-files/deleteFile)
+
+```elixir
+openai |> VectorStores.Files.delete(vector_store_id, file_id)
+```
+
+### List vector store files
+
+List vector store files using [`VectorStores.Files.list()`](https://platform.openai.com/docs/api-reference/vector-stores-files/listFiles)
+
+```elixir
+openai |> VectorStores.Files.list(vector_store_id)
+```
+
+## Vector Store File Batches
+
+File batches allow addition of multiple files to a vector store in a single operation.
+
+### Create VS file batch
+
+Use [`VectorStores.File.Batch.create()`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/createBatch) to attach a list of file ids to a vector store.
+
+```elixir
+vsf_batch = openai |> VectorStores.File.Batches.create(vector_store_id, [file_id])
+```
+
+### Retrieve VS file batch
+
+Use [`VectorStores.File.Batch.retrieve()`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/getBatch) to retrieve the batch.
+
+```elixir
+vsf_batch_id = vsf_batch["id"]
+openai |> VectorStores.File.Batches.retrieve(vector_store_id, vsf_batch_id)
+```
+
+### Cancel VS file batch
+
+Use [`VectorStores.File.Batches.cancel()`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/cancelBatch) to cancel a batch.
+
+```elixir
+openai |> VectorStores.File.Batches.cancel(vector_store_id, vsf_batch_id)
+```
+
+### List VS file batch
+
+Use [`VectorStores.File.Batches.list()`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/listBatchFiles)
+
+```elixir
+openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
+```
 
 Use [`Assistants.File.create()`](https://platform.openai.com/docs/api-reference/assistants/createAssistantFile) to attach a file to an assistant.
 
@@ -1098,4 +1222,4 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 
 ```
 
-<!-- livebook:{"offset":32482,"stamp":{"token":"XCP.0nqlbzj6PJ1QNvoq8vKsiH1U0XS5G-SWpHp9AmiuYJVZQd5ZhcGsE21Uagg03qcr-pE2aF65DoYxkjMOWm2Uuup-bcxRnawrwj5kwkTyiBsazNafLh2ZaOA","version":2}} -->
+<!-- livebook:{"offset":32528,"stamp":{"token":"XCP.x6whytvY3sddEGzE3RALGOY0R8r6ExQ6aWtSc7vEiEK5zIMxTS3_oQJy02CxynqBvPcJrYajUfhBl8u9sEYUkG1NbTBgsSP5IuDYovJWEPzylSL8laYrYUE","version":2}} -->

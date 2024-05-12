@@ -1,5 +1,7 @@
 defmodule OpenaiEx.Beta.VectorStores do
-  @moduledoc false
+  @moduledoc """
+  This module provides an implementation of the OpenAI vector_stores API. The API reference can be found at https://platform.openai.com/docs/api-reference/vector-stores.
+  """
 
   @api_fields [
     :file_ids,
@@ -17,23 +19,39 @@ defmodule OpenaiEx.Beta.VectorStores do
     args |> Enum.into(%{}) |> new()
   end
 
-  def new(args = %{vector_store_id: _}) do
+  def new(args = %{}) do
     args |> Map.take(@api_fields)
   end
 
   def list(openai = %OpenaiEx{}) do
-    openai |> OpenaiEx.Http.get(ep_url())
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.Http.get(ep_url())
   end
 
   def create(openai = %OpenaiEx{}, params \\ %{}) do
-    openai |> OpenaiEx.Http.post(ep_url(), json: params |> Map.take(@api_fields))
-  end
-
-  def delete(openai = %OpenaiEx{}, vector_store_id) do
-    openai |> OpenaiEx.Http.delete(ep_url(vector_store_id))
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.Http.post(ep_url(), json: params |> Map.take(@api_fields))
   end
 
   def retrieve(openai = %OpenaiEx{}, vector_store_id) do
-    openai |> OpenaiEx.Http.get(ep_url(vector_store_id))
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.Http.get(ep_url(vector_store_id))
+  end
+
+  def update(openai = %OpenaiEx{}, vector_store_id, params \\ %{}) do
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.Http.post(ep_url(vector_store_id),
+      json: params |> Map.take([:name, :expires_after, :metadata])
+    )
+  end
+
+  def delete(openai = %OpenaiEx{}, vector_store_id) do
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.Http.delete(ep_url(vector_store_id))
   end
 end
