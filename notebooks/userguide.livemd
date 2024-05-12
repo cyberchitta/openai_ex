@@ -976,60 +976,6 @@ Use [`VectorStores.File.Batches.list()`](https://platform.openai.com/docs/api-re
 openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
 ```
 
-Use [`Assistants.File.create()`](https://platform.openai.com/docs/api-reference/assistants/createAssistantFile) to attach a file to an assistant.
-
-Let us re-create the first assistant above
-
-```elixir
-math_asst = openai |> Assistants.create(math_assistant_req)
-```
-
-Now we can attach the file that we used earlier to this new assistant.
-
-```elixir
-math_assistant_id = math_asst["id"]
-asst_f = Assistants.File.new(assistant_id: math_assistant_id, file_id: file_id)
-asst_file = openai |> Assistants.File.create(asst_f)
-```
-
-Let's retrieve the assistant to see if it was updated with the file id  (check `file_ids` field value).
-
-```elixir
-openai |> Assistants.retrieve(math_assistant_id)
-```
-
-### Retreive Assistant File
-
-We can retrieve an assistant file by using [`Assistants.File.retrieve()`](https://platform.openai.com/docs/api-reference/assistants/getAssistantFile)
-
-```elixir
-openai |> Assistants.File.retrieve(asst_f)
-```
-
-### Delete Assistant File
-
-[`Assistant.File.delete()`] can be used to detach a file from the assistant.
-
-```elixir
-openai |> Assistants.File.delete(asst_f)
-```
-
-Verify detach by retrieving the assistant again (check `file_ids` field value)
-
-```elixir
-openai |> Assistants.retrieve(math_assistant_id)
-```
-
-### List Assistant Files
-
-We can list all files attached to an assistant with [`Assistant.File.list()`](https://platform.openai.com/docs/api-reference/assistants/listAssistantFiles)
-
-```elixir
-list_req = Assistants.File.new_list(assistant_id: math_assistant_id)
-
-openai |> Assistants.File.list(list_req)
-```
-
 ## Thread
 
 ```elixir
@@ -1221,5 +1167,3 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
-
-<!-- livebook:{"offset":32528,"stamp":{"token":"XCP.x6whytvY3sddEGzE3RALGOY0R8r6ExQ6aWtSc7vEiEK5zIMxTS3_oQJy02CxynqBvPcJrYajUfhBl8u9sEYUkG1NbTBgsSP5IuDYovJWEPzylSL8laYrYUE","version":2}} -->
