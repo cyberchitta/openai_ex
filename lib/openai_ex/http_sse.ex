@@ -107,7 +107,7 @@ defmodule OpenaiEx.HttpSse do
     |> Enum.filter(fn
       %{data: "[DONE]"} -> false
       %{data: _} -> true
-      # we can pass other events through but the clients will need to be rewritten
+      %{eventType: _} -> true
       _ -> false
     end)
     |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
