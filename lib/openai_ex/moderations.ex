@@ -1,13 +1,6 @@
 defmodule OpenaiEx.Moderations do
   @moduledoc """
   This module provides an implementation of the OpenAI moderation API. The API reference can be found at https://platform.openai.com/docs/api-reference/moderations.
-
-  ## API Fields
-
-  The following fields can be used as parameters when creating a new moderation:
-
-  - `:input`
-  - `:model`
   """
   @api_fields [
     :input,

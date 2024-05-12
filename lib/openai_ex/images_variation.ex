@@ -1,14 +1,6 @@
 defmodule OpenaiEx.Images.Variation do
   @moduledoc """
   This module provides constructors for OpenAI Image Variation API request structure. The API reference can be found at https://platform.openai.com/docs/api-reference/images/create-variation.
-
-  ## API Fields
-
-  - `:image`
-  - `:n`
-  - `:size`
-  - `:response_format`
-  - `:user`
   """
   @api_fields [
     :image,

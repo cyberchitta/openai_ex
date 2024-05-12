@@ -1,16 +1,6 @@
 defmodule OpenaiEx.Embeddings do
   @moduledoc """
   This module provides an implementation of the OpenAI embeddings API. The API reference can be found at https://platform.openai.com/docs/api-reference/embeddings.
-
-  ## API Fields
-
-  The following fields can be used as parameters when creating a new embedding:
-
-  - `:input`
-  - `:model`
-  - `:dimensions`
-  - `:encoding_format`
-  - `:user`
   """
   @api_fields [
     :input,

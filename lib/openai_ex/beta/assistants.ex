@@ -1,18 +1,6 @@
 defmodule OpenaiEx.Beta.Assistants do
   @moduledoc """
   This module provides an implementation of the OpenAI assistants API. The API reference can be found at https://platform.openai.com/docs/api-reference/assistants.
-
-  ## API Fields
-
-  The following fields can be used as parameters when creating a new assistant:
-
-  - `:model`
-  - `:name`
-  - `:description`
-  - `:instructions`
-  - `:tools`
-  - `:file_ids`
-  - `:metadata`
   """
   @api_fields [
     :model,
@@ -20,8 +8,11 @@ defmodule OpenaiEx.Beta.Assistants do
     :description,
     :instructions,
     :tools,
-    :file_ids,
-    :metadata
+    :tool_resources,
+    :metadata,
+    :temperature,
+    :top_p,
+    :response_format
   ]
 
   defp ep_url(assistant_id \\ nil) do

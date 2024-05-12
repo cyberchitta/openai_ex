@@ -2,19 +2,6 @@ defmodule OpenaiEx.Images.Generate do
   @moduledoc """
   This module provides constructors for the OpenAI image generation API. The API
   reference can be found at https://platform.openai.com/docs/api-reference/images/create.
-
-  ## API Fields
-
-  The following fields can be used as parameters when creating a new image:
-
-  - `:prompt`
-  - `:model`
-  - `:n`
-  - `:quality`
-  - `:response_format`
-  - `:size`
-  - `:style`
-  - `:user`
   """
   @api_fields [
     :prompt,

@@ -1,19 +1,6 @@
 defmodule OpenaiEx.FineTuning.Jobs do
   @moduledoc """
   This module provides an implementation of the OpenAI fine-tuning job API. The API reference can be found at https://platform.openai.com/docs/api-reference/fine-tuning.
-
-  ## API Fields
-
-  The following fields can be used as parameters for various endpoints of the API:
-
-  - `:model`
-  - `:training_file`
-  - `:hyperparameters`
-  - `:suffix`
-  - `:validation_file`
-
-  - `:after`
-  - `:limit`
   """
   @api_fields [
     :model,

@@ -52,7 +52,7 @@ defmodule OpenaiEx do
 
   # Globals for internal library use, **not** for public use.
 
-  @assistants_beta_string "assistants=v1"
+  @assistants_beta_string "assistants=v2"
   @doc false
   def with_assistants_beta(openai = %OpenaiEx{}) do
     openai
@@ -88,7 +88,6 @@ defmodule OpenaiEx do
   end
 
   # Azure OpenAI. Not public and with no guarantee of continued support.
-  @doc false
   def _for_azure(openai = %OpenaiEx{}, resource_name, deployment_id, api_version) do
     openai
     |> with_base_url(

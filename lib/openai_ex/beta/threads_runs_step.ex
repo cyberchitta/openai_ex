@@ -1,5 +1,8 @@
 defmodule OpenaiEx.Beta.Threads.Runs.Steps do
-  @moduledoc false
+  @moduledoc """
+  This module provides an implementation of the OpenAI run steps API. The API reference can be found at https://platform.openai.com/docs/api-reference/run-steps.
+  """
+
   defp ep_url(thread_id, run_id, step_id \\ nil) do
     "/threads/#{thread_id}/runs/#{run_id}/steps" <>
       if is_nil(step_id), do: "", else: "/#{step_id}"

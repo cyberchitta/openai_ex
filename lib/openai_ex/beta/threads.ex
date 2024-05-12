@@ -1,16 +1,10 @@
 defmodule OpenaiEx.Beta.Threads do
   @moduledoc """
   This module provides an implementation of the OpenAI threads API. The API reference can be found at https://platform.openai.com/docs/api-reference/threads.
-
-  ## API Fields
-
-  The following fields can be used as parameters when creating a new assistant:
-
-  - `:messages`
-  - `:metadata`
   """
   @api_fields [
     :messages,
+    :tool_resources,
     :metadata
   ]
 
