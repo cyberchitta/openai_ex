@@ -88,7 +88,6 @@ defmodule OpenaiEx do
   end
 
   # Azure OpenAI. Not public and with no guarantee of continued support.
-  @doc false
   def _for_azure(openai = %OpenaiEx{}, resource_name, deployment_id, api_version) do
     openai
     |> with_base_url(
