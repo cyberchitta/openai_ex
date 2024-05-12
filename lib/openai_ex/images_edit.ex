@@ -1,16 +1,6 @@
 defmodule OpenaiEx.Images.Edit do
   @moduledoc """
   This module provides constructors for OpenAI Image Edit API request structure. The API reference can be found at https://platform.openai.com/docs/api-reference/images/create-edit.
-
-  ## API Fields
-
-  - `:image`
-  - `:prompt`
-  - `:mask`
-  - `:n`
-  - `:size`
-  - `:response_format`
-  - `:user`
   """
   @api_fields [
     :image,

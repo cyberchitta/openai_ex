@@ -2,15 +2,6 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   @moduledoc """
   This module provides an implementation of the OpenAI messages API. The API
   reference can be found at https://platform.openai.com/docs/api-reference/messages.
-
-  ## API Fields
-
-  The following fields can be used as parameters for the messages API:
-
-  - `:role`
-  - `:content`
-  - `:attachments`
-  - `:metadata`
   """
   @api_fields [
     :role,

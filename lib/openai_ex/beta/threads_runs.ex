@@ -2,16 +2,6 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   @moduledoc """
   This module provides an implementation of the OpenAI run API. The API
   reference can be found at https://platform.openai.com/docs/api-reference/runs.
-
-  ## API Fields
-
-  The following fields can be used as parameters for the messages API:
-
-  - `:assistant_id`
-  - `:model`
-  - `:instructions`
-  - `:tools`
-  - `:metadata`
   """
   @api_fields [
     :assistant_id,

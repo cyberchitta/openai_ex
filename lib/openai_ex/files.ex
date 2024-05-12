@@ -1,15 +1,6 @@
 defmodule OpenaiEx.Files do
   @moduledoc """
   This module provides an implementation of the OpenAI files API. The API reference can be found at https://platform.openai.com/docs/api-reference/files.
-
-  ## API Fields
-
-  The following fields can be used as parameters for various endpoints of the API:
-
-  - `:file`
-  - `:purpose`
-
-  - `:file_id`
   """
   @api_fields [
     :file,

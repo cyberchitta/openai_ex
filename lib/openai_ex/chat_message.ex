@@ -2,13 +2,6 @@ defmodule OpenaiEx.ChatMessage do
   @moduledoc """
   This module provides an elixir map wrapper around the OpenAI message JSON
   object which is used in the chat completions and assistants APIs.
-
-  The following fields can be used as parameters when creating a new chat message:
-
-  - `content`
-  - `role`
-  - `name`
-  - `file_ids`
   """
   @map_fields [
     :content,
