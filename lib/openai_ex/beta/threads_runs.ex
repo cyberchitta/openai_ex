@@ -20,6 +20,8 @@ defmodule OpenaiEx.Beta.Threads.Runs do
     :response_format
   ]
 
+  @ep_url "/threads/runs"
+
   defp ep_url(thread_id, run_id \\ nil, action \\ nil) do
     "/threads/#{thread_id}/runs" <>
       if(is_nil(run_id), do: "", else: "/#{run_id}") <>
@@ -67,6 +69,14 @@ defmodule OpenaiEx.Beta.Threads.Runs do
 
   See https://platform.openai.com/docs/api-reference/runs/createRun for more information.
   """
+  def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}, stream: true) do
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.HttpSse.post(ep_url(thread_id),
+      json: run |> Map.take(@api_fields) |> Map.put(:stream, true)
+    )
+  end
+
   def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}) do
     openai
     |> OpenaiEx.with_assistants_beta()
@@ -147,6 +157,19 @@ defmodule OpenaiEx.Beta.Threads.Runs do
 
   def submit_tool_outputs(
         openai = %OpenaiEx{},
+        %{thread_id: thread_id, run_id: run_id, tool_outputs: tool_outputs},
+        stream: true
+      ) do
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.HttpSse.post(
+      ep_url(thread_id, run_id, "submit_tool_outputs"),
+      json: %{tool_outputs: tool_outputs} |> Map.put(:stream, true)
+    )
+  end
+
+  def submit_tool_outputs(
+        openai = %OpenaiEx{},
         %{thread_id: thread_id, run_id: run_id, tool_outputs: tool_outputs}
       ) do
     openai
@@ -180,9 +203,17 @@ defmodule OpenaiEx.Beta.Threads.Runs do
     :response_format
   ]
 
+  def create_and_run(openai = %OpenaiEx{}, params = %{assistant_id: _}, stream: true) do
+    openai
+    |> OpenaiEx.with_assistants_beta()
+    |> OpenaiEx.HttpSse.post(@ep_url,
+      json: params |> Map.take(@car_fields) |> Map.put(:stream, true)
+    )
+  end
+
   def create_and_run(openai = %OpenaiEx{}, params = %{assistant_id: _}) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post("/threads/runs", json: params |> Map.take(@car_fields))
+    |> OpenaiEx.Http.post(@ep_url, json: params |> Map.take(@car_fields))
   end
 end
