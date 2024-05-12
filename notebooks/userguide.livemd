@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.6.1"},
-  # {:openai_ex, path: Path.join(__DIR__, "..")},
+  # {:openai_ex, "~> 0.6.1"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.12.3"}
 ])
 ```
@@ -803,7 +803,10 @@ Now we will show an example assistant request using the retrieval tool with a se
 ```elixir
 alias OpenaiEx.Files
 
-hr_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/cyberdyne.txt"))
+# hr_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/cyberdyne.txt"))
+hrf_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/cyberdyne.txt"
+hr_file = OpenaiEx.new_file(name: hrf_url, content: fetch_blob.(hrf_url))
+
 hr_upload_req = Files.new_upload(file: hr_file, purpose: "assistants")
 hr_upload_res = openai |> Files.create(hr_upload_req)
 ```
@@ -829,7 +832,7 @@ math_assistant_req =
 Finally we call the endpoint to modify the `Assistant`
 
 ```elixir
-asst = openai |> Assistants.update(assistant_id, hr_assistant_req)
+asst = openai |> Assistants.update(assistant_id, math_assistant_req)
 ```
 
 ### Delete Assistant
@@ -852,6 +855,8 @@ assts = openai |> Assistants.list()
 
 ```elixir
 alias OpenaiEx.Beta.VectorStores
+alias OpenaiEx.Beta.VectorStores.Files
+alias OpenaiEx.Beta.VectorStores.File.Batches
 ```
 
 ### Create vector store
@@ -980,6 +985,7 @@ openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
 
 ```elixir
 alias OpenaiEx.Beta.Threads
+alias OpenaiEx.Beta.Threads.Messages
 ```
 
 ### Create thread
@@ -987,12 +993,16 @@ alias OpenaiEx.Beta.Threads
 Use the [`Thread.create()`] function to create threads. A thread can be created empty or with messages.
 
 ```elixir
-alias OpenaiEx.ChatMessage
-
 empty_thread = openai |> Threads.create()
 
-msg_hr = ChatMessage.user("What company do we work at?", [file_id])
-msg_ai = ChatMessage.user("How does AI work? Explain it in simple terms.")
+msg_hr =
+  Messages.new(
+    role: "user",
+    content: "What company do we work at?",
+    attachments: [%{file_id: file_id, tools: [%{type: "file_search"}]}]
+  )
+
+msg_ai = Messages.new(role: "user", content: "How does AI work? Explain it in simple terms.")
 
 thrd_req = Threads.new(messages: [msg_hr, msg_ai])
 
@@ -1072,27 +1082,6 @@ Use [`Message.list()`] to get all the messages for a given thread
 openai |> Threads.Messages.list(thread_id)
 ```
 
-### Retrieve message file
-
-Retrieve a message file using [`Message.File.retrieve()`]
-
-```elixir
-openai
-|> Threads.Messages.File.retrieve(%{
-  thread_id: thread_id,
-  message_id: message_id,
-  file_id: file_id
-})
-```
-
-### List message files
-
-You can list all message files using [`Message.File.list()`]
-
-```elixir
-openai |> Threads.Messages.File.list(%{thread_id: thread_id, message_id: message_id})
-```
-
 ## Runs
 
 ```elixir
@@ -1104,6 +1093,9 @@ alias OpenaiEx.Beta.Threads.Runs
 A run represents an execution on a thread. Use to [`Run.create()`](https://platform.openai.com/docs/api-reference/runs/createRun) with an assistant on a thread
 
 ```elixir
+math_assistant = openai |> Assistants.create(math_assistant_req)
+math_assistant_id = math_assistant["id"]
+
 run_req = Runs.new(thread_id: thread_id, assistant_id: math_assistant_id)
 
 run = openai |> Runs.create(run_req)

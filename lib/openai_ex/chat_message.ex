@@ -6,7 +6,6 @@ defmodule OpenaiEx.ChatMessage do
   @map_fields [
     :content,
     :role,
-    :file_ids,
     :name,
     :tool_call_id
   ]
@@ -38,7 +37,7 @@ defmodule OpenaiEx.ChatMessage do
       iex> _message = OpenaiEx.ChatMessage.user("Hello, world!")
       %{content: "Hello, world!", role: "user"}
   """
-  def user(content, file_ids \\ nil), do: new(role: "user", content: content, file_ids: file_ids)
+  def user(content), do: new(role: "user", content: content)
 
   @doc """
   Create a `ChatMessage` map with role `assistant`.
