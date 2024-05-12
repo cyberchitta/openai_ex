@@ -40,4 +40,8 @@ Enum.each(all_assistants["data"], fn a -> OpenaiEx.Beta.Assistants.delete(openai
 OpenaiEx.Beta.Assistants.list(openai)
 ```
 
-<!-- livebook:{"offset":701,"stamp":{"token":"XCP.AcSzF3VBlMvV7fo-e3QZ2RjoICcWZSJgJRLann5XUjAd0mYlgDKUEy62oICUi-anB5nYi6AyniVR7kT-5k0BFNZnodgjLEknT8lsLcmUxncJ6JAfVg1emmI","version":2}} -->
+## Vector Stores cleanup
+
+```
+(openai |> VectorStores.list())["data"] |> Enum.each(fn vs -> openai |> VectorStores.delete(vs["id"]) end)
+```
