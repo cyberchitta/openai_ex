@@ -110,7 +110,10 @@ defmodule OpenaiEx.HttpSse do
       %{eventType: _} -> true
       _ -> false
     end)
-    |> Enum.map(fn %{data: data} -> %{data: Jason.decode!(data)} end)
+    |> Enum.map(fn
+      %{data: data} -> %{data: Jason.decode!(data)}
+      token -> token
+    end)
   end
 
   @doc false
