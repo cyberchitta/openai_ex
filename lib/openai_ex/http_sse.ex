@@ -58,8 +58,8 @@ defmodule OpenaiEx.HttpSse do
   defp next_sse({acc, ref, task}) do
     receive do
       {:chunk, {:data, evt_data}, ^ref} ->
-        {tokens, next_acc} = tokenize_data(evt_data, acc)
-        {[tokens], {next_acc, ref, task}}
+        {events, next_acc} = extract_events(evt_data, acc)
+        {[events], {next_acc, ref, task}}
 
       # some 3rd party providers seem to be ending the stream with eof,
       # rather than 2 line terminators. Hopefully those will be fixed and this
@@ -81,13 +81,13 @@ defmodule OpenaiEx.HttpSse do
   @double_eol_eos ~r/(\r?\n|\r){2}$/
 
   @doc false
-  defp tokenize_data(evt_data, acc) do
+  defp extract_events(evt_data, acc) do
     all_data = acc <> evt_data
 
     if Regex.match?(@double_eol, all_data) do
       {remaining, lines} = extract_lines(all_data)
-      tokens = extract_json_tokens(lines)
-      {tokens, remaining}
+      events = process_fields(lines)
+      {events, remaining}
     else
       {[], all_data}
     end
@@ -101,9 +101,9 @@ defmodule OpenaiEx.HttpSse do
   end
 
   @doc false
-  defp extract_json_tokens(lines) do
+  defp process_fields(lines) do
     lines
-    |> Enum.map(&extract_token/1)
+    |> Enum.map(&extract_field/1)
     |> Enum.filter(fn
       %{data: "[DONE]"} -> false
       %{data: _} -> true
@@ -114,7 +114,7 @@ defmodule OpenaiEx.HttpSse do
   end
 
   @doc false
-  defp extract_token(line) do
+  defp extract_field(line) do
     [field | rest] = String.split(line, ":", parts: 2)
     value = Enum.join(rest, "") |> String.replace_prefix(" ", "")
 
