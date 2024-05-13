@@ -110,7 +110,7 @@ defmodule OpenaiEx.HttpSse do
     end)
     |> Enum.map(fn
       %{data: data} -> %{data: Jason.decode!(data)}
-      token -> token
+      field -> field
     end)
   end
 
