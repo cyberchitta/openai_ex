@@ -1101,6 +1101,19 @@ run_req = Runs.new(thread_id: thread_id, assistant_id: math_assistant_id)
 run = openai |> Runs.create(run_req)
 ```
 
+#### Streaming
+
+It is possible to stream the result of executing a run or resuming a run after submitting tool outputs. To accomplish this, pass `stream: true` to the `create`, `create_thread_and_run` and `submit_tool_outputs` functions.
+
+Cancellation works the same as for the Chat Completions endpoints.
+
+```elixir
+run_stream = openai |> Runs.create(run_req, stream: true)
+IO.puts(inspect(run_stream))
+IO.puts(inspect(run_stream.task_pid))
+run_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
+```
+
 ### Retrieve run
 
 Retrieve a run using [`Run.retrieve()`](https://platform.openai.com/docs/api-reference/runs/getRun)
