@@ -31,7 +31,7 @@ defmodule OpenaiEx.MixProject do
 
   defp deps do
     [
-      {:finch, "~> 0.16"},
+      {:finch, "~> 0.18"},
       {:jason, "~> 1.4"},
       {:multipart, "~> 0.4"},
       {:ex_doc, ">= 0.0.0", only: :docs},
