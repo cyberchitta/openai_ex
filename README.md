@@ -6,7 +6,7 @@
 
 Portions of this project were developed with assistance from ChatGPT 3.5 and 4, as well as Claude 3 Opus. However, every line of code is human curated (by me 😇).
 
-All API endpoints and features (as of May 1, 2024) are supported, including the **Assistants API Beta 2**, DALL-E-3, Text-To-Speech, the **tools support** in chat completions, and the **streaming version** of the chat completion endpoint. Streaming request **cancellation** is also supported.
+All API endpoints and features (as of May 1, 2024) are supported, including the **Assistants API Beta 2 with Run streaming**, DALL-E-3, Text-To-Speech, the **tools support** in chat completions, and the **streaming version** of the chat completion endpoint. Streaming request **cancellation** is also supported.
 
 Configuration of Finch pools and API base url are supported.
 
