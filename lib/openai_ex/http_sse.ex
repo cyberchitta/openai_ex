@@ -114,7 +114,7 @@ defmodule OpenaiEx.HttpSse do
         %{data: Jason.decode!(data)}
 
       %{eventType: value} ->
-        [event_id, data] =  String.split(value, "\ndata: ", parts: 2)
+        [event_id, data] = String.split(value, "\ndata: ", parts: 2)
         %{event: event_id, data: Jason.decode!(data)}
     end)
   end
