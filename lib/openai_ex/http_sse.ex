@@ -61,7 +61,7 @@ defmodule OpenaiEx.HttpSse do
         {:halt, {acc, ref}}
 
       {:done, ^ref} ->
-        if acc != "", do: Logger.error("residual!: #{acc}")
+        if acc != "", do: Logger.error("Residue!: #{acc}")
         {:halt, {acc, ref}}
 
       {:canceled, ^ref} ->
