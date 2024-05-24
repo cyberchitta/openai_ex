@@ -8,8 +8,7 @@
         "vscode": {
             "extensions": [
                 "jakebecker.elixir-ls",
-                "eamodio.gitlens",
-                "Continue.continue"
+                "eamodio.gitlens"
             ]
         }
     }
