@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.6.4"},
-  # {:openai_ex, path: Path.join(__DIR__, "..")},
+  # {:openai_ex, "~> 0.6.4"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.12.3"}
 ])
 ```
@@ -223,6 +223,15 @@ chat_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(in
 ```
 
 The `chat_stream.task_pid` can be used in conjunction with `OpenaiEx.HttpSse.cancel_request/1` to cancel an ongoing request.
+
+You need to check the return `chat_stream.status` field. In case the status is *not* 2XX, the `body_stream` and `task_pid` fields are not available. Instead, an `error` field will be returned.
+
+For example
+
+```elixir
+bad_req = Chat.Completions.new(model: "code-llama", messages: [])
+err_resp = openai |> Chat.Completions.create(bad_req, stream: true)
+```
 
 For a detailed example of the use of the streaming `ChatCompletion` API, **including how to cancel an ongoing request**, check out [Streaming Orderbot](https://hexdocs.pm/openai_ex/streaming_orderbot.html), the streaming equivalent of the prior example.
 
@@ -1170,3 +1179,5 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
+
+<!-- livebook:{"offset":35676,"stamp":{"token":"XCP.AjHEUsuFzph-vT5k8yFkKDymGuJknmrI8r2JaIelDg8t-OdyitwuhD6xFaBLRqpm3mD7wJET-JC6Rzm3n4c0ZDD4Cyn4cVg8DIRDO7kPdB8ypEPPC6w9zYg","version":2}} -->
