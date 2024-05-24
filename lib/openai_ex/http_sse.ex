@@ -128,18 +128,14 @@ defmodule OpenaiEx.HttpSse do
       "event" -> %{eventType: value}
       "id" -> %{lastEventId: value}
       "retry" -> %{retry: value}
-      # comment
       _ -> nil
     end
   end
 
   defp collect_error_message(ref, acc) do
     receive do
-      {:chunk, {:data, chunk}, ^ref} ->
-        collect_error_message(ref, acc <> chunk)
-
-      {:done, ^ref} ->
-        acc
+      {:chunk, {:data, chunk}, ^ref} -> collect_error_message(ref, acc <> chunk)
+      {:done, ^ref} -> acc
     end
   end
 end
