@@ -94,13 +94,7 @@ defmodule OpenaiEx.HttpSse do
   defp process_fields(lines) do
     lines
     |> Enum.map(&extract_field/1)
-    |> Enum.filter(fn
-      %{data: "[DONE]"} -> false
-      %{data: _} -> true
-      %{eventType: "done\ndata: [DONE]"} -> false
-      %{eventType: _} -> true
-      _ -> false
-    end)
+    |> Enum.filter(&filter_field/1)
     |> Enum.map(fn
       %{data: data} ->
         %{data: Jason.decode!(data)}
@@ -109,6 +103,16 @@ defmodule OpenaiEx.HttpSse do
         [event_id, data] = String.split(value, "\ndata: ", parts: 2)
         %{event: event_id, data: Jason.decode!(data)}
     end)
+  end
+
+  defp filter_field(event) do
+    case event do
+      %{data: "[DONE]"} -> false
+      %{data: _} -> true
+      %{eventType: "done\ndata: [DONE]"} -> false
+      %{eventType: _} -> true
+      _ -> false
+    end
   end
 
   defp extract_field(line) do
