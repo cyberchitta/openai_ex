@@ -71,6 +71,10 @@ defmodule OpenaiEx.HttpSse do
       {:done, ^ref} when acc == "data: [DONE]" ->
         {:halt, {acc, ref, task}}
 
+      {:done, ^ref} ->
+        if acc != "", do: Logger.error("residual!: #{acc}")
+        {:halt, {acc, ref, task}}
+
       {:canceled, ^ref} ->
         Logger.info("Request canceled by user")
         {:halt, {acc, ref, task}}
