@@ -8,7 +8,6 @@ defmodule OpenaiEx.HttpSse do
   # and
   # https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream
 
-  @doc false
   def post(openai = %OpenaiEx{}, url, json: json) do
     me = self()
     ref = make_ref()
@@ -25,12 +24,10 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  @doc false
   def cancel_request(task_pid) when is_pid(task_pid) do
     send(task_pid, :cancel_request)
   end
 
-  @doc false
   defp post_sse(openai = %OpenaiEx{}, url, json, me, ref) do
     request = OpenaiEx.Http.build_post(openai, url, json: json)
     on_chunk = create_chunk_handler(me, ref)
@@ -39,7 +36,6 @@ defmodule OpenaiEx.HttpSse do
     send(me, {:done, ref})
   end
 
-  @doc false
   defp create_chunk_handler(me, ref) do
     fn chunk, _acc ->
       receive do
@@ -52,7 +48,6 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  @doc false
   defp next_sse({acc, ref}) do
     receive do
       {:chunk, {:data, evt_data}, ^ref} ->
@@ -78,7 +73,6 @@ defmodule OpenaiEx.HttpSse do
   @double_eol ~r/(\r?\n|\r){2}/
   @double_eol_eos ~r/(\r?\n|\r){2}$/
 
-  @doc false
   defp extract_events(evt_data, acc) do
     all_data = acc <> evt_data
 
@@ -91,14 +85,12 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  @doc false
   defp extract_lines(data) do
     lines = String.split(data, @double_eol)
     incomplete_line = !Regex.match?(@double_eol_eos, data)
     if incomplete_line, do: lines |> List.pop_at(-1), else: {"", lines}
   end
 
-  @doc false
   defp process_fields(lines) do
     lines
     |> Enum.map(&extract_field/1)
@@ -119,7 +111,6 @@ defmodule OpenaiEx.HttpSse do
     end)
   end
 
-  @doc false
   defp extract_field(line) do
     [field | rest] = String.split(line, ":", parts: 2)
     value = Enum.join(rest, "") |> String.replace_prefix(" ", "")
@@ -134,7 +125,6 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  @doc false
   defp collect_error_message(ref, acc) do
     receive do
       {:chunk, {:data, chunk}, ^ref} ->
