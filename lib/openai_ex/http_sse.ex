@@ -10,32 +10,17 @@ defmodule OpenaiEx.HttpSse do
 
   @doc false
   def post(openai = %OpenaiEx{}, url, json: json) do
-    request = OpenaiEx.Http.build_post(openai, url, json: json)
-
     me = self()
     ref = make_ref()
-
-    task =
-      Task.async(fn ->
-        on_chunk = create_chunk_handler(me, ref)
-        options = Http.request_options(openai)
-        request |> Finch.stream(Map.get(openai, :finch_name), nil, on_chunk, options)
-        send(me, {:done, ref})
-      end)
-
+    task = Task.async(fn -> post_sse(openai, url, json, me, ref) end)
     status = receive(do: ({:chunk, {:status, status}, ^ref} -> status))
     headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
     if status in 200..299 do
-      body_stream =
-        Stream.resource(fn -> {"", ref, task} end, &next_sse/1, fn {_, _, task} ->
-          Task.shutdown(task)
-        end)
-
+      body_stream = Stream.resource(fn -> {"", ref} end, &next_sse/1, fn _ -> :ok end)
       %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
     else
       error_message = collect_error_message(ref, "")
-      Task.shutdown(task)
       %{status: status, headers: headers, error: Jason.decode!(error_message)}
     end
   end
@@ -43,6 +28,15 @@ defmodule OpenaiEx.HttpSse do
   @doc false
   def cancel_request(task_pid) when is_pid(task_pid) do
     send(task_pid, :cancel_request)
+  end
+
+  @doc false
+  defp post_sse(openai = %OpenaiEx{}, url, json, me, ref) do
+    request = OpenaiEx.Http.build_post(openai, url, json: json)
+    on_chunk = create_chunk_handler(me, ref)
+    options = Http.request_options(openai)
+    request |> Finch.stream(Map.get(openai, :finch_name), nil, on_chunk, options)
+    send(me, {:done, ref})
   end
 
   @doc false
@@ -59,25 +53,25 @@ defmodule OpenaiEx.HttpSse do
   end
 
   @doc false
-  defp next_sse({acc, ref, task}) do
+  defp next_sse({acc, ref}) do
     receive do
       {:chunk, {:data, evt_data}, ^ref} ->
         {events, next_acc} = extract_events(evt_data, acc)
-        {[events], {next_acc, ref, task}}
+        {[events], {next_acc, ref}}
 
       # some 3rd party providers seem to be ending the stream with eof,
       # rather than 2 line terminators. Hopefully those will be fixed and this
       # can be removed in the future
       {:done, ^ref} when acc == "data: [DONE]" ->
-        {:halt, {acc, ref, task}}
+        {:halt, {acc, ref}}
 
       {:done, ^ref} ->
         if acc != "", do: Logger.error("residual!: #{acc}")
-        {:halt, {acc, ref, task}}
+        {:halt, {acc, ref}}
 
       {:canceled, ^ref} ->
         Logger.info("Request canceled by user")
-        {:halt, {acc, ref, task}}
+        {:halt, {acc, ref}}
     end
   end
 
