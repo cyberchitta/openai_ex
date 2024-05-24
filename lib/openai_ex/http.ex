@@ -1,7 +1,6 @@
 defmodule OpenaiEx.Http do
   @moduledoc false
 
-  @doc false
   def headers(openai = %OpenaiEx{}) do
     openai._http_headers
   end
@@ -14,12 +13,10 @@ defmodule OpenaiEx.Http do
     Finch.build(method, openai.base_url <> url, headers(openai))
   end
 
-  @doc false
   def post(openai = %OpenaiEx{}, url) do
     post(openai, url, json: %{})
   end
 
-  @doc false
   def post(openai = %OpenaiEx{}, url, multipart: multipart) do
     :post
     |> Finch.build(
@@ -34,19 +31,16 @@ defmodule OpenaiEx.Http do
     |> finch_run(openai)
   end
 
-  @doc false
   def post(openai = %OpenaiEx{}, url, json: json) do
     build_post(openai, url, json: json)
     |> finch_run(openai)
   end
 
-  @doc false
   def post_no_decode(openai = %OpenaiEx{}, url, json: json) do
     build_post(openai, url, json: json)
     |> finch_run_no_decode(openai)
   end
 
-  @doc false
   def build_post(openai = %OpenaiEx{}, url, json: json) do
     :post
     |> Finch.build(
@@ -56,7 +50,6 @@ defmodule OpenaiEx.Http do
     )
   end
 
-  @doc false
   def get(openai = %OpenaiEx{}, base_url, params) do
     query =
       base_url
@@ -67,7 +60,6 @@ defmodule OpenaiEx.Http do
     openai |> get(query)
   end
 
-  @doc false
   def get(openai = %OpenaiEx{}, url) do
     :get |> build_finch(openai, url) |> finch_run(openai)
   end
@@ -76,12 +68,10 @@ defmodule OpenaiEx.Http do
     :get |> build_finch(openai, url) |> finch_run_no_decode(openai)
   end
 
-  @doc false
   def delete(openai = %OpenaiEx{}, url) do
     :delete |> build_finch(openai, url) |> finch_run(openai)
   end
 
-  @doc false
   def finch_run(finch_request, openai = %OpenaiEx{}) do
     finch_request |> finch_run_no_decode(openai) |> Jason.decode!()
   end
@@ -92,7 +82,6 @@ defmodule OpenaiEx.Http do
     |> Map.get(:body)
   end
 
-  @doc false
   def to_multi_part_form_data(req, file_fields) do
     mp =
       req
@@ -108,7 +97,6 @@ defmodule OpenaiEx.Http do
     end)
   end
 
-  @doc false
   defp to_file_field_part(k, v) do
     case v do
       {path} ->
