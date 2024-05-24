@@ -26,12 +26,18 @@ defmodule OpenaiEx.HttpSse do
     status = receive(do: ({:chunk, {:status, status}, ^ref} -> status))
     headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
-    body_stream =
-      Stream.resource(fn -> {"", ref, task} end, &next_sse/1, fn {_data, _ref, task} ->
-        Task.shutdown(task)
-      end)
+    if status in 200..299 do
+      body_stream =
+        Stream.resource(fn -> {"", ref, task} end, &next_sse/1, fn {_, _, task} ->
+          Task.shutdown(task)
+        end)
 
-    %{task_pid: task.pid, status: status, headers: headers, body_stream: body_stream}
+      %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
+    else
+      error_message = collect_error_message(ref, "")
+      Task.shutdown(task)
+      %{status: status, headers: headers, error: Jason.decode!(error_message)}
+    end
   end
 
   @doc false
@@ -63,10 +69,6 @@ defmodule OpenaiEx.HttpSse do
       # rather than 2 line terminators. Hopefully those will be fixed and this
       # can be removed in the future
       {:done, ^ref} when acc == "data: [DONE]" ->
-        {:halt, {acc, ref, task}}
-
-      {:done, ^ref} ->
-        if acc != "", do: Logger.warning(inspect(Jason.decode!(acc)))
         {:halt, {acc, ref, task}}
 
       {:canceled, ^ref} ->
@@ -131,6 +133,17 @@ defmodule OpenaiEx.HttpSse do
       "retry" -> %{retry: value}
       # comment
       _ -> nil
+    end
+  end
+
+  @doc false
+  defp collect_error_message(ref, acc) do
+    receive do
+      {:chunk, {:data, chunk}, ^ref} ->
+        collect_error_message(ref, acc <> chunk)
+
+      {:done, ^ref} ->
+        acc
     end
   end
 end
