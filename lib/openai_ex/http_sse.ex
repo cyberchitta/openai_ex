@@ -19,8 +19,8 @@ defmodule OpenaiEx.HttpSse do
       body_stream = Stream.resource(fn -> {"", ref} end, &next_sse/1, fn _ -> :ok end)
       %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
     else
-      error_message = collect_error_message(ref, "")
-      %{status: status, headers: headers, error: Jason.decode!(error_message)}
+      error = extract_error(ref, "")
+      %{status: status, headers: headers, error: Jason.decode!(error)}
     end
   end
 
@@ -132,9 +132,9 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp collect_error_message(ref, acc) do
+  defp extract_error(ref, acc) do
     receive do
-      {:chunk, {:data, chunk}, ^ref} -> collect_error_message(ref, acc <> chunk)
+      {:chunk, {:data, chunk}, ^ref} -> extract_error(ref, acc <> chunk)
       {:done, ^ref} -> acc
     end
   end
