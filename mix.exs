@@ -35,7 +35,7 @@ defmodule OpenaiEx.MixProject do
       {:jason, "~> 1.4"},
       {:multipart, "~> 0.4"},
       {:ex_doc, ">= 0.0.0", only: :docs},
-      {:credo, "~> 1.6", only: :dev, runtime: false}
+      {:credo, "~> 1.7", only: :dev, runtime: false}
     ]
   end
 
