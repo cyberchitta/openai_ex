@@ -31,13 +31,13 @@ defmodule OpenaiEx.HttpSse do
 
   defp finch_stream(openai = %OpenaiEx{}, url, json, me, ref) do
     request = Http.build_post(openai, url, json: json)
-    on_chunk = create_chunk_handler(me, ref)
+    send_me_chunk = create_chunk_sender(me, ref)
     options = Http.request_options(openai)
-    request |> Finch.stream(Map.get(openai, :finch_name), nil, on_chunk, options)
+    request |> Finch.stream(Map.get(openai, :finch_name), nil, send_me_chunk, options)
     send(me, {:done, ref})
   end
 
-  defp create_chunk_handler(me, ref) do
+  defp create_chunk_sender(me, ref) do
     fn chunk, _acc ->
       receive do
         :cancel_request ->
