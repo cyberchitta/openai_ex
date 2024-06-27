@@ -16,8 +16,8 @@ defmodule OpenaiEx.HttpSse do
     headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
     if status in 200..299 do
-      next_sse = create_next_sse(ref, openai.stream_timeout)
-      body_stream = Stream.resource(&init_sse/0, next_sse, &end_sse/1)
+      stream_receiver = create_stream_receiver(ref, openai.stream_timeout)
+      body_stream = Stream.resource(&init_stream/0, stream_receiver, &end_stream/1)
       %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
     else
       error = extract_error(ref, "")
@@ -49,9 +49,9 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp init_sse, do: ""
+  defp init_stream, do: ""
 
-  defp create_next_sse(ref, timeout) do
+  defp create_stream_receiver(ref, timeout) do
     fn acc when is_binary(acc) ->
       receive do
         {:chunk, {:data, evt_data}, ^ref} ->
@@ -79,8 +79,8 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp end_sse({:exception, reason}), do: raise(RuntimeError, "Stream error: #{reason}")
-  defp end_sse(_), do: :ok
+  defp end_stream({:exception, reason}), do: raise(RuntimeError, "Stream error: #{reason}")
+  defp end_stream(_), do: :ok
 
   @double_eol ~r/(\r?\n|\r){2}/
   @double_eol_eos ~r/(\r?\n|\r){2}$/
