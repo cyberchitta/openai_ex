@@ -110,8 +110,8 @@ defmodule OpenaiEx do
     openai |> Map.put(:base_url, base_url)
   end
 
-  def with_receive_timeout(openai = %OpenaiEx{}, receive_timeout) do
-    openai |> Map.put(:receive_timeout, receive_timeout)
+  def with_receive_timeout(openai = %OpenaiEx{}, timeout) do
+    openai |> Map.put(:receive_timeout, timeout)
   end
 
   def with_stream_timeout(openai = %OpenaiEx{}, timeout)
