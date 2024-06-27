@@ -116,7 +116,7 @@ defmodule OpenaiEx do
 
   def with_stream_timeout(openai = %OpenaiEx{}, timeout)
       when is_integer(timeout) and timeout > 0 do
-    openai |> OpenAI.put(:stream_timeout, timeout)
+    openai |> Map.put(:stream_timeout, timeout)
   end
 
   def with_finch_name(openai = %OpenaiEx{}, finch_name) do
