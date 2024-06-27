@@ -11,7 +11,7 @@ defmodule OpenaiEx.HttpSse do
   def post(openai = %OpenaiEx{}, url, json: json) do
     me = self()
     ref = make_ref()
-    task = Task.async(fn -> post_sse(openai, url, json, me, ref) end)
+    task = Task.async(fn -> finch_stream(openai, url, json, me, ref) end)
     status = receive(do: ({:chunk, {:status, status}, ^ref} -> status))
     headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
@@ -29,7 +29,7 @@ defmodule OpenaiEx.HttpSse do
     send(task_pid, :cancel_request)
   end
 
-  defp post_sse(openai = %OpenaiEx{}, url, json, me, ref) do
+  defp finch_stream(openai = %OpenaiEx{}, url, json, me, ref) do
     request = Http.build_post(openai, url, json: json)
     on_chunk = create_chunk_handler(me, ref)
     options = Http.request_options(openai)
