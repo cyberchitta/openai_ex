@@ -12,6 +12,7 @@ defmodule OpenaiEx do
             beta: nil,
             base_url: "https://api.openai.com/v1",
             receive_timeout: 15_000,
+            stream_timeout: :infinity,
             finch_name: OpenaiEx.Finch,
             _ep_path_mapping: &OpenaiEx._identity/1,
             _http_headers: nil
@@ -111,6 +112,11 @@ defmodule OpenaiEx do
 
   def with_receive_timeout(openai = %OpenaiEx{}, receive_timeout) do
     openai |> Map.put(:receive_timeout, receive_timeout)
+  end
+
+  def with_stream_timeout(openai = %OpenaiEx{}, timeout)
+      when is_integer(timeout) and timeout > 0 do
+    openai |> OpenAI.put(:stream_timeout, timeout)
   end
 
   def with_finch_name(openai = %OpenaiEx{}, finch_name) do
