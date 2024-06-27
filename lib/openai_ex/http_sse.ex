@@ -16,7 +16,8 @@ defmodule OpenaiEx.HttpSse do
     headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
     if status in 200..299 do
-      body_stream = Stream.resource(fn -> {"", ref} end, &next_sse/1, fn _ -> :ok end)
+      next_sse = create_next_sse(ref, openai.stream_timeout)
+      body_stream = Stream.resource(&init_sse/0, next_sse, &end_sse/1)
       %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
     else
       error = extract_error(ref, "")
@@ -29,7 +30,7 @@ defmodule OpenaiEx.HttpSse do
   end
 
   defp post_sse(openai = %OpenaiEx{}, url, json, me, ref) do
-    request = OpenaiEx.Http.build_post(openai, url, json: json)
+    request = Http.build_post(openai, url, json: json)
     on_chunk = create_chunk_handler(me, ref)
     options = Http.request_options(openai)
     request |> Finch.stream(Map.get(openai, :finch_name), nil, on_chunk, options)
@@ -48,27 +49,38 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp next_sse({acc, ref}) do
-    receive do
-      {:chunk, {:data, evt_data}, ^ref} ->
-        {events, next_acc} = extract_events(evt_data, acc)
-        {[events], {next_acc, ref}}
+  defp init_sse, do: ""
 
-      # some 3rd party providers seem to be ending the stream with eof,
-      # rather than 2 line terminators. Hopefully those will be fixed and this
-      # can be removed in the future
-      {:done, ^ref} when acc == "data: [DONE]" ->
-        {:halt, {acc, ref}}
+  defp create_next_sse(ref, timeout) do
+    fn acc when is_binary(acc) ->
+      receive do
+        {:chunk, {:data, evt_data}, ^ref} ->
+          {events, next_acc} = extract_events(evt_data, acc)
+          {[events], next_acc}
 
-      {:done, ^ref} ->
-        if acc != "", do: Logger.error("Residue!: #{acc}")
-        {:halt, {acc, ref}}
+        # some 3rd party providers seem to be ending the stream with eof,
+        # rather than 2 line terminators. Hopefully those will be fixed and this
+        # can be removed in the future
+        {:done, ^ref} when acc == "data: [DONE]" ->
+          {:halt, acc}
 
-      {:canceled, ^ref} ->
-        Logger.info("Request canceled by user")
-        {:halt, {acc, ref}}
+        {:done, ^ref} ->
+          if acc != "", do: Logger.error("Residue!: #{acc}")
+          {:halt, {:exception, :residual}}
+
+        {:canceled, ^ref} ->
+          Logger.info("Request canceled by user")
+          {:halt, {:exception, :canceled}}
+      after
+        timeout ->
+          Logger.warning("Stream timeout after #{timeout}ms")
+          {:halt, {:exception, :timeout}}
+      end
     end
   end
+
+  defp end_sse({:exception, reason}), do: raise(RuntimeError, "Stream error: #{reason}")
+  defp end_sse(_), do: :ok
 
   @double_eol ~r/(\r?\n|\r){2}/
   @double_eol_eos ~r/(\r?\n|\r){2}$/
