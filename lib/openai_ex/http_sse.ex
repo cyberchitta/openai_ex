@@ -79,7 +79,7 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp end_stream({:exception, reason}), do: raise(RuntimeError, "Stream error: #{reason}")
+  defp end_stream({:exception, reason}), do: raise(OpenaiEx.Exception, {:sse_exception, reason})
   defp end_stream(_), do: :ok
 
   @double_eol ~r/(\r?\n|\r){2}/
