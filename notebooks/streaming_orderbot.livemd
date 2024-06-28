@@ -60,13 +60,28 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
   end
 
   def stream_completion_to_frame(stream, frame) do
-    stream
-    |> stream_to_completions()
-    |> Enum.reduce("", fn token, text ->
-      next = text <> token
-      Kino.Frame.render(frame, Kino.Text.new(next))
-      next
-    end)
+    try do
+      result = stream
+      |> stream_to_completions()
+      |> Enum.reduce("", fn token, text ->
+        next = text <> token
+        Kino.Frame.render(frame, Kino.Text.new(next))
+        next
+      end)
+      {:ok, result}
+    rescue
+      e in Exception ->
+        case e do
+          %{type: :sse_exception, message: :canceled} ->
+            message = "Request was canceled."
+            Kino.Frame.render(frame, Kino.Text.new(message))
+            {:canceled, message}
+          _ ->
+            message = "An error occurred: #{e.message}"
+            Kino.Frame.render(frame, Kino.Text.new(message))
+            {:error, message}
+        end
+    end
   end
 
   def create_orderbot(openai = %OpenaiEx{}, context) do
@@ -81,11 +96,11 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
     |> Kino.render()
 
     stream_o = openai |> get_stream(context)
-    bot_says = stream_o |> stream_completion_to_frame(last_frame)
+    {status, bot_says} = stream_o |> stream_completion_to_frame(last_frame)
 
     Kino.listen(
       form,
-      context ++ [ChatMessage.assistant(bot_says)],
+      context ++ (if status == :ok, do: [ChatMessage.assistant(bot_says)], else: []),
       fn %{data: %{prompt: you_say}}, history ->
         Kino.Frame.render(last_frame, Kino.Text.new(""))
         Kino.Frame.append(chat_frame, Kino.Text.new(List.last(history).content))
@@ -93,8 +108,14 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
 
         stream = openai |> get_stream(history ++ [ChatMessage.user(you_say)])
         set_task_pid(stream.task_pid)
-        bot_says = stream |> stream_completion_to_frame(last_frame)
-        {:cont, history ++ [ChatMessage.user(you_say), ChatMessage.assistant(bot_says)]}
+        {status, bot_says} = stream |> stream_completion_to_frame(last_frame)
+        case status do
+          :ok ->
+            {:cont, history ++ [ChatMessage.user(you_say), ChatMessage.assistant(bot_says)]}
+          _ ->
+            Kino.Frame.append(chat_frame, Kino.Markdown.new("**Bot** #{bot_says}"))
+            {:cont, history ++ [ChatMessage.user(you_say)]}
+        end
       end
     )
 
