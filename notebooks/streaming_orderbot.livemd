@@ -171,5 +171,3 @@ context = [
 ```elixir
 openai |> StreamingOrderbot.create_orderbot(context)
 ```
-
-<!-- livebook:{"offset":4437,"stamp":{"token":"XCP.Iy1xAMVioeT-9KvIvaXPp4xWkNvzlDsHezN22TKU4QXLwrIWP_72QVzVCOfaN9WH62y_SuTNi7_Dy3CUN253EXroFQBEgESzHXBGKvtylahgkk1j49u-jLU","version":2}} -->
