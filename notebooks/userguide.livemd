@@ -2,9 +2,9 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.6.5"},
+  {:openai_ex, "~> 0.7.0"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.12.3"}
+  {:kino, "~> 0.13.1"}
 ])
 ```
 
@@ -43,7 +43,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.6.5"}
+    {:openai_ex, "~> 0.7.0"}
   ]
 )
 ```
@@ -57,7 +57,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.6.5"}
+    {:openai_ex, "~> 0.7.0"}
   ]
 end
 ```
@@ -222,6 +222,8 @@ IO.puts(inspect(chat_stream.task_pid))
 chat_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
 ```
 
+### Canceling a streaming request
+
 The `chat_stream.task_pid` can be used in conjunction with `OpenaiEx.HttpSse.cancel_request/1` to cancel an ongoing request.
 
 You need to check the return `chat_stream.status` field. In case the status is *not* 2XX, the `body_stream` and `task_pid` fields are not available. Instead, an `error` field will be returned.
@@ -234,6 +236,82 @@ err_resp = openai |> Chat.Completions.create(bad_req, stream: true)
 ```
 
 For a detailed example of the use of the streaming `ChatCompletion` API, **including how to cancel an ongoing request**, check out [Streaming Orderbot](https://hexdocs.pm/openai_ex/streaming_orderbot.html), the streaming equivalent of the prior example.
+
+### Stream Timeout
+
+While OpenAI's official API implementation typically doesn't require explicit timeout handling for streams, some third-party implementations of the OpenAI API may benefit from custom timeout settings. OpenaiEx provides a way to set a stream-specific timeout to handle these cases.
+
+You can set a stream-specific timeout using the `with_stream_timeout` function:
+
+```elixir
+# Set a stream timeout of 30 seconds
+openai_with_timeout = openai |> OpenaiEx.with_stream_timeout(30_000)
+```
+
+This is particularly useful when working with third-party OpenAI API implementations that may have different performance characteristics than the official API.
+
+### Exception Handling for Streams
+
+When working with streams, it's important to handle potential exceptions that may occur during stream processing. OpenaiEx uses a custom exception type for stream-related errors. Here's how you can handle these exceptions:
+
+```elixir
+alias OpenaiEx.Exception
+
+process_stream = fn openai, request ->
+  response = Chat.Completions.create(openai, request, stream: true)
+  
+  try do
+    response.body_stream
+    |> Stream.flat_map(& &1)
+    |> Enum.each(fn chunk ->
+      # Process each chunk here
+      IO.inspect(chunk)
+    end)
+  rescue
+    e in OpenaiEx.Exception ->
+      case e do
+        %{type: :sse_exception, message: "canceled"} -> 
+          IO.puts("Stream was canceled")
+          {:error, :canceled, e.message}
+        %{type: :sse_exception, message: "timeout"} -> 
+          IO.puts("Timeout on SSE stream")
+          {:error, :timeout, e.message}
+        _ -> 
+          IO.puts("Unknown error occurred")
+          {:error, :unknown, e.message}
+      end
+    e ->
+      IO.puts("An unexpected error occurred")
+      {:error, :unexpected, Exception.message(e)}
+  end
+end
+
+# Usage
+chat_req = Chat.Completions.new(
+  model: "gpt-3.5-turbo",
+  messages: [ChatMessage.user("Tell me a short story about a brave knight")],
+  max_tokens: 500
+)
+
+# Use the OpenaiEx struct with custom stream timeout
+result = process_stream.(openai_with_timeout, chat_req)
+case result do
+  {:error, type, message} ->
+    IO.puts("Error type: #{type}")
+    IO.puts("Error message: #{message}")
+  _ ->
+    IO.puts("Stream processed successfully")
+end
+```
+
+In this example, we define a `process_stream` function that handles different types of stream exceptions:
+
+* `:canceled`: The stream was canceled. We return an error tuple.
+* `:timeout`: The stream timed out. We return an error tuple.
+* Any other `OpenaiEx.Exception`: We treat it as an unknown error.
+* Any other exception: We treat it as an unexpected error.
+
+This approach allows you to gracefully handle different types of stream-related errors and take appropriate actions.
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat).
 
@@ -1179,5 +1257,3 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
-
-<!-- livebook:{"offset":35676,"stamp":{"token":"XCP.AjHEUsuFzph-vT5k8yFkKDymGuJknmrI8r2JaIelDg8t-OdyitwuhD6xFaBLRqpm3mD7wJET-JC6Rzm3n4c0ZDD4Cyn4cVg8DIRDO7kPdB8ypEPPC6w9zYg","version":2}} -->

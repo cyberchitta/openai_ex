@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.6.5"},
-  {:kino, "~> 0.12.3"}
+  {:openai_ex, "~> 0.7.0"},
+  {:kino, "~> 0.13.1"}
 ])
 
 alias OpenaiEx
@@ -27,7 +27,6 @@ openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
 ```elixir
 defmodule OpenaiEx.Notebooks.StreamingOrderbot do
   alias OpenaiEx
-  alias OpenaiEx.Chat.Completions
   require Logger
 
   def set_task_pid(task_pid) do
@@ -54,19 +53,37 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
   def stream_to_completions(%{body_stream: body_stream}) do
     body_stream
     |> Stream.flat_map(& &1)
-    |> Stream.map(fn %{data: d} -> d |> Map.get("choices") |> Enum.at(0) |> Map.get("delta") end)
+    |> Stream.map(fn %{data: d} -> d |> Map.get("choices") |> List.first() |> Map.get("delta") end)
     |> Stream.filter(fn map -> map |> Map.has_key?("content") end)
     |> Stream.map(fn map -> map |> Map.get("content") end)
   end
 
   def stream_completion_to_frame(stream, frame) do
-    stream
-    |> stream_to_completions()
-    |> Enum.reduce("", fn token, text ->
-      next = text <> token
-      Kino.Frame.render(frame, Kino.Text.new(next))
-      next
-    end)
+    try do
+      result =
+        stream
+        |> stream_to_completions()
+        |> Enum.reduce("", fn token, text ->
+          next = text <> token
+          Kino.Frame.render(frame, Kino.Text.new(next))
+          next
+        end)
+
+      {:ok, result}
+    rescue
+      e in OpenaiEx.Exception ->
+        case e do
+          %{type: :sse_exception, message: "canceled"} ->
+            message = "Request was canceled."
+            Kino.Frame.render(frame, Kino.Text.new(message))
+            {:canceled, message}
+
+          _ ->
+            message = "An error occurred: #{e.message}"
+            Kino.Frame.render(frame, Kino.Text.new(message))
+            {:error, message}
+        end
+    end
   end
 
   def create_orderbot(openai = %OpenaiEx{}, context) do
@@ -81,11 +98,11 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
     |> Kino.render()
 
     stream_o = openai |> get_stream(context)
-    bot_says = stream_o |> stream_completion_to_frame(last_frame)
+    {status, bot_says} = stream_o |> stream_completion_to_frame(last_frame)
 
     Kino.listen(
       form,
-      context ++ [ChatMessage.assistant(bot_says)],
+      context ++ if(status == :ok, do: [ChatMessage.assistant(bot_says)], else: []),
       fn %{data: %{prompt: you_say}}, history ->
         Kino.Frame.render(last_frame, Kino.Text.new(""))
         Kino.Frame.append(chat_frame, Kino.Text.new(List.last(history).content))
@@ -93,8 +110,12 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
 
         stream = openai |> get_stream(history ++ [ChatMessage.user(you_say)])
         set_task_pid(stream.task_pid)
-        bot_says = stream |> stream_completion_to_frame(last_frame)
-        {:cont, history ++ [ChatMessage.user(you_say), ChatMessage.assistant(bot_says)]}
+        {status, bot_says} = stream |> stream_completion_to_frame(last_frame)
+
+        case status do
+          :ok -> {:cont, history ++ [ChatMessage.user(you_say), ChatMessage.assistant(bot_says)]}
+          _ -> {:cont, history}
+        end
       end
     )
 
@@ -150,5 +171,3 @@ context = [
 ```elixir
 openai |> StreamingOrderbot.create_orderbot(context)
 ```
-
-<!-- livebook:{"offset":4437,"stamp":{"token":"XCP.Iy1xAMVioeT-9KvIvaXPp4xWkNvzlDsHezN22TKU4QXLwrIWP_72QVzVCOfaN9WH62y_SuTNi7_Dy3CUN253EXroFQBEgESzHXBGKvtylahgkk1j49u-jLU","version":2}} -->

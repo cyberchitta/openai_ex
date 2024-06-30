@@ -11,12 +11,13 @@ defmodule OpenaiEx.HttpSse do
   def post(openai = %OpenaiEx{}, url, json: json) do
     me = self()
     ref = make_ref()
-    task = Task.async(fn -> post_sse(openai, url, json, me, ref) end)
+    task = Task.async(fn -> finch_stream(openai, url, json, me, ref) end)
     status = receive(do: ({:chunk, {:status, status}, ^ref} -> status))
     headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
     if status in 200..299 do
-      body_stream = Stream.resource(fn -> {"", ref} end, &next_sse/1, fn _ -> :ok end)
+      stream_receiver = create_stream_receiver(ref, openai.stream_timeout, task)
+      body_stream = Stream.resource(&init_stream/0, stream_receiver, &end_stream/1)
       %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
     else
       error = extract_error(ref, "")
@@ -28,15 +29,20 @@ defmodule OpenaiEx.HttpSse do
     send(task_pid, :cancel_request)
   end
 
-  defp post_sse(openai = %OpenaiEx{}, url, json, me, ref) do
-    request = OpenaiEx.Http.build_post(openai, url, json: json)
-    on_chunk = create_chunk_handler(me, ref)
+  defp finch_stream(openai = %OpenaiEx{}, url, json, me, ref) do
+    request = Http.build_post(openai, url, json: json)
+    send_me_chunk = create_chunk_sender(me, ref)
     options = Http.request_options(openai)
-    request |> Finch.stream(Map.get(openai, :finch_name), nil, on_chunk, options)
-    send(me, {:done, ref})
+
+    try do
+      request |> Finch.stream(Map.get(openai, :finch_name), nil, send_me_chunk, options)
+      send(me, {:done, ref})
+    catch
+      :throw, :cancel_request -> {:exception, :cancel_request}
+    end
   end
 
-  defp create_chunk_handler(me, ref) do
+  defp create_chunk_sender(me, ref) do
     fn chunk, _acc ->
       receive do
         :cancel_request ->
@@ -48,27 +54,39 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp next_sse({acc, ref}) do
-    receive do
-      {:chunk, {:data, evt_data}, ^ref} ->
-        {events, next_acc} = extract_events(evt_data, acc)
-        {[events], {next_acc, ref}}
+  defp init_stream, do: ""
 
-      # some 3rd party providers seem to be ending the stream with eof,
-      # rather than 2 line terminators. Hopefully those will be fixed and this
-      # can be removed in the future
-      {:done, ^ref} when acc == "data: [DONE]" ->
-        {:halt, {acc, ref}}
+  defp create_stream_receiver(ref, timeout, task) do
+    fn acc when is_binary(acc) ->
+      receive do
+        {:chunk, {:data, evt_data}, ^ref} ->
+          {events, next_acc} = extract_events(evt_data, acc)
+          {[events], next_acc}
 
-      {:done, ^ref} ->
-        if acc != "", do: Logger.error("Residue!: #{acc}")
-        {:halt, {acc, ref}}
+        # some 3rd party providers seem to be ending the stream with eof,
+        # rather than 2 line terminators. Hopefully those will be fixed and this
+        # can be removed in the future
+        {:done, ^ref} when acc == "data: [DONE]" ->
+          Logger.warning("\"data: [DONE]\" should be followed by 2 line terminators")
+          {:halt, acc}
 
-      {:canceled, ^ref} ->
-        Logger.info("Request canceled by user")
-        {:halt, {acc, ref}}
+        {:done, ^ref} ->
+          {:halt, acc}
+
+        {:canceled, ^ref} ->
+          Logger.info("Request canceled by user")
+          {:halt, {:exception, :canceled}}
+      after
+        timeout ->
+          Logger.warning("Stream timeout after #{timeout}ms")
+          Task.shutdown(task)
+          {:halt, {:exception, :timeout}}
+      end
     end
   end
+
+  defp end_stream({:exception, reason}), do: raise(OpenaiEx.Exception, {:sse_exception, reason})
+  defp end_stream(_), do: :ok
 
   @double_eol ~r/(\r?\n|\r){2}/
   @double_eol_eos ~r/(\r?\n|\r){2}$/
