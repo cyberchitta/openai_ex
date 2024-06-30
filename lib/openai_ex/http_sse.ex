@@ -33,8 +33,13 @@ defmodule OpenaiEx.HttpSse do
     request = Http.build_post(openai, url, json: json)
     send_me_chunk = create_chunk_sender(me, ref)
     options = Http.request_options(openai)
-    request |> Finch.stream(Map.get(openai, :finch_name), nil, send_me_chunk, options)
-    send(me, {:done, ref})
+
+    try do
+      request |> Finch.stream(Map.get(openai, :finch_name), nil, send_me_chunk, options)
+      send(me, {:done, ref})
+    catch
+      :throw, :cancel_request -> {:exception, :cancel_request}
+    end
   end
 
   defp create_chunk_sender(me, ref) do
