@@ -257,7 +257,7 @@ When working with streams, it's important to handle potential exceptions that ma
 ```elixir
 alias OpenaiEx.Exception
 
-def process_stream(openai, request) do
+process_stream = fn openai, request ->
   response = Chat.Completions.create(openai, request, stream: true)
   
   try do
@@ -270,19 +270,12 @@ def process_stream(openai, request) do
   rescue
     e in OpenaiEx.Exception ->
       case e do
-        %{type: :sse_exception, message: :timeout} -> 
-          IO.puts("Stream timed out")
-          OpenaiEx.HttpSse.cancel_request(response.task_pid)
-          {:error, :timeout, e.message}
-        %{type: :sse_exception, message: :canceled} -> 
+        %{type: :sse_exception, message: "canceled"} -> 
           IO.puts("Stream was canceled")
           {:error, :canceled, e.message}
-        %{type: :sse_exception, message: :residual} -> 
-          IO.puts("Unexpected residual data in stream")
-          {:error, :residual, e.message}
-        %{type: :sse_exception, message: reason} -> 
-          IO.puts("Stream error occurred: #{reason}")
-          {:error, :sse_error, reason}
+        %{type: :sse_exception, message: "timeout"} -> 
+          IO.puts("Timeout on SSE stream")
+          {:error, :timeout, e.message}
         _ -> 
           IO.puts("Unknown error occurred")
           {:error, :unknown, e.message}
@@ -296,12 +289,12 @@ end
 # Usage
 chat_req = Chat.Completions.new(
   model: "gpt-3.5-turbo",
-  messages: [ChatMessage.user("Tell me a long story about a brave knight")],
+  messages: [ChatMessage.user("Tell me a short story about a brave knight")],
   max_tokens: 500
 )
 
 # Use the OpenaiEx struct with custom stream timeout
-result = process_stream(openai_with_timeout, chat_req)
+result = process_stream.(openai_with_timeout, chat_req)
 case result do
   {:error, type, message} ->
     IO.puts("Error type: #{type}")
@@ -313,18 +306,12 @@ end
 
 In this example, we define a `process_stream` function that handles different types of stream exceptions:
 
-* `:timeout`: The stream timed out. We cancel the request and return an error tuple.
 * `:canceled`: The stream was canceled. We return an error tuple.
-* `:residual`: There was unexpected residual data in the stream. We return an error tuple.
-* Any other `sse_exception`: We treat it as a specific SSE error.
+* `:timeout`: The stream timed out. We return an error tuple.
 * Any other `OpenaiEx.Exception`: We treat it as an unknown error.
 * Any other exception: We treat it as an unexpected error.
 
-This approach allows you to gracefully handle different types of stream-related errors and take appropriate actions (such as canceling the request in case of a timeout).
-
-Remember that while setting a stream timeout is often unnecessary when working with the official OpenAI API, it can be crucial when dealing with third-party implementations or in scenarios where you need more control over the stream's behavior.
-
-By implementing proper timeout settings and exception handling, you can create more robust applications that can gracefully handle various stream-related issues, especially when working with different OpenAI API implementations.
+This approach allows you to gracefully handle different types of stream-related errors and take appropriate actions.
 
 For more information on generating chat completions, see the [OpenAI API Chat Completions reference](https://platform.openai.com/docs/api-reference/chat).
 
@@ -1270,3 +1257,5 @@ Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs
 ```elixir
 
 ```
+
+<!-- livebook:{"offset":38433,"stamp":{"token":"XCP.7J__SjZDOoBnjaNPVACzkXOKqTSwsJLXErM7dj0A1MNnu-30vBBU2T6fdshNlg_QInmdXamZ6PybevrZRJyRGWiYQeqi5Q1ZzIDN_y5gDW3MUX4cxURbWm8","version":2}} -->
