@@ -71,12 +71,7 @@ defmodule OpenaiEx.HttpSse do
           {:halt, acc}
 
         {:done, ^ref} ->
-          if acc != "" do
-            Logger.error("Residue!: #{acc}")
-            {:halt, {:exception, :residual}}
-          else
-            {:halt, acc}
-          end
+          {:halt, acc}
 
         {:canceled, ^ref} ->
           Logger.info("Request canceled by user")
