@@ -62,11 +62,16 @@ defmodule OpenaiEx.HttpSse do
         # rather than 2 line terminators. Hopefully those will be fixed and this
         # can be removed in the future
         {:done, ^ref} when acc == "data: [DONE]" ->
+          Logger.warning("\"data: [DONE]\" should be followed by 2 line terminators")
           {:halt, acc}
 
         {:done, ^ref} ->
-          if acc != "", do: Logger.error("Residue!: #{acc}")
-          {:halt, {:exception, :residual}}
+          if acc != "" do
+            Logger.error("Residue!: #{acc}")
+            {:halt, {:exception, :residual}}
+          else
+            {:halt, acc}
+          end
 
         {:canceled, ^ref} ->
           Logger.info("Request canceled by user")
