@@ -16,7 +16,7 @@ defmodule OpenaiEx.HttpSse do
     headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
     if status in 200..299 do
-      stream_receiver = create_stream_receiver(ref, openai.stream_timeout)
+      stream_receiver = create_stream_receiver(ref, openai.stream_timeout, task)
       body_stream = Stream.resource(&init_stream/0, stream_receiver, &end_stream/1)
       %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
     else
@@ -56,7 +56,7 @@ defmodule OpenaiEx.HttpSse do
 
   defp init_stream, do: ""
 
-  defp create_stream_receiver(ref, timeout) do
+  defp create_stream_receiver(ref, timeout, task) do
     fn acc when is_binary(acc) ->
       receive do
         {:chunk, {:data, evt_data}, ^ref} ->
@@ -84,6 +84,7 @@ defmodule OpenaiEx.HttpSse do
       after
         timeout ->
           Logger.warning("Stream timeout after #{timeout}ms")
+          Task.shutdown(task)
           {:halt, {:exception, :timeout}}
       end
     end
