@@ -1,6 +1,7 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
   alias OpenaiEx.Http
+  alias OpenaiEx.Exception
   require Logger
 
   # based on
@@ -85,7 +86,7 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp end_stream({:exception, reason}), do: raise(OpenaiEx.Exception, {:sse_exception, reason, nil, nil})
+  defp end_stream({:exception, reason}), do: raise(Exception.new({:sse_exception, reason}))
   defp end_stream(_), do: :ok
 
   @double_eol ~r/(\r?\n|\r){2}/
