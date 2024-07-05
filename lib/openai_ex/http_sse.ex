@@ -1,6 +1,6 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
-  alias OpenaiEx.Http
+  alias OpenaiEx.Http.Finch, as: Client
   alias OpenaiEx.Exception
   require Logger
 
@@ -31,12 +31,11 @@ defmodule OpenaiEx.HttpSse do
   end
 
   defp finch_stream(openai = %OpenaiEx{}, url, json, me, ref) do
-    request = Http.build_post(openai, url, json: json)
+    request = Client.build_post(openai, url, json: json)
     send_me_chunk = create_chunk_sender(me, ref)
-    options = Http.request_options(openai)
 
     try do
-      request |> Finch.stream(Map.get(openai, :finch_name), nil, send_me_chunk, options)
+      Client.stream(request, openai, send_me_chunk)
       send(me, {:done, ref})
     catch
       :throw, :cancel_request -> {:exception, :cancel_request}
