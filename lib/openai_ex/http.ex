@@ -8,7 +8,7 @@ defmodule OpenaiEx.Http do
   end
 
   def post(openai = %OpenaiEx{}, url, multipart: multipart) do
-    Client.post(openai, url, multipart) |> Jason.decode!()
+    Client.post(openai, url, multipart: multipart) |> Jason.decode!()
   end
 
   def post(openai = %OpenaiEx{}, url, json: json) do
