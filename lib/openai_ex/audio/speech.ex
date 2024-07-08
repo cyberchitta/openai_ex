@@ -13,6 +13,8 @@ defmodule OpenaiEx.Audio.Speech do
   - `:response_format`
   - `:speed`
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :input,
     :model,
@@ -56,8 +58,11 @@ defmodule OpenaiEx.Audio.Speech do
 
   See https://platform.openai.com/docs/api-reference/audio/createSpeech for more information.
   """
+  def create!(openai = %OpenaiEx{}, audio = %{}) do
+    openai |> create(audio) |> Http.bang_it()
+  end
+
   def create(openai = %OpenaiEx{}, audio = %{}) do
-    openai
-    |> OpenaiEx.Http.post_no_decode("/audio/speech", json: audio |> Map.take(@api_fields))
+    openai |> Http.post_no_decode("/audio/speech", json: audio |> Map.take(@api_fields))
   end
 end

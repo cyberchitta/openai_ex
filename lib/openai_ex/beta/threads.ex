@@ -2,6 +2,8 @@ defmodule OpenaiEx.Beta.Threads do
   @moduledoc """
   This module provides an implementation of the OpenAI threads API. The API reference can be found at https://platform.openai.com/docs/api-reference/threads.
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :messages,
     :tool_resources,
@@ -46,10 +48,13 @@ defmodule OpenaiEx.Beta.Threads do
 
   https://platform.openai.com/docs/api-reference/threads/createThread
   """
+  def create!(openai = %OpenaiEx{}, params = %{} \\ %{}) do
+    openai |> create(params) |> Http.bang_it()
+  end
+
   def create(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(ep_url(), json: params |> Map.take(@api_fields))
+    json = params |> Map.take(@api_fields)
+    openai |> OpenaiEx.with_assistants_beta() |> Http.post(ep_url(), json: json)
   end
 
   @doc """
@@ -66,10 +71,12 @@ defmodule OpenaiEx.Beta.Threads do
 
   https://platform.openai.com/docs/api-reference/threads/getThread
   """
+  def retrieve!(openai = %OpenaiEx{}, thread_id) do
+    openai |> retrieve(thread_id) |> Http.bang_it()
+  end
+
   def retrieve(openai = %OpenaiEx{}, thread_id) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.get(ep_url(thread_id))
+    openai |> OpenaiEx.with_assistants_beta() |> Http.get(ep_url(thread_id))
   end
 
   @doc """
@@ -87,10 +94,13 @@ defmodule OpenaiEx.Beta.Threads do
 
   https://platform.openai.com/docs/api-reference/threads/modifyThread
   """
+  def update!(openai = %OpenaiEx{}, thread_id, params = %{metadata: _metadata}) do
+    openai |> update(thread_id, params) |> Http.bang_it()
+  end
+
   def update(openai = %OpenaiEx{}, thread_id, params = %{metadata: _metadata}) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(ep_url(thread_id), json: params |> Map.take([:thread_id, :metadata]))
+    json = params |> Map.take([:thread_id, :metadata])
+    openai |> OpenaiEx.with_assistants_beta() |> Http.post(ep_url(thread_id), json: json)
   end
 
   @doc """
@@ -107,17 +117,22 @@ defmodule OpenaiEx.Beta.Threads do
 
   https://platform.openai.com/docs/api-reference/threads/deleteThread
   """
+  def delete!(openai = %OpenaiEx{}, thread_id) do
+    openai |> delete(thread_id) |> Http.bang_it()
+  end
+
   def delete(openai = %OpenaiEx{}, thread_id) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.delete(ep_url(thread_id))
+    openai |> OpenaiEx.with_assistants_beta() |> Http.delete(ep_url(thread_id))
   end
 
   # Not (yet) part of the documented API, but the endpoint exists.
   @doc false
+  def list!(openai = %OpenaiEx{}, params = %{} \\ %{}) do
+    openai |> list(params) |> Http.bang_it()
+  end
+
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.get(ep_url(), params |> Map.take(OpenaiEx.list_query_fields()))
+    qry_params = params |> Map.take(OpenaiEx.list_query_fields())
+    openai |> OpenaiEx.with_assistants_beta() |> Http.get(ep_url(), qry_params)
   end
 end

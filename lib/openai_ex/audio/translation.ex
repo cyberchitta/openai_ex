@@ -13,6 +13,8 @@ defmodule OpenaiEx.Audio.Translation do
   - `:response_format`
   - `:temperature`
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :file,
     :model,
@@ -56,11 +58,13 @@ defmodule OpenaiEx.Audio.Translation do
 
   See https://platform.openai.com/docs/api-reference/audio/createTranslation for more information.
   """
+  def create!(openai = %OpenaiEx{}, audio = %{}) do
+    openai |> create(audio) |> Http.bang_it()
+  end
+
   def create(openai = %OpenaiEx{}, audio = %{}) do
-    openai
-    |> OpenaiEx.Http.post("/audio/translations",
-      multipart: audio |> OpenaiEx.Http.to_multi_part_form_data(file_fields())
-    )
+    multipart = audio |> Http.to_multi_part_form_data(file_fields())
+    openai |> Http.post("/audio/translations", multipart: multipart)
   end
 
   @doc false

@@ -19,10 +19,10 @@ defmodule OpenaiEx.HttpSse do
     if status in 200..299 do
       stream_receiver = create_stream_receiver(ref, openai.stream_timeout, task)
       body_stream = Stream.resource(&init_stream/0, stream_receiver, &end_stream/1)
-      %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
+      {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
     else
       error = extract_error(ref, "")
-      %{status: status, headers: headers, body: Jason.decode!(error)}
+      {:error, %{status: status, headers: headers, body: Jason.decode!(error)}}
     end
   end
 

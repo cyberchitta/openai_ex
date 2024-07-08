@@ -3,6 +3,8 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   This module provides an implementation of the OpenAI run API. The API
   reference can be found at https://platform.openai.com/docs/api-reference/runs.
   """
+  alias OpenaiEx.{Http, HttpSse}
+
   @api_fields [
     :assistant_id,
     :model,
@@ -72,7 +74,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}, stream: true) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.HttpSse.post(ep_url(thread_id),
+    |> HttpSse.post(ep_url(thread_id),
       json: run |> Map.take(@api_fields) |> Map.put(:stream, true)
     )
   end
@@ -80,7 +82,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(ep_url(thread_id), json: run |> Map.take(@api_fields))
+    |> Http.post(ep_url(thread_id), json: run |> Map.take(@api_fields))
   end
 
   @doc """
@@ -98,9 +100,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   https://platform.openai.com/docs/api-reference/runs/getRun
   """
   def retrieve(openai = %OpenaiEx{}, %{thread_id: thread_id, run_id: run_id}) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.get(ep_url(thread_id, run_id))
+    openai |> OpenaiEx.with_assistants_beta() |> Http.get(ep_url(thread_id, run_id))
   end
 
   @doc """
@@ -120,7 +120,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   def update(openai = %OpenaiEx{}, %{thread_id: thread_id, run_id: run_id, metadata: metadata}) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(ep_url(thread_id, run_id), json: %{metadata: metadata})
+    |> Http.post(ep_url(thread_id, run_id), json: %{metadata: metadata})
   end
 
   @doc """
@@ -152,7 +152,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   def list(openai = %OpenaiEx{}, thread_id, params = %{} \\ %{}) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.get(ep_url(thread_id), params |> Map.take(OpenaiEx.list_query_fields()))
+    |> Http.get(ep_url(thread_id), params |> Map.take(OpenaiEx.list_query_fields()))
   end
 
   def submit_tool_outputs(
@@ -162,7 +162,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
       ) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.HttpSse.post(
+    |> HttpSse.post(
       ep_url(thread_id, run_id, "submit_tool_outputs"),
       json: %{tool_outputs: tool_outputs} |> Map.put(:stream, true)
     )
@@ -174,7 +174,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
       ) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(
+    |> Http.post(
       ep_url(thread_id, run_id, "submit_tool_outputs"),
       json: %{tool_outputs: tool_outputs}
     )
@@ -183,7 +183,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   def cancel(openai = %OpenaiEx{}, %{thread_id: thread_id, run_id: run_id}) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(ep_url(thread_id, run_id, "cancel"))
+    |> Http.post(ep_url(thread_id, run_id, "cancel"))
   end
 
   @car_fields [
@@ -206,7 +206,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   def create_and_run(openai = %OpenaiEx{}, params = %{assistant_id: _}, stream: true) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.HttpSse.post(@ep_url,
+    |> HttpSse.post(@ep_url,
       json: params |> Map.take(@car_fields) |> Map.put(:stream, true)
     )
   end
@@ -214,6 +214,6 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   def create_and_run(openai = %OpenaiEx{}, params = %{assistant_id: _}) do
     openai
     |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(@ep_url, json: params |> Map.take(@car_fields))
+    |> Http.post(@ep_url, json: params |> Map.take(@car_fields))
   end
 end

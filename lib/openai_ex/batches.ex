@@ -3,6 +3,8 @@ defmodule OpenaiEx.Batches do
   This module provides an implementation of the OpenAI Batch API. The API reference can be found at https://platform.openai.com/docs/api-reference/batch.
   """
 
+  alias OpenaiEx.Http
+
   @api_fields [
     :input_file_id,
     :completion_window,
@@ -42,8 +44,12 @@ defmodule OpenaiEx.Batches do
 
   https://platform.openai.com/docs/api-reference/batch/create
   """
+  def create!(openai = %OpenaiEx{}, batch = %{}) do
+    openai |> create(batch) |> Http.bang_it()
+  end
+
   def create(openai = %OpenaiEx{}, batch = %{}) do
-    openai |> OpenaiEx.Http.post(ep_url(), json: batch)
+    openai |> Http.post(ep_url(), json: batch)
   end
 
   @doc """
@@ -51,8 +57,12 @@ defmodule OpenaiEx.Batches do
 
   https://platform.openai.com/docs/api-reference/batch/retrieve
   """
+  def retrieve!(openai = %OpenaiEx{}, batch_id: batch_id) do
+    openai |> retrieve(batch_id: batch_id) |> Http.bang_it()
+  end
+
   def retrieve(openai = %OpenaiEx{}, batch_id: batch_id) do
-    openai |> OpenaiEx.Http.get(ep_url(batch_id))
+    openai |> Http.get(ep_url(batch_id))
   end
 
   @doc """
@@ -60,8 +70,12 @@ defmodule OpenaiEx.Batches do
 
   https://platform.openai.com/docs/api-reference/batch/cancel
   """
+  def cancel!(openai = %OpenaiEx{}, batch_id: batch_id) do
+    openai |> cancel(batch_id: batch_id) |> Http.bang_it()
+  end
+
   def cancel(openai = %OpenaiEx{}, batch_id: batch_id) do
-    openai |> OpenaiEx.Http.post(ep_url(batch_id, "cancel"))
+    openai |> Http.post(ep_url(batch_id, "cancel"))
   end
 
   @doc """
@@ -69,8 +83,12 @@ defmodule OpenaiEx.Batches do
 
   https://platform.openai.com/docs/api-reference/batch/list
   """
+  def list!(openai = %OpenaiEx{}, opts \\ []) do
+    openai |> list(opts) |> Http.bang_it()
+  end
+
   def list(openai = %OpenaiEx{}, opts \\ []) do
     params = opts |> Enum.into(%{}) |> Map.take([:after, :limit])
-    openai |> OpenaiEx.Http.get(ep_url(), params)
+    openai |> Http.get(ep_url(), params)
   end
 end

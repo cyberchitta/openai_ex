@@ -2,6 +2,8 @@ defmodule OpenaiEx.Moderations do
   @moduledoc """
   This module provides an implementation of the OpenAI moderation API. The API reference can be found at https://platform.openai.com/docs/api-reference/moderations.
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :input,
     :model
@@ -52,8 +54,11 @@ defmodule OpenaiEx.Moderations do
 
   A map containing the fields of the moderation response.
   """
+  def create!(openai = %OpenaiEx{}, moderation) do
+    openai |> create(moderation) |> Http.bang_it()
+  end
+
   def create(openai = %OpenaiEx{}, moderation) do
-    openai
-    |> OpenaiEx.Http.post("/moderations", json: moderation |> Map.take(@api_fields))
+    openai |> Http.post("/moderations", json: moderation |> Map.take(@api_fields))
   end
 end
