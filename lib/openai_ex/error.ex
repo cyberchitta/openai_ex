@@ -1,15 +1,15 @@
 defmodule OpenaiEx.Error do
   defexception [
-    :kind,
+    :status_code,
+    :name,
     :message,
-    :request,
     :body,
     :code,
     :param,
     :type,
-    :status_code,
     :request_id,
-    :name
+    :request,
+    :kind
   ]
 
   @error_names %{
@@ -107,13 +107,15 @@ defmodule OpenaiEx.Error do
 
   defp status_error(kind, status_code, response, body) when is_map(body) do
     error = body["error"]
+
     exception(
       kind: kind,
       message: error["message"],
       response: response,
       body: error,
       status_code: status_code,
-      request_id: get_in(response.headers, [Access.filter(&(elem(&1, 0) == "x-request-id")), Access.elem(1)])
+      request_id:
+        get_in(response.headers, [Access.filter(&(elem(&1, 0) == "x-request-id")), Access.elem(1)])
     )
   end
 
