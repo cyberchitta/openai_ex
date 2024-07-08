@@ -68,7 +68,7 @@ defmodule OpenaiEx.Beta.Threads.Messages do
 
   ## Returns
 
-  A map containing the fields of the specificied message object.
+  A map containing the fields of the specified message object.
 
   https://platform.openai.com/docs/api-reference/messages/getMessage
   """

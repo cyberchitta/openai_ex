@@ -101,7 +101,7 @@ In production scenarios where you want to explicitly tweak the Finch pool, you c
 
 ```elixir
 Finch.start_link(
-    name: MyConfguredFinch,
+    name: MyConfiguredFinch,
     pools: ...
 )
 ```

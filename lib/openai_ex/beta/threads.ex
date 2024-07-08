@@ -62,7 +62,7 @@ defmodule OpenaiEx.Beta.Threads do
 
   ## Returns
 
-  A map containing the fields of the specificied thread object.
+  A map containing the fields of the specified thread object.
 
   https://platform.openai.com/docs/api-reference/threads/getThread
   """
