@@ -21,8 +21,8 @@ defmodule OpenaiEx.HttpSse do
       body_stream = Stream.resource(&init_stream/0, stream_receiver, &end_stream/1)
       {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
     else
-      error = extract_error(ref, "")
-      {:error, %{status: status, headers: headers, body: Jason.decode!(error)}}
+      body = extract_error(ref, "") |> Jason.decode!()
+      {:error, Error.status_error(status, %{status: status, headers: headers, body: body}, body)}
     end
   end
 
