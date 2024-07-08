@@ -41,7 +41,7 @@ defmodule OpenaiEx.Error do
   def exception(attrs) when is_list(attrs) do
     kind = attrs[:kind] || :api_error
     name = @error_names[kind]
-    error = struct!(__MODULE__, [name: name] ++ attrs)
+    error = struct(__MODULE__, [name: name] ++ attrs)
 
     if is_map(error.body) do
       %{
@@ -106,13 +106,14 @@ defmodule OpenaiEx.Error do
     do: status_error(:internal_server_error, 500, response, body)
 
   defp status_error(kind, status_code, response, body) when is_map(body) do
+    error = body["error"]
     exception(
       kind: kind,
-      message: body.message,
+      message: error["message"],
       response: response,
-      body: body,
+      body: error,
       status_code: status_code,
-      request_id: get_in(response, [:headers, "x-request-id"])
+      request_id: get_in(response.headers, [Access.filter(&(elem(&1, 0) == "x-request-id")), Access.elem(1)])
     )
   end
 
