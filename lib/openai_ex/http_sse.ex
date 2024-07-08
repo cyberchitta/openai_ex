@@ -22,7 +22,7 @@ defmodule OpenaiEx.HttpSse do
       %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
     else
       error = extract_error(ref, "")
-      %{status: status, headers: headers, error: Jason.decode!(error)}
+      %{status: status, headers: headers, body: Jason.decode!(error)}
     end
   end
 
