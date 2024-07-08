@@ -1,7 +1,7 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
   alias OpenaiEx.Http.Finch, as: Client
-  alias OpenaiEx.Exception
+  alias OpenaiEx.Error
   require Logger
 
   # based on
@@ -85,7 +85,8 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp end_stream({:exception, reason}), do: raise(Exception.new({:sse_exception, reason}))
+  defp end_stream({:exception, :timeout}), do: raise(Error.sse_timeout_error())
+  defp end_stream({:exception, :canceled}), do: raise(Error.sse_user_cancellation())
   defp end_stream(_), do: :ok
 
   @double_eol ~r/(\r?\n|\r){2}/
