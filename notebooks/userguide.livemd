@@ -255,7 +255,7 @@ This is particularly useful when working with third-party OpenAI API implementat
 When working with streams, it's important to handle potential exceptions that may occur during stream processing. OpenaiEx uses a custom exception type for stream-related errors. Here's how you can handle these exceptions:
 
 ```elixir
-alias OpenaiEx.Exception
+alias OpenaiEx.Error
 
 process_stream = fn openai, request ->
   response = Chat.Completions.create(openai, request, stream: true)
@@ -268,12 +268,12 @@ process_stream = fn openai, request ->
       IO.inspect(chunk)
     end)
   rescue
-    e in OpenaiEx.Exception ->
+    e in OpenaiEx.Error ->
       case e do
-        %{type: :sse_exception, message: "canceled"} -> 
+        %{type: :sse_cancellation} -> 
           IO.puts("Stream was canceled")
           {:error, :canceled, e.message}
-        %{type: :sse_exception, message: "timeout"} -> 
+        %{type: :sse_timeout_error} -> 
           IO.puts("Timeout on SSE stream")
           {:error, :timeout, e.message}
         _ -> 

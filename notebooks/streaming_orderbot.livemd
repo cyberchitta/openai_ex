@@ -71,9 +71,9 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
 
       {:ok, result}
     rescue
-      e in OpenaiEx.Exception ->
+      e in OpenaiEx.Error ->
         case e do
-          %{type: :sse_exception, message: "canceled"} ->
+          %{type: :sse_cancellation} ->
             message = "Request was canceled."
             Kino.Frame.render(frame, Kino.Text.new(message))
             {:canceled, message}
