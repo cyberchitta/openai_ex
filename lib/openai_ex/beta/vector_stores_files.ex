@@ -12,7 +12,7 @@ defmodule OpenaiEx.Beta.VectorStores.Files do
   end
 
   def list!(openai = %OpenaiEx{}, vector_store_id, params \\ %{}) do
-    openai |> list(vector_store_id, params) |> Http.bang_it()
+    openai |> list(vector_store_id, params) |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}, vector_store_id, params \\ %{}) do
@@ -21,7 +21,7 @@ defmodule OpenaiEx.Beta.VectorStores.Files do
   end
 
   def create!(openai = %OpenaiEx{}, vector_store_id, file_id) do
-    openai |> create(vector_store_id, file_id) |> Http.bang_it()
+    openai |> create(vector_store_id, file_id) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, vector_store_id, file_id) do
@@ -30,7 +30,7 @@ defmodule OpenaiEx.Beta.VectorStores.Files do
   end
 
   def retrieve!(openai = %OpenaiEx{}, vector_store_id, file_id) do
-    openai |> retrieve(vector_store_id, file_id) |> Http.bang_it()
+    openai |> retrieve(vector_store_id, file_id) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, vector_store_id, file_id) do
@@ -38,7 +38,7 @@ defmodule OpenaiEx.Beta.VectorStores.Files do
   end
 
   def delete!(openai = %OpenaiEx{}, vector_store_id, file_id) do
-    openai |> delete(vector_store_id, file_id) |> Http.bang_it()
+    openai |> delete(vector_store_id, file_id) |> Http.bang_it!()
   end
 
   def delete(openai = %OpenaiEx{}, vector_store_id, file_id) do

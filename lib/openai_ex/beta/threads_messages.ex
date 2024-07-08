@@ -51,7 +51,7 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   https://platform.openai.com/docs/api-reference/messages/createMessage
   """
   def create!(openai = %OpenaiEx{}, thread_id, params) do
-    openai |> create(thread_id, params) |> Http.bang_it()
+    openai |> create(thread_id, params) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, thread_id, params = %{role: _, content: _}) do
@@ -74,7 +74,7 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   https://platform.openai.com/docs/api-reference/messages/getMessage
   """
   def retrieve!(openai = %OpenaiEx{}, params = %{thread_id: _, message_id: _}) do
-    openai |> retrieve(params) |> Http.bang_it()
+    openai |> retrieve(params) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, %{thread_id: thread_id, message_id: message_id}) do
@@ -96,7 +96,7 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   https://platform.openai.com/docs/api-reference/messages/modifyMessage
   """
   def update!(openai = %OpenaiEx{}, params = %{thread_id: _, message_id: _, metadata: _}) do
-    openai |> update(params) |> Http.bang_it()
+    openai |> update(params) |> Http.bang_it!()
   end
 
   def update(openai = %OpenaiEx{}, %{
@@ -110,7 +110,7 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   end
 
   def delete!(openai = %OpenaiEx{}, thread_id, message_id) do
-    openai |> delete(thread_id, message_id) |> Http.bang_it()
+    openai |> delete(thread_id, message_id) |> Http.bang_it!()
   end
 
   def delete(openai = %OpenaiEx{}, thread_id, message_id) do
@@ -132,7 +132,7 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   end
 
   def list!(openai = %OpenaiEx{}, thread_id, params = %{} \\ %{}) do
-    openai |> list(thread_id, params) |> Http.bang_it()
+    openai |> list(thread_id, params) |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}, thread_id, params = %{} \\ %{}) do

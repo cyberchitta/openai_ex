@@ -14,7 +14,7 @@ defmodule OpenaiEx.Models do
   https://platform.openai.com/docs/api-reference/models/list
   """
   def list!(openai = %OpenaiEx{}) do
-    openai |> list() |> Http.bang_it()
+    openai |> list() |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}) do
@@ -27,7 +27,7 @@ defmodule OpenaiEx.Models do
   https://platform.openai.com/docs/api-reference/models/retrieve
   """
   def retrieve!(openai = %OpenaiEx{}, model) do
-    openai |> retrieve(model) |> Http.bang_it()
+    openai |> retrieve(model) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, model) do
@@ -40,7 +40,7 @@ defmodule OpenaiEx.Models do
   https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
   """
   def delete!(openai = %OpenaiEx{}, model) do
-    openai |> delete(model) |> Http.bang_it()
+    openai |> delete(model) |> Http.bang_it!()
   end
 
   def delete(openai = %OpenaiEx{}, model) do

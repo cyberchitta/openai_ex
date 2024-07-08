@@ -86,7 +86,7 @@ defmodule OpenaiEx.Http do
     end
   end
 
-  def bang_it(response) do
+  def bang_it!(response) do
     case response do
       {:ok, response} -> response
       {:error, error} -> raise error

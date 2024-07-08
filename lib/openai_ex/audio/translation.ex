@@ -59,7 +59,7 @@ defmodule OpenaiEx.Audio.Translation do
   See https://platform.openai.com/docs/api-reference/audio/createTranslation for more information.
   """
   def create!(openai = %OpenaiEx{}, audio = %{}) do
-    openai |> create(audio) |> Http.bang_it()
+    openai |> create(audio) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, audio = %{}) do

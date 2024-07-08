@@ -71,7 +71,7 @@ defmodule OpenaiEx.Chat.Completions do
   See https://platform.openai.com/docs/api-reference/chat/completions/create for more information.
   """
   def create!(openai = %OpenaiEx{}, chat_completion = %{}, stream: true) do
-    openai |> create(chat_completion, stream: true) |> Http.bang_it()
+    openai |> create(chat_completion, stream: true) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, chat_completion = %{}, stream: true) do
@@ -82,7 +82,7 @@ defmodule OpenaiEx.Chat.Completions do
   end
 
   def create!(openai = %OpenaiEx{}, chat_completion = %{}) do
-    openai |> create(chat_completion) |> Http.bang_it()
+    openai |> create(chat_completion) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, chat_completion = %{}) do

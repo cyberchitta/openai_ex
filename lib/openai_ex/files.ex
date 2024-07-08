@@ -64,7 +64,7 @@ defmodule OpenaiEx.Files do
   https://platform.openai.com/docs/api-reference/files/list
   """
   def list!(openai = %OpenaiEx{}) do
-    openai |> list() |> Http.bang_it()
+    openai |> list() |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}) do
@@ -86,7 +86,7 @@ defmodule OpenaiEx.Files do
   https://platform.openai.com/docs/api-reference/files/upload
   """
   def create!(openai = %OpenaiEx{}, upload) do
-    openai |> create(upload) |> Http.bang_it()
+    openai |> create(upload) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, upload) do
@@ -109,7 +109,7 @@ defmodule OpenaiEx.Files do
   https://platform.openai.com/docs/api-reference/files/delete
   """
   def delete!(openai = %OpenaiEx{}, file_id) do
-    openai |> delete(file_id) |> Http.bang_it()
+    openai |> delete(file_id) |> Http.bang_it!()
   end
 
   def delete(openai = %OpenaiEx{}, file_id) do
@@ -131,7 +131,7 @@ defmodule OpenaiEx.Files do
   https://platform.openai.com/docs/api-reference/files/retrieve
   """
   def retrieve!(openai = %OpenaiEx{}, file_id) do
-    openai |> retrieve(file_id) |> Http.bang_it()
+    openai |> retrieve(file_id) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, file_id) do
@@ -153,7 +153,7 @@ defmodule OpenaiEx.Files do
   https://platform.openai.com/docs/api-reference/files/retrieve-content
   """
   def content!(openai = %OpenaiEx{}, file_id) do
-    openai |> content(file_id) |> Http.bang_it()
+    openai |> content(file_id) |> Http.bang_it!()
   end
 
   def content(openai = %OpenaiEx{}, file_id) do

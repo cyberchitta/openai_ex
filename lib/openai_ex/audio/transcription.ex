@@ -63,7 +63,7 @@ defmodule OpenaiEx.Audio.Transcription do
   See https://platform.openai.com/docs/api-reference/audio/createTranscription for more information.
   """
   def create!(openai = %OpenaiEx{}, audio = %{}) do
-    openai |> create(audio) |> Http.bang_it()
+    openai |> create(audio) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, audio = %{}) do

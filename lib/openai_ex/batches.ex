@@ -45,7 +45,7 @@ defmodule OpenaiEx.Batches do
   https://platform.openai.com/docs/api-reference/batch/create
   """
   def create!(openai = %OpenaiEx{}, batch = %{}) do
-    openai |> create(batch) |> Http.bang_it()
+    openai |> create(batch) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, batch = %{}) do
@@ -58,7 +58,7 @@ defmodule OpenaiEx.Batches do
   https://platform.openai.com/docs/api-reference/batch/retrieve
   """
   def retrieve!(openai = %OpenaiEx{}, batch_id: batch_id) do
-    openai |> retrieve(batch_id: batch_id) |> Http.bang_it()
+    openai |> retrieve(batch_id: batch_id) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, batch_id: batch_id) do
@@ -71,7 +71,7 @@ defmodule OpenaiEx.Batches do
   https://platform.openai.com/docs/api-reference/batch/cancel
   """
   def cancel!(openai = %OpenaiEx{}, batch_id: batch_id) do
-    openai |> cancel(batch_id: batch_id) |> Http.bang_it()
+    openai |> cancel(batch_id: batch_id) |> Http.bang_it!()
   end
 
   def cancel(openai = %OpenaiEx{}, batch_id: batch_id) do
@@ -84,7 +84,7 @@ defmodule OpenaiEx.Batches do
   https://platform.openai.com/docs/api-reference/batch/list
   """
   def list!(openai = %OpenaiEx{}, opts \\ []) do
-    openai |> list(opts) |> Http.bang_it()
+    openai |> list(opts) |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}, opts \\ []) do

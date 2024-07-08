@@ -47,7 +47,7 @@ defmodule OpenaiEx.FineTuning.Jobs do
   https://platform.openai.com/docs/api-reference/fine-tuning/list
   """
   def list!(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai |> list(params) |> Http.bang_it()
+    openai |> list(params) |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
@@ -60,7 +60,7 @@ defmodule OpenaiEx.FineTuning.Jobs do
   https://platform.openai.com/docs/api-reference/fine-tuning/create
   """
   def create!(openai = %OpenaiEx{}, finetuning = %{}) do
-    openai |> create(finetuning) |> Http.bang_it()
+    openai |> create(finetuning) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, finetuning = %{}) do
@@ -73,7 +73,7 @@ defmodule OpenaiEx.FineTuning.Jobs do
   https://platform.openai.com/docs/api-reference/fine-tuning/retrieve
   """
   def retrieve!(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> retrieve(fine_tuning_job_id: fine_tuning_job_id) |> Http.bang_it()
+    openai |> retrieve(fine_tuning_job_id: fine_tuning_job_id) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
@@ -86,7 +86,7 @@ defmodule OpenaiEx.FineTuning.Jobs do
   https://platform.openai.com/docs/api-reference/fine-tuning/cancel
   """
   def cancel!(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> cancel(fine_tuning_job_id: fine_tuning_job_id) |> Http.bang_it()
+    openai |> cancel(fine_tuning_job_id: fine_tuning_job_id) |> Http.bang_it!()
   end
 
   def cancel(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
@@ -99,7 +99,7 @@ defmodule OpenaiEx.FineTuning.Jobs do
   https://platform.openai.com/docs/api-reference/fine-tuning/events
   """
   def list_events!(openai = %OpenaiEx{}, opts) do
-    openai |> list_events(opts) |> Http.bang_it()
+    openai |> list_events(opts) |> Http.bang_it!()
   end
 
   def list_events(openai = %OpenaiEx{}, opts = [fine_tuning_job_id: fine_tuning_job_id]) do

@@ -55,7 +55,7 @@ defmodule OpenaiEx.Moderations do
   A map containing the fields of the moderation response.
   """
   def create!(openai = %OpenaiEx{}, moderation) do
-    openai |> create(moderation) |> Http.bang_it()
+    openai |> create(moderation) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, moderation) do

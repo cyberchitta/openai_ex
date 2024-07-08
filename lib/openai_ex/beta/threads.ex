@@ -49,7 +49,7 @@ defmodule OpenaiEx.Beta.Threads do
   https://platform.openai.com/docs/api-reference/threads/createThread
   """
   def create!(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai |> create(params) |> Http.bang_it()
+    openai |> create(params) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, params = %{} \\ %{}) do
@@ -72,7 +72,7 @@ defmodule OpenaiEx.Beta.Threads do
   https://platform.openai.com/docs/api-reference/threads/getThread
   """
   def retrieve!(openai = %OpenaiEx{}, thread_id) do
-    openai |> retrieve(thread_id) |> Http.bang_it()
+    openai |> retrieve(thread_id) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, thread_id) do
@@ -95,7 +95,7 @@ defmodule OpenaiEx.Beta.Threads do
   https://platform.openai.com/docs/api-reference/threads/modifyThread
   """
   def update!(openai = %OpenaiEx{}, thread_id, params = %{metadata: _metadata}) do
-    openai |> update(thread_id, params) |> Http.bang_it()
+    openai |> update(thread_id, params) |> Http.bang_it!()
   end
 
   def update(openai = %OpenaiEx{}, thread_id, params = %{metadata: _metadata}) do
@@ -118,7 +118,7 @@ defmodule OpenaiEx.Beta.Threads do
   https://platform.openai.com/docs/api-reference/threads/deleteThread
   """
   def delete!(openai = %OpenaiEx{}, thread_id) do
-    openai |> delete(thread_id) |> Http.bang_it()
+    openai |> delete(thread_id) |> Http.bang_it!()
   end
 
   def delete(openai = %OpenaiEx{}, thread_id) do
@@ -128,7 +128,7 @@ defmodule OpenaiEx.Beta.Threads do
   # Not (yet) part of the documented API, but the endpoint exists.
   @doc false
   def list!(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai |> list(params) |> Http.bang_it()
+    openai |> list(params) |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do

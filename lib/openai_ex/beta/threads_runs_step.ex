@@ -10,7 +10,7 @@ defmodule OpenaiEx.Beta.Threads.Runs.Steps do
   end
 
   def retrieve!(openai = %OpenaiEx{}, params = %{thread_id: _, run_id: _, step_id: _}) do
-    openai |> retrieve(params) |> Http.bang_it()
+    openai |> retrieve(params) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, %{thread_id: thread_id, run_id: run_id, step_id: step_id}) do
@@ -18,7 +18,7 @@ defmodule OpenaiEx.Beta.Threads.Runs.Steps do
   end
 
   def list!(openai = %OpenaiEx{}, params = %{thread_id: _, run_id: _}) do
-    openai |> list(params) |> Http.bang_it()
+    openai |> list(params) |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}, params = %{thread_id: thread_id, run_id: run_id}) do

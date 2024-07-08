@@ -67,7 +67,7 @@ defmodule OpenaiEx.Beta.Assistants do
   See https://platform.openai.com/docs/api-reference/assistants/createAssistant for more information.
   """
   def create!(openai = %OpenaiEx{}, assistant = %{}) do
-    openai |> create(assistant) |> Http.bang_it()
+    openai |> create(assistant) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, assistant = %{}) do
@@ -90,7 +90,7 @@ defmodule OpenaiEx.Beta.Assistants do
   https://platform.openai.com/docs/api-reference/assistants/getAssistant
   """
   def retrieve!(openai = %OpenaiEx{}, assistant_id) do
-    openai |> retrieve(assistant_id) |> Http.bang_it()
+    openai |> retrieve(assistant_id) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, assistant_id) do
@@ -113,7 +113,7 @@ defmodule OpenaiEx.Beta.Assistants do
   See https://platform.openai.com/docs/api-reference/assistants/modifyAssistant for more information.
   """
   def update!(openai = %OpenaiEx{}, assistant_id, assistant = %{}) do
-    openai |> update(assistant_id, assistant) |> Http.bang_it()
+    openai |> update(assistant_id, assistant) |> Http.bang_it!()
   end
 
   def update(openai = %OpenaiEx{}, assistant_id, assistant = %{}) do
@@ -136,7 +136,7 @@ defmodule OpenaiEx.Beta.Assistants do
   https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
   """
   def delete!(openai = %OpenaiEx{}, assistant_id) do
-    openai |> delete(assistant_id) |> Http.bang_it()
+    openai |> delete(assistant_id) |> Http.bang_it!()
   end
 
   def delete(openai = %OpenaiEx{}, assistant_id) do
@@ -169,7 +169,7 @@ defmodule OpenaiEx.Beta.Assistants do
   https://platform.openai.com/docs/api-reference/assistants/listAssistants
   """
   def list!(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai |> list(params) |> Http.bang_it()
+    openai |> list(params) |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do

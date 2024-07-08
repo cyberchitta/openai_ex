@@ -13,7 +13,7 @@ defmodule OpenaiEx.Beta.VectorStores.File.Batches do
   end
 
   def list!(openai = %OpenaiEx{}, vector_store_id, batch_id, params \\ %{}) do
-    openai |> list(vector_store_id, batch_id, params) |> Http.bang_it()
+    openai |> list(vector_store_id, batch_id, params) |> Http.bang_it!()
   end
 
   def list(openai = %OpenaiEx{}, vector_store_id, batch_id, params \\ %{}) do
@@ -23,7 +23,7 @@ defmodule OpenaiEx.Beta.VectorStores.File.Batches do
   end
 
   def create!(openai = %OpenaiEx{}, vector_store_id, file_ids) do
-    openai |> create(vector_store_id, file_ids) |> Http.bang_it()
+    openai |> create(vector_store_id, file_ids) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, vector_store_id, file_ids) do
@@ -32,7 +32,7 @@ defmodule OpenaiEx.Beta.VectorStores.File.Batches do
   end
 
   def retrieve!(openai = %OpenaiEx{}, vector_store_id, batch_id) do
-    openai |> retrieve(vector_store_id, batch_id) |> Http.bang_it()
+    openai |> retrieve(vector_store_id, batch_id) |> Http.bang_it!()
   end
 
   def retrieve(openai = %OpenaiEx{}, vector_store_id, batch_id) do
@@ -40,7 +40,7 @@ defmodule OpenaiEx.Beta.VectorStores.File.Batches do
   end
 
   def cancel!(openai = %OpenaiEx{}, vector_store_id, batch_id) do
-    openai |> cancel(vector_store_id, batch_id) |> Http.bang_it()
+    openai |> cancel(vector_store_id, batch_id) |> Http.bang_it!()
   end
 
   def cancel(openai = %OpenaiEx{}, vector_store_id, batch_id) do

@@ -19,7 +19,7 @@ defmodule OpenaiEx.Images do
   See the [OpenAI API Create Image reference](https://platform.openai.com/docs/api-reference/images/create) for more information.
   """
   def generate!(openai = %OpenaiEx{}, image = %{}) do
-    openai |> generate(image) |> Http.bang_it()
+    openai |> generate(image) |> Http.bang_it!()
   end
 
   def generate(openai = %OpenaiEx{}, image = %{}) do
@@ -41,7 +41,7 @@ defmodule OpenaiEx.Images do
   See the [OpenAI API Create Image Edit reference](https://platform.openai.com/docs/api-reference/images/create-edit) for more information.
   """
   def edit!(openai = %OpenaiEx{}, image_edit = %{}) do
-    openai |> edit(image_edit) |> Http.bang_it()
+    openai |> edit(image_edit) |> Http.bang_it!()
   end
 
   def edit(openai = %OpenaiEx{}, image_edit = %{}) do
@@ -64,7 +64,7 @@ defmodule OpenaiEx.Images do
   See the [OpenAI API Create Image Variation reference](https://platform.openai.com/docs/api-reference/images/create-variation) for more information.
   """
   def create_variation!(openai = %OpenaiEx{}, image_variation = %{}) do
-    openai |> create_variation(image_variation) |> Http.bang_it()
+    openai |> create_variation(image_variation) |> Http.bang_it!()
   end
 
   def create_variation(openai = %OpenaiEx{}, image_variation = %{}) do

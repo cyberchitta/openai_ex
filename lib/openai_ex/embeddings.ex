@@ -59,7 +59,7 @@ defmodule OpenaiEx.Embeddings do
   See https://platform.openai.com/docs/api-reference/embeddings/create for more information.
   """
   def create!(openai = %OpenaiEx{}, embedding = %{}) do
-    openai |> create(embedding) |> Http.bang_it()
+    openai |> create(embedding) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, embedding = %{}) do
