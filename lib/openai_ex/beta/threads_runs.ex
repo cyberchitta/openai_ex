@@ -72,7 +72,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   See https://platform.openai.com/docs/api-reference/runs/createRun for more information.
   """
   def create!(openai = %OpenaiEx{}, run = %{thread_id: _, assistant_id: _}, stream: true) do
-    openai |> create(run) |> Http.bang_it!()
+    openai |> create(run, stream: true) |> Http.bang_it!()
   end
 
   def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}, stream: true) do
