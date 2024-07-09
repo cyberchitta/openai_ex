@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.7.0"},
+  {:openai_ex, "~> 0.8.0"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.13.1"}
 ])
@@ -43,7 +43,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.7.0"}
+    {:openai_ex, "~> 0.8.0"}
   ]
 )
 ```
@@ -57,7 +57,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.7.0"}
+    {:openai_ex, "~> 0.8.0"}
   ]
 end
 ```
@@ -151,6 +151,51 @@ openai = OpenaiEx.new(entraId) |> OpenaiEx._for_azure(resource_name, deployment_
 
 These methods will be supported as long as the Azure version does not deviate too far from the base OpenAI API.
 
+## Error Handling
+
+OpenaiEx provides robust error handling to support both interactive and non-interactive usage. There are two main ways to handle errors:
+
+### Error Tuples
+
+Most functions in OpenaiEx return `:ok` and `:error` tuples. This allows for pattern matching and explicit error handling:
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+case OpenaiEx.Chat.Completions.create(openai, chat_req) do
+  {:ok, response} -> # Handle successful response
+  {:error, error} -> # Handle error
+end
+```
+
+### Exceptions
+
+For scenarios where you prefer exceptions, OpenaiEx provides bang (!) versions of functions that raise exceptions on errors:
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+try do
+  response = OpenaiEx.Chat.Completions.create!(openai, chat_req)
+  # Handle successful response
+rescue
+  e in OpenaiEx.Error -> # Handle exception
+end
+```
+
+### Error Types
+
+OpenaiEx closely follows the error types defined in the official OpenAI Python library. For a comprehensive list and description of these error types, please refer to the [OpenAI API Error Types documentation](https://platform.openai.com/docs/guides/error-codes/api-errors).
+
+In addition to these standard error types, OpenaiEx defines two specific error types for handling streaming operations:
+
+* `SSETimeoutError`: Raised when a streaming response times out
+* `SSECancellationError`: Raised when a user initiates a stream cancellation
+
+For more details on specific error types and their attributes, refer to the `OpenaiEx.Error` module documentation.
+
+This revision maintains the important information about OpenaiEx-specific error types while directing users to the official documentation for the standard error types. It's more concise and easier to keep up-to-date with any changes in the OpenAI API error specifications.
+
 ## Model
 
 ### List Models
@@ -160,7 +205,7 @@ To list all available models, use the [`Model.list()`](https://platform.openai.c
 ```elixir
 alias OpenaiEx.Models
 
-openai |> Models.list()
+openai |> Models.list!()
 ```
 
 ### Retrieve Models
@@ -168,7 +213,7 @@ openai |> Models.list()
 To retrieve information about a specific model, use the [`Model.retrieve()`](https://platform.openai.com/docs/api-reference/models/retrieve) function:
 
 ```elixir
-openai |> Models.retrieve("gpt-3.5-turbo")
+openai |> Models.retrieve!("gpt-3.5-turbo")
 ```
 
 For more information on using models, see the [OpenAI API Models reference](https://platform.openai.com/docs/api-reference/models).
@@ -206,7 +251,7 @@ ChatMessage.user(
 You can generate a chat completion using the [`ChatCompletion.create()`](https://platform.openai.com/docs/api-reference/chat/completions/create) function:
 
 ```elixir
-chat_response = openai |> Chat.Completions.create(chat_req)
+chat_response = openai |> Chat.Completions.create!(chat_req)
 ```
 
 For a more in-depth example of `ChatCompletion`, check out the [Deeplearning.AI OrderBot Livebook](https://hexdocs.pm/openai_ex/dlai_orderbot.html).
@@ -216,7 +261,7 @@ You can also call the endpoint and have it stream the response. This returns the
 To use the stream option, call the `ChatCompletion.create()` function with `stream: true`
 
 ```elixir
-chat_stream = openai |> Chat.Completions.create(chat_req, stream: true)
+chat_stream = openai |> Chat.Completions.create!(chat_req, stream: true)
 IO.puts(inspect(chat_stream))
 IO.puts(inspect(chat_stream.task_pid))
 chat_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
@@ -255,10 +300,10 @@ This is particularly useful when working with third-party OpenAI API implementat
 When working with streams, it's important to handle potential exceptions that may occur during stream processing. OpenaiEx uses a custom exception type for stream-related errors. Here's how you can handle these exceptions:
 
 ```elixir
-alias OpenaiEx.Exception
+alias OpenaiEx.Error
 
 process_stream = fn openai, request ->
-  response = Chat.Completions.create(openai, request, stream: true)
+  response = Chat.Completions.create!(openai, request, stream: true)
   
   try do
     response.body_stream
@@ -268,12 +313,12 @@ process_stream = fn openai, request ->
       IO.inspect(chunk)
     end)
   rescue
-    e in OpenaiEx.Exception ->
+    e in OpenaiEx.Error ->
       case e do
-        %{type: :sse_exception, message: "canceled"} -> 
+        %{kind: :sse_cancellation} -> 
           IO.puts("Stream was canceled")
           {:error, :canceled, e.message}
-        %{type: :sse_exception, message: "timeout"} -> 
+        %{kind: :sse_timeout_error} -> 
           IO.puts("Timeout on SSE stream")
           {:error, :timeout, e.message}
         _ -> 
@@ -362,7 +407,7 @@ fn_req =
 Next, we call the OpenAI endpoint to get a response that includes the function call.
 
 ```elixir
-fn_response = openai |> Chat.Completions.create(fn_req)
+fn_response = openai |> Chat.Completions.create!(fn_req)
 ```
 
 We extract the function call from the response and call the appropriate function with the given parameters. In this example, we define a map of functions that maps function names to their implementations. We then use the function name and arguments from the function call to look up the appropriate function and call it with the given parameters.
@@ -405,7 +450,7 @@ fn_req_2 =
     messages: latest_msgs |> Enum.reverse()
   )
 
-fn_response_2 = openai |> Chat.Completions.create(fn_req_2)
+fn_response_2 = openai |> Chat.Completions.create!(fn_req_2)
 ```
 
 The final response includes the result of the function call integrated into the conversation.
@@ -425,7 +470,7 @@ img_req = Images.Generate.new(prompt: "An adorable baby sea otter", size: "256x2
 Then call the [`Image.create()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the images.
 
 ```elixir
-img_response = openai |> Images.generate(img_req)
+img_response = openai |> Images.generate!(img_req)
 ```
 
 For more information on generating images, see the [OpenAI API Image reference](https://platform.openai.com/docs/api-reference/images).
@@ -486,7 +531,7 @@ img_edit_req =
 We then call the [`Image.create_edit()`]() function
 
 ```elixir
-img_edit_response = openai |> Images.edit(img_edit_req)
+img_edit_response = openai |> Images.edit!(img_edit_req)
 ```
 
 and view the result
@@ -511,7 +556,7 @@ Then call the [`Image.create_variation()`](https://platform.openai.com/docs/api-
 ###
 
 ```elixir
-img_var_response = openai |> Images.create_variation(img_var_req)
+img_var_response = openai |> Images.create_variation!(img_var_req)
 ```
 
 ```elixir
@@ -538,7 +583,7 @@ emb_req =
 Then call the [`Embedding.create()`]() function.
 
 ```elixir
-emb_response = openai |> Embeddings.create(emb_req)
+emb_response = openai |> Embeddings.create!(emb_req)
 ```
 
 For more information on generating embeddings, see the [OpenAI API Embedding reference](https://platform.openai.com/docs/api-reference/embeddings/create)
@@ -568,7 +613,7 @@ speech_req =
 We then call the [`Audio.Speech.create()`](https://platform.openai.com/docs/api-reference/audio/createSpeech) function to create the audio response
 
 ```elixir
-speech_response = openai |> Audio.Speech.create(speech_req)
+speech_response = openai |> Audio.Speech.create!(speech_req)
 ```
 
 We can play the response using the `Kino` Audio widget.
@@ -598,7 +643,7 @@ translation_req = Audio.Transcription.new(file: audio_file, model: "whisper-1")
 We then call the [`Audio.Transcription.create()`](https://platform.openai.com/docs/api-reference/audio/createTranscription) function to create a transcription.
 
 ```elixir
-translation_response = openai |> Audio.Transcription.create(translation_req)
+translation_response = openai |> Audio.Transcription.create!(translation_req)
 ```
 
 ### Create translation
@@ -616,7 +661,7 @@ To request all files that belong to the user organization, call the [`File.list(
 ```elixir
 alias OpenaiEx.Files
 
-openai |> Files.list()
+openai |> Files.list!()
 ```
 
 ### Upload files
@@ -636,13 +681,13 @@ upload_req = Files.new_upload(file: fine_tune_file, purpose: "fine-tune")
 Then we call the [`File.create()`](https://platform.openai.com/docs/api-reference/files/upload) function to upload the file
 
 ```elixir
-upload_res = openai |> Files.create(upload_req)
+upload_res = openai |> Files.create!(upload_req)
 ```
 
 We can verify that the file has been uploaded by calling
 
 ```elixir
-openai |> Files.list()
+openai |> Files.list!()
 ```
 
 We grab the file id from the previous response value to use in the following samples
@@ -656,7 +701,7 @@ file_id = upload_res["id"]
 In order to retrieve meta information on a file, we simply call the [`File.retrieve()`]() function with the given id
 
 ```elixir
-openai |> Files.retrieve(file_id)
+openai |> Files.retrieve!(file_id)
 ```
 
 ### Retrieve file content
@@ -664,7 +709,7 @@ openai |> Files.retrieve(file_id)
 Similarly to download the file contents, we call [`File.content()`]()
 
 ```elixir
-openai |> Files.content(file_id)
+openai |> Files.content!(file_id)
 ```
 
 ### Delete file
@@ -672,13 +717,13 @@ openai |> Files.content(file_id)
 Finally, we can delete the file by calling [`File.delete()`](https://platform.openai.com/docs/api-reference/files/delete)
 
 ```elixir
-openai |> Files.delete(file_id)
+openai |> Files.delete!(file_id)
 ```
 
 Verify that the file has been deleted by listing files again
 
 ```elixir
-openai |> Files.list()
+openai |> Files.list!()
 ```
 
 ## FineTuning Job
@@ -686,7 +731,7 @@ openai |> Files.list()
 To run a fine-tuning job, we minimally need a training file. We will re-run the file creation request above.
 
 ```elixir
-upload_res = openai |> Files.create(upload_req)
+upload_res = openai |> Files.create!(upload_req)
 ```
 
 Next we call `FineTuning.Jobs.new()` to create a new request structure
@@ -700,32 +745,32 @@ ft_req = FineTuning.Jobs.new(model: "davinci-002", training_file: upload_res["id
 To begin the fine tune, we call the [`FineTuning.Jobs.create()`](https://platform.openai.com/docs/api-reference/fine-tunes/create) function
 
 ```elixir
-ft_res = openai |> FineTuning.Jobs.create(ft_req)
+ft_res = openai |> FineTuning.Jobs.create!(ft_req)
 ```
 
 We can list all fine tunes by calling [`FineTuning.Jobs.list()`](https://platform.openai.com/docs/api-reference/fine-tunes/list)
 
 ```elixir
-openai |> FineTuning.Jobs.list()
+openai |> FineTuning.Jobs.list!()
 ```
 
 The function [`FineTune.retrieve()`](https://platform.openai.com/docs/api-reference/fine-tunes/retrieve) gets the details of a particular fine tune.
 
 ```elixir
 ft_id = ft_res["id"]
-openai |> FineTuning.Jobs.retrieve(fine_tuning_job_id: ft_id)
+openai |> FineTuning.Jobs.retrieve!(fine_tuning_job_id: ft_id)
 ```
 
 and [`FineTuning.Jobs.list_events()`](https://platform.openai.com/docs/api-reference/fine-tunes/events) can be called to get the events
 
 ```elixir
-openai |> FineTuning.Jobs.list_events(fine_tuning_job_id: ft_id)
+openai |> FineTuning.Jobs.list_events!(fine_tuning_job_id: ft_id)
 ```
 
 To cancel a Fine Tune job, call [`FineTuning.Jobs.cancel()`](https://platform.openai.com/docs/api-reference/fine-tunes/cancel)
 
 ```elixir
-openai |> FineTuning.Jobs.cancel(fine_tuning_job_id: ft_id)
+openai |> FineTuning.Jobs.cancel!(fine_tuning_job_id: ft_id)
 ```
 
 A fine tuned model can be deleted by calling the [`Model.delete()`](https://platform.openai.com/docs/api-reference/fine-tunes/delete-model)
@@ -734,7 +779,7 @@ A fine tuned model can be deleted by calling the [`Model.delete()`](https://plat
 ft_model = ft_res["fine_tuned_model"]
 
 unless is_nil(ft_model) do
-  openai |> Models.delete(ft_model)
+  openai |> Models.delete!(ft_model)
 end
 ```
 
@@ -760,7 +805,7 @@ batch_file = OpenaiEx.new_file(name: batch_url, content: fetch_blob.(batch_url))
 
 # batch_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/batch-requests.jsonl"))
 batch_upload_req = Files.new_upload(file: batch_file, purpose: "batch")
-batch_upload_res = openai |> Files.create(batch_upload_req)
+batch_upload_res = openai |> Files.create!(batch_upload_req)
 ```
 
 Then, we create the batch request using `Batch.new()` and specify the necessary parameters.
@@ -777,7 +822,7 @@ batch_req =
 Finally, we call the [`Batch.create()`](https://platform.openai.com/docs/api-reference/batch/create) function to create and execute the batch.
 
 ```elixir
-batch = openai |> Batches.create(batch_req)
+batch = openai |> Batches.create!(batch_req)
 ```
 
 ### Retrieve batch
@@ -786,16 +831,16 @@ Use the [`Batch.retrieve()`](https://platform.openai.com/docs/api-reference/batc
 
 ```elixir
 batch_id = batch["id"]
-batch_job = openai |> Batches.retrieve(batch_id: batch_id)
+batch_job = openai |> Batches.retrieve!(batch_id: batch_id)
 ```
 
 ```elixir
 batch_job_output_file_id = batch_job["output_file_id"]
-batch_job_output_file = openai |> Files.retrieve(batch_job_output_file_id)
+batch_job_output_file = openai |> Files.retrieve!(batch_job_output_file_id)
 ```
 
 ```elixir
-batch_result = batch_output_content = openai |> Files.content(batch_job_output_file["id"])
+batch_result = batch_output_content = openai |> Files.content!(batch_job_output_file["id"])
 ```
 
 Note that the string is not valid json (it's a sequence of json objects without the commas or the array '[' ']' delimiters), so it cannot be parsed as such.
@@ -807,7 +852,7 @@ Note that the string is not valid json (it's a sequence of json objects without 
 Use the [`Batch.cancel()`](https://platform.openai.com/docs/api-reference/batch/cancel) function to cancel an in-progress batch.
 
 ```elixir
-cancel_result = openai |> Batches.cancel(batch_id: batch_id)
+cancel_result = openai |> Batches.cancel!(batch_id: batch_id)
 ```
 
 ### List batches
@@ -815,7 +860,7 @@ cancel_result = openai |> Batches.cancel(batch_id: batch_id)
 Use the [`Batch.list()`](https://platform.openai.com/docs/api-reference/batch/list) function to list your organization's batches.
 
 ```elixir
-openai |> Batches.list()
+openai |> Batches.list!()
 ```
 
 For more information on the Batch API, see the [OpenAI API Batch Reference](https://platform.openai.com/docs/api-reference/batch).
@@ -833,7 +878,7 @@ mod_req = Moderations.new(input: "I want to kill people")
 The call the function [`Moderation.create()`](https://platform.openai.com/docs/api-reference/moderations/create)
 
 ```elixir
-mod_res = openai |> Moderations.create(mod_req)
+mod_res = openai |> Moderations.create!(mod_req)
 ```
 
 For more information on the moderation endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/moderations)
@@ -864,7 +909,7 @@ hr_assistant_req =
 Then we call the create function
 
 ```elixir
-asst = openai |> Assistants.create(hr_assistant_req)
+asst = openai |> Assistants.create!(hr_assistant_req)
 ```
 
 ### Retrieve Assistant
@@ -878,7 +923,7 @@ assistant_id = asst["id"]
 which can then be used to retrieve the Assistant fields, using the [`Assistant.retrieve()`](https://platform.openai.com/docs/api-reference/assistants/getAssistant) function.
 
 ```elixir
-openai |> Assistants.retrieve(assistant_id)
+openai |> Assistants.retrieve!(assistant_id)
 ```
 
 ### Modify Assistant
@@ -895,7 +940,7 @@ hrf_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets
 hr_file = OpenaiEx.new_file(name: hrf_url, content: fetch_blob.(hrf_url))
 
 hr_upload_req = Files.new_upload(file: hr_file, purpose: "assistants")
-hr_upload_res = openai |> Files.create(hr_upload_req)
+hr_upload_res = openai |> Files.create!(hr_upload_req)
 ```
 
 ```elixir
@@ -919,7 +964,7 @@ math_assistant_req =
 Finally we call the endpoint to modify the `Assistant`
 
 ```elixir
-asst = openai |> Assistants.update(assistant_id, math_assistant_req)
+asst = openai |> Assistants.update!(assistant_id, math_assistant_req)
 ```
 
 ### Delete Assistant
@@ -927,7 +972,7 @@ asst = openai |> Assistants.update(assistant_id, math_assistant_req)
 Finally we can delete assistants using the [`Assistant.delete()`](https://platform.openai.com/docs/api-reference/assistants/deleteAssistant) function
 
 ```elixir
-openai |> Assistants.delete(assistant_id)
+openai |> Assistants.delete!(assistant_id)
 ```
 
 ### List Assistants
@@ -935,7 +980,7 @@ openai |> Assistants.delete(assistant_id)
 We use [`Assistant.list()`](https://platform.openai.com/docs/api-reference/assistants/listAssistants) to get a list of assistants
 
 ```elixir
-assts = openai |> Assistants.list()
+assts = openai |> Assistants.list!()
 ```
 
 ## Vector Stores
@@ -952,7 +997,7 @@ Use [`VectorStores.create()`](https://platform.openai.com/docs/api-reference/vec
 
 ```elixir
 vector_store_req = VectorStores.new(name: "HR Documents")
-vector_store = openai |> VectorStores.create(vector_store_req)
+vector_store = openai |> VectorStores.create!(vector_store_req)
 vector_store_id = vector_store["id"]
 ```
 
@@ -961,7 +1006,7 @@ vector_store_id = vector_store["id"]
 Use [`VectorStores.retrieve()`](https://platform.openai.com/docs/api-reference/vector-stores/retrieve) to retrieve a vector store.
 
 ```elixir
-openai |> VectorStores.retrieve(vector_store_id)
+openai |> VectorStores.retrieve!(vector_store_id)
 ```
 
 ### Update vector store
@@ -969,7 +1014,7 @@ openai |> VectorStores.retrieve(vector_store_id)
 Use [`VectorStores.update()`](https://platform.openai.com/docs/api-reference/vector-stores/modify) to modify the vector store.
 
 ```elixir
-openai |> VectorStores.update(vector_store_id, %{name: "HR Documents 2"})
+openai |> VectorStores.update!(vector_store_id, %{name: "HR Documents 2"})
 ```
 
 ### Delete vector store
@@ -977,7 +1022,7 @@ openai |> VectorStores.update(vector_store_id, %{name: "HR Documents 2"})
 [`VectorStores.delete()`](https://platform.openai.com/docs/api-reference/vector-stores/delete) can be used to delete a vector store.
 
 ```elixir
-openai |> VectorStores.delete(vector_store_id)
+openai |> VectorStores.delete!(vector_store_id)
 ```
 
 ### List vector stores
@@ -985,7 +1030,7 @@ openai |> VectorStores.delete(vector_store_id)
 We use [`VectorStores.list()`](https://platform.openai.com/docs/api-reference/vector-stores/list) to get a list of vectorstores.
 
 ```elixir
-openai |> VectorStores.list()
+openai |> VectorStores.list!()
 ```
 
 ## Vector Store Files
@@ -997,14 +1042,14 @@ We can create a vector store file by attaching a file to a vector store using [`
 First we recreate the vector store above
 
 ```elixir
-vector_store = openai |> VectorStores.create(VectorStores.new(name: "HR Documents"))
+vector_store = openai |> VectorStores.create!(VectorStores.new(name: "HR Documents"))
 ```
 
 then attach the file id from earlier
 
 ```elixir
 vector_store_id = vector_store["id"]
-vs_file = openai |> VectorStores.Files.create(vector_store_id, file_id)
+vs_file = openai |> VectorStores.Files.create!(vector_store_id, file_id)
 ```
 
 ### Retrieve vector store file
@@ -1012,7 +1057,7 @@ vs_file = openai |> VectorStores.Files.create(vector_store_id, file_id)
 Retrieve a vector store file using the [`VectorStores.Files.retrieve()`](https://platform.openai.com/docs/api-reference/vector-stores-files/getFile) function
 
 ```elixir
-openai |> VectorStores.Files.retrieve(vector_store_id, file_id)
+openai |> VectorStores.Files.retrieve!(vector_store_id, file_id)
 ```
 
 ### Delete vector store file
@@ -1020,7 +1065,7 @@ openai |> VectorStores.Files.retrieve(vector_store_id, file_id)
 Detach a file from the vector store using [`VectorStores.Files.delete()`](https://platform.openai.com/docs/api-reference/vector-stores-files/deleteFile)
 
 ```elixir
-openai |> VectorStores.Files.delete(vector_store_id, file_id)
+openai |> VectorStores.Files.delete!(vector_store_id, file_id)
 ```
 
 ### List vector store files
@@ -1028,7 +1073,7 @@ openai |> VectorStores.Files.delete(vector_store_id, file_id)
 List vector store files using [`VectorStores.Files.list()`](https://platform.openai.com/docs/api-reference/vector-stores-files/listFiles)
 
 ```elixir
-openai |> VectorStores.Files.list(vector_store_id)
+openai |> VectorStores.Files.list!(vector_store_id)
 ```
 
 ## Vector Store File Batches
@@ -1040,7 +1085,7 @@ File batches allow addition of multiple files to a vector store in a single oper
 Use [`VectorStores.File.Batch.create()`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/createBatch) to attach a list of file ids to a vector store.
 
 ```elixir
-vsf_batch = openai |> VectorStores.File.Batches.create(vector_store_id, [file_id])
+vsf_batch = openai |> VectorStores.File.Batches.create!(vector_store_id, [file_id])
 ```
 
 ### Retrieve VS file batch
@@ -1049,7 +1094,7 @@ Use [`VectorStores.File.Batch.retrieve()`](https://platform.openai.com/docs/api-
 
 ```elixir
 vsf_batch_id = vsf_batch["id"]
-openai |> VectorStores.File.Batches.retrieve(vector_store_id, vsf_batch_id)
+openai |> VectorStores.File.Batches.retrieve!(vector_store_id, vsf_batch_id)
 ```
 
 ### Cancel VS file batch
@@ -1057,7 +1102,7 @@ openai |> VectorStores.File.Batches.retrieve(vector_store_id, vsf_batch_id)
 Use [`VectorStores.File.Batches.cancel()`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/cancelBatch) to cancel a batch.
 
 ```elixir
-openai |> VectorStores.File.Batches.cancel(vector_store_id, vsf_batch_id)
+openai |> VectorStores.File.Batches.cancel!(vector_store_id, vsf_batch_id)
 ```
 
 ### List VS file batch
@@ -1065,7 +1110,7 @@ openai |> VectorStores.File.Batches.cancel(vector_store_id, vsf_batch_id)
 Use [`VectorStores.File.Batches.list()`](https://platform.openai.com/docs/api-reference/vector-stores-file-batches/listBatchFiles)
 
 ```elixir
-openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
+openai |> VectorStores.File.Batches.list!(vector_store_id, vsf_batch_id)
 ```
 
 ## Thread
@@ -1080,7 +1125,7 @@ alias OpenaiEx.Beta.Threads.Messages
 Use the [`Thread.create()`] function to create threads. A thread can be created empty or with messages.
 
 ```elixir
-empty_thread = openai |> Threads.create()
+empty_thread = openai |> Threads.create!()
 
 msg_hr =
   Messages.new(
@@ -1093,7 +1138,7 @@ msg_ai = Messages.new(role: "user", content: "How does AI work? Explain it in si
 
 thrd_req = Threads.new(messages: [msg_hr, msg_ai])
 
-thread = openai |> Threads.create(thrd_req)
+thread = openai |> Threads.create!(thrd_req)
 ```
 
 ### Retrieve thread
@@ -1102,7 +1147,7 @@ thread = openai |> Threads.create(thrd_req)
 
 ```elixir
 thread_id = thread["id"]
-openai |> Threads.retrieve(thread_id)
+openai |> Threads.retrieve!(thread_id)
 ```
 
 ### Modify thread
@@ -1110,7 +1155,7 @@ openai |> Threads.retrieve(thread_id)
 The metadata for a thread can be modified using [`Thread.update()`](https://platform.openai.com/docs/api-reference/threads/modifyThread)
 
 ```elixir
-openai |> Threads.update(thread_id, %{metadata: %{modified: "true", user: "abc123"}})
+openai |> Threads.update!(thread_id, %{metadata: %{modified: "true", user: "abc123"}})
 ```
 
 ### Delete thread
@@ -1118,7 +1163,7 @@ openai |> Threads.update(thread_id, %{metadata: %{modified: "true", user: "abc12
 Use [`Thread.delete()`](https://platform.openai.com/docs/api-reference/threads/deleteThread) to delete a thread
 
 ```elixir
-openai |> Threads.delete(thread_id)
+openai |> Threads.delete!(thread_id)
 ```
 
 Verify deletion
@@ -1136,7 +1181,7 @@ You can create a single message for a thread using [`Message.create()`](https://
 ```elixir
 thread_id = empty_thread["id"]
 
-message = openai |> Threads.Messages.create(thread_id, msg_hr)
+message = openai |> Threads.Messages.create!(thread_id, msg_hr)
 ```
 
 ### Retrieve message
@@ -1145,7 +1190,7 @@ Use [`Message.retrieve()`] to retrieve a message
 
 ```elixir
 message_id = message["id"]
-openai |> Threads.Messages.retrieve(%{thread_id: thread_id, message_id: message_id})
+openai |> Threads.Messages.retrieve!(%{thread_id: thread_id, message_id: message_id})
 ```
 
 ### Modify message
@@ -1158,7 +1203,7 @@ metadata = %{modified: "true", user: "abc123"}
 upd_msg_req =
   Threads.Messages.new(thread_id: thread_id, message_id: message_id, metadata: metadata)
 
-message = openai |> Threads.Messages.update(upd_msg_req)
+message = openai |> Threads.Messages.update!(upd_msg_req)
 ```
 
 ### List messages
@@ -1166,7 +1211,7 @@ message = openai |> Threads.Messages.update(upd_msg_req)
 Use [`Message.list()`] to get all the messages for a given thread
 
 ```elixir
-openai |> Threads.Messages.list(thread_id)
+openai |> Threads.Messages.list!(thread_id)
 ```
 
 ## Runs
@@ -1180,12 +1225,12 @@ alias OpenaiEx.Beta.Threads.Runs
 A run represents an execution on a thread. Use to [`Run.create()`](https://platform.openai.com/docs/api-reference/runs/createRun) with an assistant on a thread
 
 ```elixir
-math_assistant = openai |> Assistants.create(math_assistant_req)
+math_assistant = openai |> Assistants.create!(math_assistant_req)
 math_assistant_id = math_assistant["id"]
 
 run_req = Runs.new(thread_id: thread_id, assistant_id: math_assistant_id)
 
-run = openai |> Runs.create(run_req)
+run = openai |> Runs.create!(run_req)
 ```
 
 #### Streaming
@@ -1193,7 +1238,7 @@ run = openai |> Runs.create(run_req)
 It is possible to stream the result of executing a run or resuming a run after submitting tool outputs. To accomplish this, pass `stream: true` to the `create`, `create_thread_and_run` and `submit_tool_outputs` functions.
 
 ```elixir
-run_stream = openai |> Runs.create(run_req, stream: true)
+run_stream = openai |> Runs.create!(run_req, stream: true)
 IO.puts(inspect(run_stream))
 IO.puts(inspect(run_stream.task_pid))
 run_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
@@ -1205,7 +1250,7 @@ Retrieve a run using [`Run.retrieve()`](https://platform.openai.com/docs/api-ref
 
 ```elixir
 run_id = run["id"]
-openai |> Runs.retrieve(%{thread_id: thread_id, run_id: run_id})
+openai |> Runs.retrieve!(%{thread_id: thread_id, run_id: run_id})
 ```
 
 ### Modify run
@@ -1214,7 +1259,7 @@ The run metadata can be modified using the [`Run.update()`](https://platform.ope
 
 ```elixir
 openai
-|> Runs.update(%{
+|> Runs.update!(%{
   thread_id: thread_id,
   run_id: run_id,
   metadata: %{user_id: "user_zmVY6FvuBDDwIqM4KgH"}
@@ -1226,7 +1271,7 @@ openai
 List the runs belonging to a thread using [`Run.list()`](https://platform.openai.com/docs/api-reference/runs/listRuns)
 
 ```elixir
-openai |> Runs.list(thread_id)
+openai |> Runs.list!(thread_id)
 ```
 
 ### Submit tool outputs to a run

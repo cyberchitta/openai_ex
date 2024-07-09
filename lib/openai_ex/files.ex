@@ -2,6 +2,8 @@ defmodule OpenaiEx.Files do
   @moduledoc """
   This module provides an implementation of the OpenAI files API. The API reference can be found at https://platform.openai.com/docs/api-reference/files.
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :file,
     :purpose,
@@ -61,8 +63,12 @@ defmodule OpenaiEx.Files do
 
   https://platform.openai.com/docs/api-reference/files/list
   """
+  def list!(openai = %OpenaiEx{}) do
+    openai |> list() |> Http.bang_it!()
+  end
+
   def list(openai = %OpenaiEx{}) do
-    openai |> OpenaiEx.Http.get(ep_url())
+    openai |> Http.get(ep_url())
   end
 
   @doc """
@@ -79,11 +85,13 @@ defmodule OpenaiEx.Files do
 
   https://platform.openai.com/docs/api-reference/files/upload
   """
+  def create!(openai = %OpenaiEx{}, upload) do
+    openai |> create(upload) |> Http.bang_it!()
+  end
+
   def create(openai = %OpenaiEx{}, upload) do
-    openai
-    |> OpenaiEx.Http.post(ep_url(),
-      multipart: upload |> OpenaiEx.Http.to_multi_part_form_data(file_fields())
-    )
+    multipart = upload |> Http.to_multi_part_form_data(file_fields())
+    openai |> Http.post(ep_url(), multipart: multipart)
   end
 
   @doc """
@@ -100,9 +108,12 @@ defmodule OpenaiEx.Files do
 
   https://platform.openai.com/docs/api-reference/files/delete
   """
+  def delete!(openai = %OpenaiEx{}, file_id) do
+    openai |> delete(file_id) |> Http.bang_it!()
+  end
+
   def delete(openai = %OpenaiEx{}, file_id) do
-    openai
-    |> OpenaiEx.Http.delete(ep_url(file_id))
+    openai |> Http.delete(ep_url(file_id))
   end
 
   @doc """
@@ -119,9 +130,12 @@ defmodule OpenaiEx.Files do
 
   https://platform.openai.com/docs/api-reference/files/retrieve
   """
+  def retrieve!(openai = %OpenaiEx{}, file_id) do
+    openai |> retrieve(file_id) |> Http.bang_it!()
+  end
+
   def retrieve(openai = %OpenaiEx{}, file_id) do
-    openai
-    |> OpenaiEx.Http.get(ep_url(file_id))
+    openai |> Http.get(ep_url(file_id))
   end
 
   @doc """
@@ -138,9 +152,12 @@ defmodule OpenaiEx.Files do
 
   https://platform.openai.com/docs/api-reference/files/retrieve-content
   """
+  def content!(openai = %OpenaiEx{}, file_id) do
+    openai |> content(file_id) |> Http.bang_it!()
+  end
+
   def content(openai = %OpenaiEx{}, file_id) do
-    openai
-    |> OpenaiEx.Http.get_no_decode(ep_url(file_id, "content"))
+    openai |> Http.get_no_decode(ep_url(file_id, "content"))
   end
 
   @doc false

@@ -15,6 +15,8 @@ defmodule OpenaiEx.Audio.Transcription do
   - `:temperature`
   - `:timestamp_granularities`
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :file,
     :model,
@@ -60,11 +62,13 @@ defmodule OpenaiEx.Audio.Transcription do
 
   See https://platform.openai.com/docs/api-reference/audio/createTranscription for more information.
   """
+  def create!(openai = %OpenaiEx{}, audio = %{}) do
+    openai |> create(audio) |> Http.bang_it!()
+  end
+
   def create(openai = %OpenaiEx{}, audio = %{}) do
-    openai
-    |> OpenaiEx.Http.post("/audio/transcriptions",
-      multipart: audio |> OpenaiEx.Http.to_multi_part_form_data(file_fields())
-    )
+    multipart = audio |> Http.to_multi_part_form_data(file_fields())
+    openai |> Http.post("/audio/transcriptions", multipart: multipart)
   end
 
   @doc false

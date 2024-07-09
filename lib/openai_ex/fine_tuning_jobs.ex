@@ -2,6 +2,8 @@ defmodule OpenaiEx.FineTuning.Jobs do
   @moduledoc """
   This module provides an implementation of the OpenAI fine-tuning job API. The API reference can be found at https://platform.openai.com/docs/api-reference/fine-tuning.
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :model,
     :hyperparameters,
@@ -40,21 +42,29 @@ defmodule OpenaiEx.FineTuning.Jobs do
   end
 
   @doc """
-  Calls the fine-tuning job creation endpoint.
-
-  https://platform.openai.com/docs/api-reference/fine-tuning/create
-  """
-  def create(openai = %OpenaiEx{}, finetuning = %{}) do
-    openai |> OpenaiEx.Http.post(ep_url(), json: finetuning)
-  end
-
-  @doc """
   Calls the fine-tuning job list endpoint.
 
   https://platform.openai.com/docs/api-reference/fine-tuning/list
   """
+  def list!(openai = %OpenaiEx{}, params = %{} \\ %{}) do
+    openai |> list(params) |> Http.bang_it!()
+  end
+
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai |> OpenaiEx.Http.get(ep_url(), params |> Map.take(@api_fields))
+    openai |> Http.get(ep_url(), params |> Map.take(@api_fields))
+  end
+
+  @doc """
+  Calls the fine-tuning job creation endpoint.
+
+  https://platform.openai.com/docs/api-reference/fine-tuning/create
+  """
+  def create!(openai = %OpenaiEx{}, finetuning = %{}) do
+    openai |> create(finetuning) |> Http.bang_it!()
+  end
+
+  def create(openai = %OpenaiEx{}, finetuning = %{}) do
+    openai |> Http.post(ep_url(), json: finetuning)
   end
 
   @doc """
@@ -62,8 +72,12 @@ defmodule OpenaiEx.FineTuning.Jobs do
 
   https://platform.openai.com/docs/api-reference/fine-tuning/retrieve
   """
+  def retrieve!(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
+    openai |> retrieve(fine_tuning_job_id: fine_tuning_job_id) |> Http.bang_it!()
+  end
+
   def retrieve(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> OpenaiEx.Http.get(ep_url(fine_tuning_job_id))
+    openai |> Http.get(ep_url(fine_tuning_job_id))
   end
 
   @doc """
@@ -71,8 +85,12 @@ defmodule OpenaiEx.FineTuning.Jobs do
 
   https://platform.openai.com/docs/api-reference/fine-tuning/cancel
   """
+  def cancel!(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
+    openai |> cancel(fine_tuning_job_id: fine_tuning_job_id) |> Http.bang_it!()
+  end
+
   def cancel(openai = %OpenaiEx{}, fine_tuning_job_id: fine_tuning_job_id) do
-    openai |> OpenaiEx.Http.post(ep_url(fine_tuning_job_id, "cancel"))
+    openai |> Http.post(ep_url(fine_tuning_job_id, "cancel"))
   end
 
   @doc """
@@ -80,8 +98,12 @@ defmodule OpenaiEx.FineTuning.Jobs do
 
   https://platform.openai.com/docs/api-reference/fine-tuning/events
   """
+  def list_events!(openai = %OpenaiEx{}, opts) do
+    openai |> list_events(opts) |> Http.bang_it!()
+  end
+
   def list_events(openai = %OpenaiEx{}, opts = [fine_tuning_job_id: fine_tuning_job_id]) do
     params = opts |> Enum.into(%{}) |> Map.take([:after, :limit])
-    openai |> OpenaiEx.Http.get(ep_url(fine_tuning_job_id, "events"), params)
+    openai |> Http.get(ep_url(fine_tuning_job_id, "events"), params)
   end
 end

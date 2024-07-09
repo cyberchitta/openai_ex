@@ -4,8 +4,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.13.1"}
+  {:openai_ex, "~> 0.8.0"},
+  {:kino, "~> 0.13.2"}
 ])
 
 alias OpenaiEx
@@ -42,7 +42,7 @@ Kino.listen(form, fn %{data: %{text: prompt}} ->
 
   res_urls =
     openai
-    |> Image.generate(%{
+    |> Images.generate!(%{
       prompt: prompt,
       n: n,
       size: size
@@ -60,4 +60,4 @@ end)
 Kino.Layout.grid([form, frame], boxed: true, gap: 16)
 ```
 
-<!-- livebook:{"offset":1302,"stamp":{"token":"XCP.0gH9iiaZxxApW4uBGO1PnDnHbED6KSghZlpHphkA2h3sjqpMK-JuOnxdM-OCQr5ZwmLoJO5UMYtyPeYPVrv0djj0n8iXqnCsKt6osUtu01Z8xHBoQctqlbU","version":2}} -->
+<!-- livebook:{"offset":1285,"stamp":{"token":"XCP.z6v6YeZ4AUWug7vQpJAqGS9qL3MBYOZtkCQKxp10CEsCLetWklepx0UU-f5foGk5QDGG5RaMFviyMpAGdA__lsZhKKGoukl_f1fsQ-zycl2FEiNiQW6n_YM","version":2}} -->

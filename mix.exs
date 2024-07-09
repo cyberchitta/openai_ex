@@ -1,7 +1,7 @@
 defmodule OpenaiEx.MixProject do
   use Mix.Project
 
-  @version "0.7.0"
+  @version "0.8.0"
   @description "Community maintained OpenAI API Elixir client for Livebook"
   @source_url "https://github.com/restlessronin/openai_ex"
 
@@ -60,7 +60,6 @@ defmodule OpenaiEx.MixProject do
         "notebooks/userguide.livemd",
         "notebooks/streaming_orderbot.livemd",
         "notebooks/dlai_orderbot.livemd",
-        "notebooks/completions.livemd",
         "notebooks/images.livemd"
       ]
     ]

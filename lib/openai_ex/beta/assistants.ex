@@ -2,6 +2,8 @@ defmodule OpenaiEx.Beta.Assistants do
   @moduledoc """
   This module provides an implementation of the OpenAI assistants API. The API reference can be found at https://platform.openai.com/docs/api-reference/assistants.
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :model,
     :name,
@@ -64,10 +66,13 @@ defmodule OpenaiEx.Beta.Assistants do
 
   See https://platform.openai.com/docs/api-reference/assistants/createAssistant for more information.
   """
+  def create!(openai = %OpenaiEx{}, assistant = %{}) do
+    openai |> create(assistant) |> Http.bang_it!()
+  end
+
   def create(openai = %OpenaiEx{}, assistant = %{}) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(ep_url(), json: assistant |> Map.take(@api_fields))
+    json = assistant |> Map.take(@api_fields)
+    openai |> OpenaiEx.with_assistants_beta() |> Http.post(ep_url(), json: json)
   end
 
   @doc """
@@ -84,10 +89,12 @@ defmodule OpenaiEx.Beta.Assistants do
 
   https://platform.openai.com/docs/api-reference/assistants/getAssistant
   """
+  def retrieve!(openai = %OpenaiEx{}, assistant_id) do
+    openai |> retrieve(assistant_id) |> Http.bang_it!()
+  end
+
   def retrieve(openai = %OpenaiEx{}, assistant_id) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.get(ep_url(assistant_id))
+    openai |> OpenaiEx.with_assistants_beta() |> Http.get(ep_url(assistant_id))
   end
 
   @doc """
@@ -105,10 +112,13 @@ defmodule OpenaiEx.Beta.Assistants do
 
   See https://platform.openai.com/docs/api-reference/assistants/modifyAssistant for more information.
   """
+  def update!(openai = %OpenaiEx{}, assistant_id, assistant = %{}) do
+    openai |> update(assistant_id, assistant) |> Http.bang_it!()
+  end
+
   def update(openai = %OpenaiEx{}, assistant_id, assistant = %{}) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.post(ep_url(assistant_id), json: assistant |> Map.take(@api_fields))
+    json = assistant |> Map.take(@api_fields)
+    openai |> OpenaiEx.with_assistants_beta() |> Http.post(ep_url(assistant_id), json: json)
   end
 
   @doc """
@@ -125,10 +135,12 @@ defmodule OpenaiEx.Beta.Assistants do
 
   https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
   """
+  def delete!(openai = %OpenaiEx{}, assistant_id) do
+    openai |> delete(assistant_id) |> Http.bang_it!()
+  end
+
   def delete(openai = %OpenaiEx{}, assistant_id) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.delete(ep_url(assistant_id))
+    openai |> OpenaiEx.with_assistants_beta() |> Http.delete(ep_url(assistant_id))
   end
 
   @doc """
@@ -148,8 +160,7 @@ defmodule OpenaiEx.Beta.Assistants do
   end
 
   def new_list(args = %{}) do
-    args
-    |> Map.take(OpenaiEx.list_query_fields())
+    args |> Map.take(OpenaiEx.list_query_fields())
   end
 
   @doc """
@@ -157,9 +168,12 @@ defmodule OpenaiEx.Beta.Assistants do
 
   https://platform.openai.com/docs/api-reference/assistants/listAssistants
   """
+  def list!(openai = %OpenaiEx{}, params = %{} \\ %{}) do
+    openai |> list(params) |> Http.bang_it!()
+  end
+
   def list(openai = %OpenaiEx{}, params = %{} \\ %{}) do
-    openai
-    |> OpenaiEx.with_assistants_beta()
-    |> OpenaiEx.Http.get(ep_url(), params |> Map.take(OpenaiEx.list_query_fields()))
+    qry_params = params |> Map.take(OpenaiEx.list_query_fields())
+    openai |> OpenaiEx.with_assistants_beta() |> Http.get(ep_url(), qry_params)
   end
 end

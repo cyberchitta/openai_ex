@@ -2,6 +2,8 @@ defmodule OpenaiEx.Embeddings do
   @moduledoc """
   This module provides an implementation of the OpenAI embeddings API. The API reference can be found at https://platform.openai.com/docs/api-reference/embeddings.
   """
+  alias OpenaiEx.Http
+
   @api_fields [
     :input,
     :model,
@@ -56,8 +58,12 @@ defmodule OpenaiEx.Embeddings do
 
   See https://platform.openai.com/docs/api-reference/embeddings/create for more information.
   """
+  def create!(openai = %OpenaiEx{}, embedding = %{}) do
+    openai |> create(embedding) |> Http.bang_it!()
+  end
+
   def create(openai = %OpenaiEx{}, embedding = %{}) do
     ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
-    openai |> OpenaiEx.Http.post(ep, json: embedding)
+    openai |> Http.post(ep, json: embedding)
   end
 end

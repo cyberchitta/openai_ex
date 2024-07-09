@@ -1,6 +1,7 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
-  alias OpenaiEx.Http
+  alias OpenaiEx.Http.Finch, as: Client
+  alias OpenaiEx.Error
   require Logger
 
   # based on
@@ -18,10 +19,10 @@ defmodule OpenaiEx.HttpSse do
     if status in 200..299 do
       stream_receiver = create_stream_receiver(ref, openai.stream_timeout, task)
       body_stream = Stream.resource(&init_stream/0, stream_receiver, &end_stream/1)
-      %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}
+      {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
     else
-      error = extract_error(ref, "")
-      %{status: status, headers: headers, error: Jason.decode!(error)}
+      body = extract_error(ref, "") |> Jason.decode!()
+      {:error, Error.status_error(status, %{status: status, headers: headers, body: body}, body)}
     end
   end
 
@@ -30,12 +31,11 @@ defmodule OpenaiEx.HttpSse do
   end
 
   defp finch_stream(openai = %OpenaiEx{}, url, json, me, ref) do
-    request = Http.build_post(openai, url, json: json)
+    request = Client.build_post(openai, url, json: json)
     send_me_chunk = create_chunk_sender(me, ref)
-    options = Http.request_options(openai)
 
     try do
-      request |> Finch.stream(Map.get(openai, :finch_name), nil, send_me_chunk, options)
+      Client.stream(request, openai, send_me_chunk)
       send(me, {:done, ref})
     catch
       :throw, :cancel_request -> {:exception, :cancel_request}
@@ -85,7 +85,8 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp end_stream({:exception, reason}), do: raise(OpenaiEx.Exception, {:sse_exception, reason})
+  defp end_stream({:exception, :timeout}), do: raise(Error.sse_timeout_error())
+  defp end_stream({:exception, :canceled}), do: raise(Error.sse_user_cancellation())
   defp end_stream(_), do: :ok
 
   @double_eol ~r/(\r?\n|\r){2}/
@@ -112,11 +113,11 @@ defmodule OpenaiEx.HttpSse do
   defp process_fields(lines) do
     lines
     |> Enum.map(&extract_field/1)
-    |> Enum.filter(&filter_field/1)
-    |> Enum.map(&decode_field/1)
+    |> Enum.filter(&is_data/1)
+    |> Enum.map(&to_json/1)
   end
 
-  defp decode_field(field) do
+  defp to_json(field) do
     case field do
       %{data: data} ->
         %{data: Jason.decode!(data)}
@@ -127,7 +128,7 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp filter_field(field) do
+  defp is_data(field) do
     case field do
       %{data: "[DONE]"} -> false
       %{data: _} -> true
