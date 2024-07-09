@@ -4,7 +4,7 @@
 Mix.install([
   {:openai_ex, "~> 0.8.0"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.13.1"}
+  {:kino, "~> 0.13.2"}
 ])
 ```
 
