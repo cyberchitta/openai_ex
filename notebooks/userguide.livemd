@@ -10,7 +10,7 @@ Mix.install([
 
 ## Introduction
 
-`OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client especially for Livebook development.
+`OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client.
 
 Portions of this project were developed with assistance from ChatGPT 3.5 and 4, as well as Claude 3 Opus and Claude 3.5 Sonnet. However, every line of code is human curated (by me 😇).
 
