@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.7.0"},
+  {:openai_ex, "~> 0.8.0"},
   {:kino, "~> 0.11.0"}
 ])
 
@@ -173,5 +173,3 @@ Kino.listen(
   end
 )
 ```
-
-<!-- livebook:{"offset":5224,"stamp":{"token":"XCP.x32LYqzk3RpFi-uvrDTBhX4aeFFvVabDbVHxfvvYuhphXZIPN9Szd0RhrkpG97gEF0dKkQl3DHlRkzkC7jQlJrMx2zzF34w5zz718rmOy6J_WO-IKfetc0A","version":2}} -->
