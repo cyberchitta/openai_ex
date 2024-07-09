@@ -194,8 +194,6 @@ In addition to these standard error types, OpenaiEx defines two specific error t
 
 For more details on specific error types and their attributes, refer to the `OpenaiEx.Error` module documentation.
 
-This revision maintains the important information about OpenaiEx-specific error types while directing users to the official documentation for the standard error types. It's more concise and easier to keep up-to-date with any changes in the OpenAI API error specifications.
-
 ## Model
 
 ### List Models
