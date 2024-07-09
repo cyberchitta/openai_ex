@@ -46,3 +46,8 @@ OpenaiEx.Beta.Assistants.list(openai)
 (openai |> OpenaiEx.Beta.VectorStores.list())["data"]
 |> Enum.each(fn vs -> openai |> OpenaiEx.Beta.VectorStores.delete(vs["id"]) end)
 ```
+
+```elixir
+openai |> OpenaiEx.Beta.VectorStores.list()
+```
+
