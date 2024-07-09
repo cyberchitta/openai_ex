@@ -3,7 +3,7 @@
 ```elixir
 Mix.install([
   {:openai_ex, "~> 0.8.0"},
-  {:kino, "~> 0.13.1"}
+  {:kino, "~> 0.13.2"}
 ])
 
 alias OpenaiEx
@@ -47,7 +47,7 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
   end
 
   def get_stream(openai = %OpenaiEx{}, messages) do
-    openai |> Chat.Completions.create(create_chat_req(messages: messages), stream: true)
+    openai |> Chat.Completions.create!(create_chat_req(messages: messages), stream: true)
   end
 
   def stream_to_completions(%{body_stream: body_stream}) do
@@ -73,7 +73,7 @@ defmodule OpenaiEx.Notebooks.StreamingOrderbot do
     rescue
       e in OpenaiEx.Error ->
         case e do
-          %{type: :sse_cancellation} ->
+          %{kind: :sse_cancellation} ->
             message = "Request was canceled."
             Kino.Frame.render(frame, Kino.Text.new(message))
             {:canceled, message}

@@ -3,7 +3,7 @@
 ```elixir
 Mix.install([
   {:openai_ex, "~> 0.8.0"},
-  {:kino, "~> 0.11.0"}
+  {:kino, "~> 0.13.2"}
 ])
 
 alias OpenaiEx
@@ -48,11 +48,11 @@ defmodule OpenaiEx.Notebooks.DlaiOrderbot do
 
   def get_completion(openai = %OpenaiEx{}, cc_req = %{}) do
     openai
-    |> Chat.Completions.create(cc_req)
+    |> Chat.Completions.create!(cc_req)
     # for debugging
     #    |> IO.inspect()
     |> Map.get("choices")
-    |> Enum.at(0)
+    |> List.first()
     |> Map.get("message")
     |> Map.get("content")
   end
