@@ -80,11 +80,11 @@ You can also specify an organization if you are a member of more than one:
 
 For more information on authentication, see the [OpenAI API Authentication reference](https://platform.openai.com/docs/api-reference/authentication).
 
-### Configuration
+## Configuration
 
 There are a few places where configuration seemed necessary.
 
-#### Receive Timeout
+### Receive Timeout
 
 The default receive timeout is 15 seconds. If you are seeing longer latencies, you can override the default with
 
@@ -93,7 +93,7 @@ The default receive timeout is 15 seconds. If you are seeing longer latencies, y
 openai = OpenaiEx.new(apikey) |> OpenaiEx.with_receive_timeout(45_000)
 ```
 
-#### Finch Instance
+### Finch Instance
 
 In production scenarios where you want to explicitly tweak the Finch pool, you can create a new Finch instance using
 
@@ -116,7 +116,7 @@ openai_with_custom_finch = openai |> with_finch_name(MyConfiguredFinch)
 
 <!-- livebook:{"break_markdown":true} -->
 
-#### Base Url
+### Base Url
 
 There are times, such as when using a local LLM (like Ollama) with an OpenAI proxy, when you need to reset the base url of the API. This is generally only applicable for chat and chat completion endpoints and can be accomplished by
 
@@ -127,7 +127,7 @@ proxy_openai =
   OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
 ```
 
-#### Azure OpenAI
+### Azure OpenAI
 
 The Azure OpenAI API replicates the Completion, Chat Completion and Embeddings endpoints from OpenAI.
 
