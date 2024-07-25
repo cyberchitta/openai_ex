@@ -18,6 +18,7 @@ defmodule OpenaiEx.Chat.Completions do
     :seed,
     :service_tier,
     :stop,
+    :stream_options,
     :temperature,
     :top_p,
     :top_logprobs,
