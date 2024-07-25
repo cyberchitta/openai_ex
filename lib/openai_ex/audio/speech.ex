@@ -1,17 +1,6 @@
 defmodule OpenaiEx.Audio.Speech do
   @moduledoc """
-  This module provides an implementation of the OpenAI audio speech API. The API
-  reference can be found at https://platform.openai.com/docs/api-reference/audio/createSpeech.
-
-  ## API Fields
-
-  The following fields can be used as parameters when creating a new audio speech request:
-
-  - `:input`
-  - `:model`
-  - `:voice`
-  - `:response_format`
-  - `:speed`
+  This module provides an implementation of the OpenAI audio speech API. The API reference can be found at https://platform.openai.com/docs/api-reference/audio/createSpeech.
   """
   alias OpenaiEx.Http
 

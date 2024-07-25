@@ -1,17 +1,6 @@
 defmodule OpenaiEx.Audio.Translation do
   @moduledoc """
-  This module provides an implementation of the OpenAI audio translation API. The API
-  reference can be found at https://platform.openai.com/docs/api-reference/audio/createTranslation.
-
-  ## API Fields
-
-  The following fields can be used as parameters when creating a new audio request:
-
-  - `:file`
-  - `:model`
-  - `:prompt`
-  - `:response_format`
-  - `:temperature`
+  This module provides an implementation of the OpenAI audio translation API. The API reference can be found at https://platform.openai.com/docs/api-reference/audio/createTranslation.
   """
   alias OpenaiEx.Http
 
