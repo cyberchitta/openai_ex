@@ -1,5 +1,6 @@
 defmodule OpenaiEx.Http.Finch do
   @moduledoc false
+  require Logger
   alias OpenaiEx.Error
 
   def get(openai = %OpenaiEx{}, url) do
@@ -83,5 +84,11 @@ defmodule OpenaiEx.Http.Finch do
   def to_error(:closed, request),
     do: {:error, Error.api_connection_error("Connection closed.", request)}
 
-  def to_error(reason, request), do: {:error, Error.api_connection_error(reason, request)}
+  def to_error(reason, request) do
+    Logger.warning(
+      "Unknown Finch error, please report to maintainer: reason: #{inspect(reason)}, request #{inspect(request)}"
+    )
+
+    {:error, Error.api_connection_error(reason, request)}
+  end
 end
