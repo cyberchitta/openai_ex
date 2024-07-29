@@ -79,6 +79,9 @@ defmodule OpenaiEx.Http.Finch do
   end
 
   def to_error(:timeout, request), do: {:error, Error.api_timeout_error(request)}
-  def to_error(:closed, request), do: {:error, Error.api_connection_error("Connection closed.", request)}
+
+  def to_error(:closed, request),
+    do: {:error, Error.api_connection_error("Connection closed.", request)}
+
   def to_error(reason, request), do: {:error, Error.api_connection_error(reason, request)}
 end
