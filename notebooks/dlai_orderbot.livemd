@@ -40,7 +40,7 @@ defmodule OpenaiEx.Notebooks.DlaiOrderbot do
   def create_chat_req(args = [_ | _]) do
     args
     |> Enum.into(%{
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o-mini",
       temperature: 0
     })
     |> Chat.Completions.new()

@@ -211,7 +211,7 @@ openai |> Models.list!()
 To retrieve information about a specific model, use the [`Model.retrieve()`](https://platform.openai.com/docs/api-reference/models/retrieve) function:
 
 ```elixir
-openai |> Models.retrieve!("gpt-3.5-turbo")
+openai |> Models.retrieve!("gpt-4o-mini")
 ```
 
 For more information on using models, see the [OpenAI API Models reference](https://platform.openai.com/docs/api-reference/models).
@@ -227,7 +227,7 @@ alias OpenaiEx.MsgContent
 
 chat_req =
   Chat.Completions.new(
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o-mini",
     messages: [
       ChatMessage.user(
         "Give me some background on the elixir language. Why was it created? What is it used for? What distinguishes it from other languages? How popular is it?"
@@ -259,7 +259,7 @@ You can also call the endpoint and have it stream the response. This returns the
 To use the stream option, call the `ChatCompletion.create()` function with `stream: true`
 
 ```elixir
-chat_stream = openai |> Chat.Completions.create!(chat_req, stream: true)
+chat_stream = openai |> Chat.Completions.create!(chat_req |> Map.put(:stream_options, %{include_usage: true}), stream: true)
 IO.puts(inspect(chat_stream))
 IO.puts(inspect(chat_stream.task_pid))
 chat_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
@@ -331,7 +331,7 @@ end
 
 # Usage
 chat_req = Chat.Completions.new(
-  model: "gpt-3.5-turbo",
+  model: "gpt-4o-mini",
   messages: [ChatMessage.user("Tell me a short story about a brave knight")],
   max_tokens: 500
 )
@@ -395,7 +395,7 @@ rev_msgs = [
 
 fn_req =
   Chat.Completions.new(
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o-mini",
     messages: rev_msgs |> Enum.reverse(),
     tools: [tool_spec],
     tool_choice: "auto"
@@ -444,7 +444,7 @@ latest_msgs = [ChatMessage.tool(tool_id, fn_name, fn_value) | [fn_message | rev_
 
 fn_req_2 =
   Chat.Completions.new(
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o-mini",
     messages: latest_msgs |> Enum.reverse()
   )
 
@@ -900,7 +900,7 @@ hr_assistant_req =
       "You are an HR bot, and you have access to files to answer employee questions about company policies.",
     name: "HR Helper",
     tools: [%{type: "file_search"}],
-    model: "gpt-3.5-turbo"
+    model: "gpt-4o-mini"
   )
 ```
 
@@ -954,7 +954,7 @@ math_assistant_req =
       "You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
     name: "Math Tutor",
     tools: [%{type: "code_interpreter"}],
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o-mini",
     tool_resources: %{code_interpreter: %{file_ids: [file_id]}}
   )
 ```
