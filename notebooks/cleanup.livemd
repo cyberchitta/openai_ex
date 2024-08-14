@@ -15,40 +15,40 @@ openai = OpenaiEx.new(apikey)
 ```
 
 ```elixir
-all_files = openai |> OpenaiEx.Files.list()
+all_files = openai |> OpenaiEx.Files.list!()
 ```
 
 ```elixir
-Enum.each(all_files["data"], fn file -> OpenaiEx.Files.delete(openai, file["id"]) end)
+Enum.each(all_files["data"], fn file -> OpenaiEx.Files.delete!(openai, file["id"]) end)
 ```
 
 ```elixir
-OpenaiEx.Files.list(openai)
+OpenaiEx.Files.list!(openai)
 ```
 
 ## Assistants cleanup
 
 ```elixir
-all_assistants = OpenaiEx.Beta.Assistants.list(openai)
+all_assistants = OpenaiEx.Beta.Assistants.list!(openai)
 ```
 
 ```elixir
-Enum.each(all_assistants["data"], fn a -> OpenaiEx.Beta.Assistants.delete(openai, a["id"]) end)
+Enum.each(all_assistants["data"], fn a -> OpenaiEx.Beta.Assistants.delete!(openai, a["id"]) end)
 ```
 
 ```elixir
-OpenaiEx.Beta.Assistants.list(openai)
+OpenaiEx.Beta.Assistants.list!(openai)
 ```
 
 ## Vector Stores cleanup
 
 ```elixir
-(openai |> OpenaiEx.Beta.VectorStores.list())["data"]
-|> Enum.each(fn vs -> openai |> OpenaiEx.Beta.VectorStores.delete(vs["id"]) end)
+(openai |> OpenaiEx.Beta.VectorStores.list!())["data"]
+|> Enum.each(fn vs -> openai |> OpenaiEx.Beta.VectorStores.delete!(vs["id"]) end)
 ```
 
 ```elixir
-openai |> OpenaiEx.Beta.VectorStores.list()
+openai |> OpenaiEx.Beta.VectorStores.list!()
 ```
 
-<!-- livebook:{"offset":936,"stamp":{"token":"XCP.QJ3bDeszAN9P2FtfrscwxEq0qDKAUYs5fRVSm5WPHyABxRNGY8uJjWyyiuujBuIiOPlv0HZM0xnT9mIMAhG27rN2NaYzEMhHI4glBeECjJsv42VL60QH3cg","version":2}} -->
+<!-- livebook:{"offset":945,"stamp":{"token":"XCP.UtkySz4q0ZIjbnxKHDFEd4RRZfKookRU6K5xUhFPwPoBvBaeShIDfRpYIrWtZhw8qTwjpZ9L4Ic64MM5uwVQxm5AvLrs0LmWat_UkjEnWUudx7Zcy3HoLPE","version":2}} -->
