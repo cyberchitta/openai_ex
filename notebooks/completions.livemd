@@ -1,0 +1,156 @@
+<!-- livebook:{"app_settings":{"access_type":"public","show_source":true,"slug":"completion"}} -->
+
+# Completions Bot
+
+```elixir
+Mix.install([
+  {:openai_ex, "~> 0.7.0"},
+  {:kino, "~> 0.13.1"}
+])
+
+alias OpenaiEx
+alias OpenaiEx.Completion
+```
+
+## Deprecation Notice
+
+Note that OpenAI has deprecated the models that use the Completion API. The newer models all use the Chat Completion API. As such, this livebook will **stop working** when the models are discontinued.
+
+It is still being left in the documentation in case people want to use it with non OpenAI models through an OpenAI API proxy.
+
+## Model Choices
+
+```elixir
+openai =
+  System.fetch_env!("LB_OPENAI_API_KEY")
+  |> OpenaiEx.new()
+
+# uncomment the line at the end of this block comment when working with a local LLM with a 
+# proxy such as llama.cpp-python in the example below, our development livebook server is 
+# running in a docker dev container while the local llm is running on the host machine
+# |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
+```
+
+```elixir
+comp_models = [
+  "text-davinci-003",
+  "text-davinci-002",
+  "text-curie-001",
+  "text-babbage-001",
+  "text-ada-001"
+]
+```
+
+## Normal Completion
+
+This function calls the completion API and renders the result in the given Kino frame.
+
+```elixir
+completion = fn model, prompt, max_tokens, temperature, last_frame ->
+  text =
+    openai
+    |> Completion.create(%{
+      model: model,
+      prompt: prompt,
+      max_tokens: max_tokens,
+      temperature: temperature
+    })
+    |> Map.get("choices")
+    |> Enum.at(0)
+    |> Map.get("text")
+
+  Kino.Frame.render(last_frame, Kino.Markdown.new("**Bot** #{text}"))
+  text
+end
+```
+
+## Streaming Completion
+
+This function calls the streaming completion API and continuously updates the Kino frame with the latest tokens
+
+```elixir
+completion_stream = fn model, prompt, max_tokens, temperature, last_frame ->
+  stream =
+    openai
+    |> Completion.create(
+      %{
+        model: model,
+        prompt: prompt,
+        max_tokens: max_tokens,
+        temperature: temperature
+      },
+      stream: true
+    )
+
+  token_stream =
+    stream.body_stream
+    |> Stream.flat_map(& &1)
+    |> Stream.map(fn %{data: data} ->
+      data |> Map.get("choices") |> Enum.at(0) |> Map.get("text")
+    end)
+
+  token_stream
+  |> Enum.reduce("", fn out, acc ->
+    next = acc <> out
+    Kino.Frame.render(last_frame, Kino.Markdown.new("**Bot** #{next}"))
+    next
+  end)
+end
+```
+
+## Create a Form UI
+
+This is a function to create a Form UI that can be used to call the completion API. The 2nd parameter determines whether the normal or streaming API is called.
+
+```elixir
+create_form = fn title, completion_fn ->
+  chat_frame = Kino.Frame.new()
+  last_frame = Kino.Frame.new()
+
+  Kino.Frame.render(chat_frame, Kino.Markdown.new(title))
+
+  inputs = [
+    model: Kino.Input.select("Model", comp_models |> Enum.map(fn x -> {x, x} end)),
+    max_tokens: Kino.Input.number("Max Tokens", default: 400),
+    temperature: Kino.Input.number("Temperature", default: 1),
+    prompt: Kino.Input.textarea("Prompt")
+  ]
+
+  form = Kino.Control.form(inputs, submit: "Send", reset_on_submit: [:prompt])
+
+  Kino.listen(
+    form,
+    fn %{
+         data: %{
+           prompt: prompt,
+           model: model,
+           max_tokens: max_tokens,
+           temperature: temperature
+         }
+       } ->
+      Kino.Frame.render(chat_frame, Kino.Markdown.new(title))
+      Kino.Frame.append(chat_frame, Kino.Markdown.new("**Me** #{prompt}"))
+
+      completion_fn.(model, prompt, max_tokens, temperature, last_frame)
+    end
+  )
+
+  Kino.Layout.grid([chat_frame, last_frame, form], boxed: true, gap: 16)
+end
+```
+
+### Normal Chatbot
+
+Create the Form for the non-streaming completion API and use it.
+
+```elixir
+create_form.("## Completion Chatbot", completion)
+```
+
+### Streaming Chatbot
+
+Create the form for the streaming completion API, and use it.
+
+```elixir
+create_form.("## Streaming Chatbot", completion_stream)
+```
