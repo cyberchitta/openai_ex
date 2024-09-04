@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.8.2"},
+  {:openai_ex, "~> 0.8.3"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.13.2"}
 ])
@@ -43,7 +43,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.8.2"}
+    {:openai_ex, "~> 0.8.3"}
   ]
 )
 ```
@@ -57,7 +57,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.8.2"}
+    {:openai_ex, "~> 0.8.3"}
   ]
 end
 ```

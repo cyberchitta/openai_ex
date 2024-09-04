@@ -1,10 +1,8 @@
-<!-- livebook:{"app_settings":{"access_type":"public","show_source":true,"slug":"completion"}} -->
-
 # Completions Bot
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.7.0"},
+  {:openai_ex, "~> 0.8.3"},
   {:kino, "~> 0.13.1"}
 ])
 
