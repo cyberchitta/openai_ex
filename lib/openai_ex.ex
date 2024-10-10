@@ -9,6 +9,7 @@ defmodule OpenaiEx do
   """
   defstruct token: nil,
             organization: nil,
+            project: nil,
             beta: nil,
             base_url: "https://api.openai.com/v1",
             receive_timeout: 15_000,
@@ -22,17 +23,22 @@ defmodule OpenaiEx do
 
   See https://platform.openai.com/docs/api-reference/authentication for details.
   """
-  def new(token, organization \\ nil) do
+  def new(token, organization \\ nil, project \\ nil) do
     headers =
       [{"Authorization", "Bearer #{token}"}] ++
         if(is_nil(organization),
           do: [],
           else: [{"OpenAI-Organization", organization}]
+        ) ++
+        if(is_nil(project),
+          do: [],
+          else: [{"OpenAI-Project", project}]
         )
 
     %OpenaiEx{
       token: token,
       organization: organization,
+      project: project,
       _http_headers: headers
     }
   end
