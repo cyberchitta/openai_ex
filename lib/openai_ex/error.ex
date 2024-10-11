@@ -91,7 +91,7 @@ defmodule OpenaiEx.Error do
     )
   end
 
-  def api_connection_error(message \\ "Connection error.", request) do
+  def api_connection_error(message, request) do
     exception(kind: :api_connection_error, message: message, request: request)
   end
 

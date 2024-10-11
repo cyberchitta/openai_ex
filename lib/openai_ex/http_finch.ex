@@ -84,6 +84,9 @@ defmodule OpenaiEx.Http.Finch do
   def to_error(:closed, request),
     do: {:error, Error.api_connection_error("Connection closed.", request)}
 
+  def to_error(:nxdomain, request),
+    do: {:error, Error.api_connection_error("Bad address - Non-Existent Domain.", request)}
+
   def to_error(reason, request) do
     Logger.warning(
       "Unknown Finch error, please report to maintainer: reason: #{inspect(reason)}, request #{inspect(request)}"
