@@ -56,7 +56,7 @@ defmodule OpenaiEx.Error do
   end
 
   @impl true
-  def message(%__MODULE__{} = error) do
+  def message(error = %__MODULE__{}) do
     "#{error.name}: #{error.message}" <>
       if(error.status_code, do: " (HTTP #{error.status_code})", else: "") <>
       if(error.body, do: " (JSON #{inspect(error.body)})", else: "")

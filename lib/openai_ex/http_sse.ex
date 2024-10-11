@@ -113,7 +113,7 @@ defmodule OpenaiEx.HttpSse do
   defp process_fields(lines) do
     lines
     |> Enum.map(&extract_field/1)
-    |> Enum.filter(&is_data/1)
+    |> Enum.filter(&data?/1)
     |> Enum.map(&to_json/1)
   end
 
@@ -128,7 +128,7 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp is_data(field) do
+  defp data?(field) do
     case field do
       %{data: "[DONE]"} -> false
       %{data: _} -> true
