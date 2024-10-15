@@ -116,13 +116,11 @@ defmodule OpenaiEx do
     openai |> Map.put(:base_url, base_url)
   end
 
+  @spec with_additional_headers(%OpenaiEx{}, map()) :: %OpenaiEx{}
   def with_additional_headers(openai = %OpenaiEx{}, additional_headers) do
-    openai |> Map.get_and_update(
-      :_http_headers,
-      fn headers ->
-        {headers, headers ++ additional_headers}
-      end
-    ) |> elem(1)
+    Map.update(openai, :_http_headers, [], fn existing_headers ->
+      existing_headers ++ Enum.to_list(additional_headers)
+    end)
   end
 
   def with_receive_timeout(openai = %OpenaiEx{}, timeout)
