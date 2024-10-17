@@ -127,6 +127,29 @@ proxy_openai =
   OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
 ```
 
+### Using an LLM gateway (e.g. [Portkey](https://portkey.ai/))
+
+LLM gateways are used to provide a virtual interface to multiple LLM providers behind a single API endpoint.
+
+Generally they work on the basis of additional HTTP headers being added that specify the model to use, the provider to use, and possibly other parameters.
+
+For example, to configure your client for openai using the portkey gateway, you would do this:
+
+```elixir
+OpenaiEx.new(open_ai_api_key) 
+  |> OpenaiEx.with_base_url("https://api.portkey.ai/v1") 
+  |> OpenaiEx.with_additional_headers(%{"x-portkey-api-key"=>portkey_api_key, "x-portkey-provider"=>"openai"})
+```
+
+similarly, for Anthropic, you would do this:
+
+```elixir
+OpenaiEx.new(anthropic_api_key) 
+  |> OpenaiEx.with_base_url("https://api.portkey.ai/v1") 
+  |> OpenaiEx.with_additional_headers(%{"x-portkey-api-key"=>portkey_api_key, "x-portkey-provider"=>"anthropic"})
+```
+
+
 ### Azure OpenAI
 
 The Azure OpenAI API replicates the Completion, Chat Completion and Embeddings endpoints from OpenAI.
