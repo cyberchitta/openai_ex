@@ -116,7 +116,6 @@ defmodule OpenaiEx do
     openai |> Map.put(:base_url, base_url)
   end
 
-  @spec with_additional_headers(%OpenaiEx{}, map()) :: %OpenaiEx{}
   def with_additional_headers(openai = %OpenaiEx{}, additional_headers) do
     Map.update(openai, :_http_headers, [], fn existing_headers ->
       existing_headers ++ Enum.to_list(additional_headers)
