@@ -2,9 +2,9 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.8.5"},
+  {:openai_ex, "~> 0.8.6"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.13.2"}
+  {:kino, "~> 0.14.2"}
 ])
 ```
 
@@ -43,7 +43,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.8.5"}
+    {:openai_ex, "~> 0.8.6"}
   ]
 )
 ```
@@ -57,7 +57,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.8.5"}
+    {:openai_ex, "~> 0.8.6"}
   ]
 end
 ```
@@ -136,7 +136,10 @@ Generally they work on the basis of additional HTTP headers being added that spe
 For example, to configure your client for openai using the portkey gateway, you would do this:
 
 ```elixir
-OpenaiEx.new(open_ai_api_key) 
+openai_api_key = "an-openai-api-key"
+portkey_api_key = "a-portkey-api-key"
+
+OpenaiEx.new(openai_api_key) 
   |> OpenaiEx.with_base_url("https://api.portkey.ai/v1") 
   |> OpenaiEx.with_additional_headers(%{"x-portkey-api-key"=>portkey_api_key, "x-portkey-provider"=>"openai"})
 ```
@@ -144,11 +147,12 @@ OpenaiEx.new(open_ai_api_key)
 similarly, for Anthropic, you would do this:
 
 ```elixir
+anthropic_api_key = "some-anthropic-api-key"
+
 OpenaiEx.new(anthropic_api_key) 
   |> OpenaiEx.with_base_url("https://api.portkey.ai/v1") 
   |> OpenaiEx.with_additional_headers(%{"x-portkey-api-key"=>portkey_api_key, "x-portkey-provider"=>"anthropic"})
 ```
-
 
 ### Azure OpenAI
 
@@ -760,7 +764,7 @@ Next we call `FineTuning.Jobs.new()` to create a new request structure
 ```elixir
 alias OpenaiEx.FineTuning
 
-ft_req = FineTuning.Jobs.new(model: "davinci-002", training_file: upload_res["id"])
+ft_req = FineTuning.Jobs.new(model: "gpt-4o-mini-2024-07-18", training_file: upload_res["id"])
 ```
 
 To begin the fine tune, we call the [`FineTuning.Jobs.create()`](https://platform.openai.com/docs/api-reference/fine-tunes/create) function
