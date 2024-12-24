@@ -30,6 +30,16 @@ defmodule OpenaiEx.ChatMessage do
   def system(content), do: new(role: "system", content: content)
 
   @doc """
+  Create a `ChatMessage` map with role `developer`.
+
+  Example usage:
+
+      iex> _message = OpenaiEx.ChatMessage.developer("Hello, world!")
+      %{content: "Hello, world!", role: "developer"}
+  """
+  def developer(content), do: new(role: "developer", content: content)
+
+  @doc """
   Create a `ChatMessage` map with role `user`.
 
   Example usage:
