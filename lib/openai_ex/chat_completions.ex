@@ -73,6 +73,7 @@ defmodule OpenaiEx.Chat.Completions do
 
   - `openai`: The OpenAI configuration.
   - `chat_completion`: The chat completion request, as a map with keys corresponding to the API fields.
+  - `stream: true` : adding this parameter activates response streaming.
 
   ## Returns
 
