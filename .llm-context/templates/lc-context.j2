@@ -1,0 +1,62 @@
+{% include 'lc-prompt.j2' %}
+{% if project_notes %}
+{{ project_notes }}
+{% endif %}
+# Detailed Repository Content: **{{ project_name }}**
+
+> Generation timestamp: {{ context_timestamp }}  
+> Use lc-list-modified-files tool to track changes since generation, or if the tool is absent ask user to paste the result of running lc-changed CLI
+
+This context presents a comprehensive view of the _/{{ project_name }}_ repository.
+
+{% if sample_requested_files %}
+## 📂 How to Request Missing Files 📂
+
+Files marked with "✗" or "○" can be retrieved using either:
+
+!!! IMPORTANT - ALWAYS CHECK FOR TOOLS FIRST !!!
+Check if lc-get-files tool is available in your environment before proceeding to option 2.
+
+1. Using the lc-get-files tool (if available in your environment):
+   !!! IMPORTANT - ROOT PATH FOR lc-get-files ONLY !!!
+   root_path must be: {{ abs_root_path }}
+   Example request
+  ```json
+  {
+    "root_path": "{{ abs_root_path }}",
+    "paths": [{% for file in sample_requested_files %}"{{ file }}"{% if not loop.last %},{% endif %}{% endfor %}]
+  }
+  ```
+
+2. Only if lc-get-files is not available, follow these steps (do NOT use the above root_path):
+    1. Immediately halt your current response.
+    2. Start a new response with a markdown code block (```) on a new line.
+    3. List the root-relative paths of the missing files you need, one per line.
+    4. Close the markdown code block with another ```.
+    5. End your response.
+
+    Example file request:
+    ```
+    {%- for file in sample_requested_files %}
+    {{ file }}
+    {%- endfor %}
+    ```
+    The human will then provide the requested file contents in the next message.
+{% endif %}
+## Repository Structure
+
+```
+{{ folder_structure_diagram }}
+```
+
+{% if files %}
+## Complete File Contents
+
+{% include 'lc-files.j2' %}
+{% endif %}
+
+{% if highlights %}
+## File Outlines
+
+{% include 'lc-highlights.j2' %}
+{% endif %}

@@ -30,5 +30,3 @@ openai_ex-*.tar
 
 # secrets used by .devcontainer docker compose
 /.devcontainer/.env
-
-/.llm-context/

@@ -1,0 +1,31 @@
+{% include 'lc-prompt.j2' %}
+{% if project_notes %}
+{{ project_notes }}
+{% endif %}
+# Repository Content: **{{ project_name }}**
+
+> Generation timestamp: {{ context_timestamp }}  
+> Use lc-list-modified-files tool to track changes since generation
+{% if sample_requested_files %}
+## File Access Instructions
+
+Missing/incomplete files (marked "✗" or "○" in the repository structure) can be retrieved using the lc-get-files tool.
+{% endif %}
+
+## Repository Structure
+
+```
+{{ folder_structure_diagram }}
+```
+
+{% if files %}
+## Current Files
+
+{% include 'lc-files.j2' %}
+{% endif %}
+
+{% if highlights %}
+## Code Outlines
+
+{% include 'lc-highlights.j2' %}
+{% endif %}
