@@ -88,10 +88,29 @@ defmodule OpenaiEx.Http.Finch do
     do: {:error, Error.api_connection_error("Bad address - Non-Existent Domain.", request)}
 
   def to_error(reason, request) do
+    sanitized_request = sanitize_request(request)
+
     Logger.warning(
-      "Unknown Finch error, please report to maintainer: reason: #{inspect(reason)}, request #{inspect(request)}"
+      "Unknown Finch error, please report to maintainer: reason: #{inspect(reason)}, request #{inspect(sanitized_request)}"
     )
 
     {:error, Error.api_connection_error(reason, request)}
+  end
+
+  def sanitize_request(%Finch.Request{headers: headers} = request) when is_list(headers) do
+    sanitized_headers =
+      Enum.map(headers, fn
+        {key, value} when is_binary(key) ->
+          if String.downcase(key) == "authorization" and String.starts_with?(value, "Bearer ") do
+            {key, "Bearer [REDACTED]"}
+          else
+            {key, value}
+          end
+
+        other ->
+          other
+      end)
+
+    %{request | headers: sanitized_headers}
   end
 end
