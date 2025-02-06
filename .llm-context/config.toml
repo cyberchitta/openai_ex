@@ -11,6 +11,13 @@ prompt = "lc-prompt.j2"
 prompt = "lc-prompt.md"
 [profiles.code.gitignores]
 full_files = [
+    ".github/",
+    ".devcontainer/",
+    ".vscode/",
+    "notebooks/",
+    "test/",
+    "openapi",
+    "assets/",
     ".git",
     ".gitignore",
     ".llm-context/",
