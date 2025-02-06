@@ -51,6 +51,7 @@ defmodule OpenaiEx.Completion do
   ## Arguments
   - `openai`: The OpenAI configuration.
   - `completion`: The completion request, as a map with keys corresponding to the API fields.
+  - `stream: true` : adding this parameter activates response streaming.
   ## Returns
   A map containing the API response.
   See https://platform.openai.com/docs/api-reference/completions/create for more information.
