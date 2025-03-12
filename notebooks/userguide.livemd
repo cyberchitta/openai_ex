@@ -2,9 +2,9 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.8.6"},
-  # {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.14.2"}
+  # {:openai_ex, "~> 0.9.0"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
+  {:kino, "~> 0.15.3"}
 ])
 ```
 
@@ -43,7 +43,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.8.6"}
+    {:openai_ex, "~> 0.9.0"}
   ]
 )
 ```
@@ -57,7 +57,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.8.6"}
+    {:openai_ex, "~> 0.9.0"}
   ]
 end
 ```
@@ -479,6 +479,220 @@ fn_req_2 =
 ```
 
 The final response includes the result of the function call integrated into the conversation.
+
+## Responses
+
+```elixir
+alias OpenaiEx.Responses
+alias OpenaiEx.ChatMessage
+```
+
+The Responses API combines features of Chat Completions and Assistants, providing a streamlined way to interact with OpenAI models. It supports single-turn and multi-turn conversations, tool use (including built-in tools), and optional server-side state management. It is the recommended approach for building applications that would previously have used the Assistants API, which will be sunset in the first half of 2026.
+
+### Create a Response
+
+Use [`Responses.create()`](https://platform.openai.com/docs/api-reference/responses/create) to generate a response. You can provide a simple prompt or a list of `ChatMessage` structs for multi-turn conversations. The `store: true` option enables server-side state management.
+
+First, a simple example with a single prompt:
+
+```elixir
+response_req = %{
+  model: "gpt-4o-mini",
+  input: "Explain the theory of relativity.",
+  store: true # Optional: Enables state management
+}
+
+{:ok, response} = openai |> Responses.create(response_req)
+```
+
+Next, a multi-turn example using `ChatMessage` structs:
+
+```elixir
+response_req2 = %{
+  model: "gpt-4o-mini",
+  input: [
+    ChatMessage.user("What is the capital of France?"),
+    ChatMessage.assistant("Paris."),
+    ChatMessage.user("And what is the capital of Germany?")
+  ],
+  store: true
+}
+
+{:ok, response2} = openai |> Responses.create(response_req2)
+```
+
+### Retrieve a Response
+
+If `store` was set to `true`, you can retrieve the full response object (including conversation history) using [`Responses.retrieve()`](https://platform.openai.com/docs/api-reference/responses/retrieve). Response objects are automatically deleted after 30 days.
+
+```elixir
+response_id = response["id"]
+
+{:ok, retrieved_response} = openai |> Responses.retrieve(response_id: response_id)
+```
+
+### Streaming Responses
+
+The Responses API supports streaming, activated by passing `stream: true` to the `create` function. This returns the result as a series of semantic events, which can be processed and displayed as they arrive.
+
+Here's a simple example that prints each event:
+
+```elixir
+streaming_req = %{
+  model: "gpt-4o-mini",
+  input: "Tell me a long story about a cat.",
+  store: true  # Streaming works with or without storing the response
+}
+
+{:ok, stream} = openai |> Responses.create(streaming_req, stream: true)
+
+stream.body_stream
+|> Stream.flat_map(& &1)
+|> Enum.each(fn event ->
+  IO.puts(inspect(event))
+end)
+```
+
+Here's a more detailed example that demonstrates how to handle different event types using pattern matching:
+
+```elixir
+streaming_req = %{
+  model: "gpt-4o-mini",
+  input: "Tell me a 500 word story about a cat.",
+  store: true  # Streaming works with or without storing the response
+}
+
+{:ok, stream} = openai |> Responses.create(streaming_req, stream: true)
+
+stream.body_stream
+|> Stream.flat_map(& &1)
+|> Enum.each(fn event ->
+  case event do
+    %{data: data, event: "response.created"} ->
+      # Initial response creation.  Contains metadata.
+      IO.puts("Response Created: #{inspect(data)}")
+
+    %{data: data, event: "response.in_progress"} ->
+       # The response is still being generated.
+      IO.puts("Response In Progress: #{inspect(data)}")
+
+    %{data: data, event: "response.output_item.added"} ->
+      # An output item (e.g. text, tool call) was added to the response
+      IO.puts("Output Item Added: #{inspect(data)}")
+
+    %{data: data, event: "response.content_part.added"} ->
+      # A content part was added (e.g. a chunk of text for a text output item.)
+      IO.puts("Content Part Added: #{inspect(data)}")
+
+    %{data: %{"delta" => delta}, event: "response.output_text.delta"} ->
+      # Text delta (a chunk of text).  Write this to the console/UI.
+      IO.write(delta)
+
+    %{data: data, event: "response.output_text.done"} ->
+       # The text output is complete.
+      IO.puts("\nOutput Text Done: #{inspect(data)}")
+
+    %{data: data, event: "response.content_part.done"} ->
+      # A content part is done (e.g., end of a text chunk)
+      IO.puts("Content Part Done: #{inspect(data)}")
+
+    %{data: data, event: "response.output_item.done"} ->
+      # An output item is done (e.g. text generation or tool call)
+      IO.puts("Output Item Done: #{inspect(data)}")
+
+    %{data: data, event: "response.completed"} ->
+      # The entire response is complete.
+      IO.puts("\nResponse Completed: #{inspect(data)}")
+
+    other ->
+      # Handle other event types.  See API reference for full list.
+      IO.puts("Other Event: #{inspect(other)}")
+  end
+end)
+```
+
+### Streaming with Tool Calling
+
+Streaming also works when using tools.  The stream will include events related to tool usage, such as `response.output_item.added` when a tool call is initiated and `response.output_tool_call.*` events for the tool call's progress and results.
+
+Here's an example using the built-in `web_search_preview` tool, demonstrating how to handle tool-related events in the stream:
+
+```elixir
+streaming_req_with_tool = %{
+  model: "gpt-4o-mini",
+  input: "What's the latest news on the James Webb Telescope?",
+  tools: [%{type: "web_search_preview"}],
+  store: true
+}
+
+{:ok, stream} = openai |> Responses.create(streaming_req_with_tool, stream: true)
+
+stream.body_stream
+|> Stream.flat_map(& &1)
+|> Enum.each(fn event ->
+  case event do
+    %{data: data, event: "response.created"} ->
+      IO.puts("Response Created: #{inspect(data)}")
+
+    %{data: data, event: "response.in_progress"} ->
+      IO.puts("Response In Progress: #{inspect(data)}")
+
+    %{data: data, event: "response.output_item.added"} ->
+      IO.puts("Output Item Added: #{inspect(data)}")
+
+    %{data: data, event: "response.content_part.added"} ->
+      IO.puts("Content Part Added: #{inspect(data)}")
+
+    %{data: %{"delta" => delta}, event: "response.output_text.delta"} ->
+      IO.write(delta)
+
+    %{data: data, event: "response.output_text.done"} ->
+      IO.puts("\nOutput Text Done: #{inspect(data)}")
+
+    %{data: data, event: "response.content_part.done"} ->
+      IO.puts("Content Part Done: #{inspect(data)}")
+
+    %{data: data, event: "response.output_item.done"} ->
+      IO.puts("Output Item Done: #{inspect(data)}")
+
+    %{data: data, event: "response.completed"} ->
+      IO.puts("\nResponse Completed: #{inspect(data)}")
+
+     %{data: data, event: "response.output_tool_call.started"} ->
+      IO.puts("Tool Call Started: #{inspect(data)}")
+
+    %{data: data, event: "response.output_tool_call.in_progress"} ->
+      IO.puts("Tool Call In Progress: #{inspect(data)}")
+
+    %{data: data, event: "response.output_tool_call.completed"} ->
+      IO.puts("Tool Call Completed: #{inspect(data)}")
+
+    %{data: data, event: "response.output_tool_call.failed"} ->
+      IO.puts("Tool Call Failed: #{inspect(data)}")
+
+    %{
+      data: %{
+        "index" => index,
+        "id" => id,
+        "type" => type,
+        "web_search_preview" => %{"query" => query}
+      },
+      event: "response.output_tool_call.delta"
+    } ->
+      IO.puts(
+        "Tool Call Delta (index=#{index}, id=#{id}, type=#{type}, query=#{query})"
+      )
+
+    other ->
+      # Handle other event types.
+      IO.puts("Other Event: #{inspect(other)}")
+  end
+end)
+```
+
+This example shows how to handle `response.output_tool_call.*` events to track the progress of tool calls within the stream, specifically for the `web_search_preview` tool.
+
+For more information on the Responses API, see the [OpenAI API Responses Reference](https://platform.openai.com/docs/api-reference/responses).
 
 ## Image
 
