@@ -31,7 +31,8 @@ defmodule OpenaiEx.Chat.Completions do
     :top_logprobs,
     :tools,
     :tool_choice,
-    :user
+    :user,
+    :web_search_options
   ]
 
   @doc """
