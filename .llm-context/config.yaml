@@ -1,0 +1,96 @@
+__info__: 'This project uses llm-context. For more information, visit: https://github.com/cyberchitta/llm-context.py
+  or https://pypi.org/project/llm-context/'
+profiles:
+  code:
+    description: Default profile for software projects, selecting all code files while
+      excluding media and git-related files.
+    gitignores:
+      full_files:
+      - .git
+      - .gitignore
+      - .llm-context/
+      - '*.tmp'
+      - '*.lock'
+      - package-lock.json
+      - yarn.lock
+      - pnpm-lock.yaml
+      - go.sum
+      - elm-stuff
+      - LICENSE
+      - CHANGELOG.md
+      - README.md
+      - .env
+      - .dockerignore
+      - Dockerfile
+      - docker-compose.yml
+      - '*.log'
+      - '*.svg'
+      - '*.png'
+      - '*.jpg'
+      - '*.jpeg'
+      - '*.gif'
+      - '*.ico'
+      - '*.woff'
+      - '*.woff2'
+      - '*.eot'
+      - '*.ttf'
+      - '*.map'
+      outline_files:
+      - .git
+      - .gitignore
+      - .llm-context/
+      - '*.tmp'
+      - '*.lock'
+      - package-lock.json
+      - yarn.lock
+      - pnpm-lock.yaml
+      - go.sum
+      - elm-stuff
+      - LICENSE
+      - CHANGELOG.md
+      - README.md
+      - .env
+      - .dockerignore
+      - Dockerfile
+      - docker-compose.yml
+      - '*.log'
+      - '*.svg'
+      - '*.png'
+      - '*.jpg'
+      - '*.jpeg'
+      - '*.gif'
+      - '*.ico'
+      - '*.woff'
+      - '*.woff2'
+      - '*.eot'
+      - '*.ttf'
+      - '*.map'
+    only-include:
+      full_files:
+      - '**/*'
+      outline_files:
+      - '**/*'
+    prompt: lc-prompt.md
+    settings:
+      no_media: false
+      with_prompt: false
+      with_user_notes: false
+  code-file:
+    base: code
+    description: Extends 'code' by saving the generated context to 'project-context.md.tmp'
+      for external use.
+    settings:
+      context_file: project-context.md.tmp
+  code-prompt:
+    base: code
+    description: Extends 'code' by including LLM instructions from lc-prompt.md for
+      guided interactions.
+    settings:
+      with_prompt: true
+templates:
+  context: lc-context.j2
+  context-mcp: lc-context-mcp.j2
+  definitions: lc-definitions.j2
+  files: lc-files.j2
+  highlights: lc-highlights.j2
+  prompt: lc-prompt.j2
