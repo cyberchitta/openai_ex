@@ -484,7 +484,6 @@ The final response includes the result of the function call integrated into the 
 
 ```elixir
 alias OpenaiEx.Responses
-alias OpenaiEx.ChatMessage
 ```
 
 The Responses API combines features of Chat Completions and Assistants, providing a streamlined way to interact with OpenAI models. It supports single-turn and multi-turn conversations, tool use (including built-in tools), and optional server-side state management. It is the recommended approach for building applications that would previously have used the Assistants API, which will be sunset in the first half of 2026.
