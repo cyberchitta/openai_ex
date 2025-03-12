@@ -12,16 +12,6 @@ defmodule OpenaiEx.Moderations do
   @doc """
   Creates a new moderation request with the given arguments.
 
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the moderation request.
-
-  ## Returns
-
-  A map containing the fields of the moderation request.
-
-  The `:input` field is required.
-
   Example usage:
 
       iex> OpenaiEx.Moderations.new(input: "This is a test")
@@ -44,15 +34,6 @@ defmodule OpenaiEx.Moderations do
 
   @doc """
   Calls the moderation endpoint.
-
-  ## Arguments
-
-  - `openai`: The OpenAI configuration to use.
-  - `moderation`: The moderation request to send.
-
-  ## Returns
-
-  A map containing the fields of the moderation response.
   """
   def create!(openai = %OpenaiEx{}, moderation) do
     openai |> create(moderation) |> Http.bang_it!()

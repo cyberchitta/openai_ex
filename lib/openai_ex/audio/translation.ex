@@ -13,17 +13,7 @@ defmodule OpenaiEx.Audio.Translation do
   ]
 
   @doc """
-  Creates a new audio translation request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the audio translation request.
-
-  ## Returns
-
-  A map containing the fields of the audio translation request.
-
-  The `:file` and `:model` fields are required.
+  Creates a new audio translation request
   """
   def new(args = [_ | _]) do
     args |> Enum.into(%{}) |> new()
@@ -35,15 +25,6 @@ defmodule OpenaiEx.Audio.Translation do
 
   @doc """
   Calls the audio translation endpoint.
-
-  ## Arguments
-
-  - `openai`: A map containing the OpenAI configuration.
-  - `audio`: A map containing the audio translation request.
-
-  ## Returns
-
-  A map containing the audio translation response.
 
   See https://platform.openai.com/docs/api-reference/audio/createTranslation for more information.
   """

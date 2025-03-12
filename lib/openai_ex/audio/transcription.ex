@@ -16,16 +16,6 @@ defmodule OpenaiEx.Audio.Transcription do
 
   @doc """
   Creates a new audio request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the audio transcription request.
-
-  ## Returns
-
-  A map containing the fields of the audio transcription request.
-
-  The `:file` and `:model` fields are required.
   """
   def new(args = [_ | _]) do
     args |> Enum.into(%{}) |> new()
@@ -37,15 +27,6 @@ defmodule OpenaiEx.Audio.Transcription do
 
   @doc """
   Calls the audio transcription endpoint.
-
-  ## Arguments
-
-  - `openai`: A map containing the OpenAI configuration.
-  - `audio`: A map containing the audio transcription request.
-
-  ## Returns
-
-  A map containing the audio transcription response.
 
   See https://platform.openai.com/docs/api-reference/audio/createTranscription for more information.
   """

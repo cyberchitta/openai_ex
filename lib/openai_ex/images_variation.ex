@@ -11,17 +11,7 @@ defmodule OpenaiEx.Images.Variation do
   ]
 
   @doc """
-  Creates a new image variation request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the image variation request.
-
-  ## Returns
-
-  A map containing the fields of the image variation request.
-
-  The `:image` field is required.
+  Creates a new image variation request
   """
 
   def new(args = [_ | _]) do

@@ -18,16 +18,6 @@ defmodule OpenaiEx.Files do
 
   @doc """
   Creates a new file upload request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the file upload request.
-
-  ## Returns
-
-  A map containing the fields of the file upload request.
-
-  The `:file` and `:purpose` fields are required.
   """
   def new_upload(args = [_ | _]) do
     args |> Enum.into(%{}) |> new_upload()
@@ -38,17 +28,7 @@ defmodule OpenaiEx.Files do
   end
 
   @doc """
-  Creates a new file retrieve / deletion / retrieve_content request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the file retrieve / deletion / retrieve_content request.
-
-  ## Returns
-
-  A map containing the fields of the file retrieve / deletion / retrieve_content request.
-
-  The `:file_id` field is required.
+  Creates a new file retrieve / deletion / retrieve_content request
   """
   def new(args = [_ | _]) do
     args |> Enum.into(%{}) |> new()
@@ -74,15 +54,6 @@ defmodule OpenaiEx.Files do
   @doc """
   Calls the file upload endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `upload`: A map containing the fields of the file upload request.
-
-  ## Returns
-
-  A map containing the fields of the file upload response.
-
   https://platform.openai.com/docs/api-reference/files/upload
   """
   def create!(openai = %OpenaiEx{}, upload) do
@@ -97,15 +68,6 @@ defmodule OpenaiEx.Files do
   @doc """
   Calls the file delete endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `file_id`: The ID of the file to delete.
-
-  ## Returns
-
-  A map containing the fields of the file delete response.
-
   https://platform.openai.com/docs/api-reference/files/delete
   """
   def delete!(openai = %OpenaiEx{}, file_id) do
@@ -119,15 +81,6 @@ defmodule OpenaiEx.Files do
   @doc """
   Calls the file retrieve endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `file_id`: The ID of the file to retrieve.
-
-  ## Returns
-
-  A map containing the fields of the file retrieve response.
-
   https://platform.openai.com/docs/api-reference/files/retrieve
   """
   def retrieve!(openai = %OpenaiEx{}, file_id) do
@@ -140,15 +93,6 @@ defmodule OpenaiEx.Files do
 
   @doc """
   Calls the file retrieve_content endpoint.
-
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `file_id`: The ID of the file to retrieve the content of.
-
-  ## Returns
-
-  A map containing the fields of the file retrieve_content response.
 
   https://platform.openai.com/docs/api-reference/files/retrieve-content
   """

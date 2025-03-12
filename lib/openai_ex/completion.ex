@@ -24,11 +24,7 @@ defmodule OpenaiEx.Completion do
 
   @doc """
   Creates a new completion request with the given arguments.
-  ## Arguments
-  - `args`: A list of key-value pairs, or a map, representing the fields of the completion request.
-  ## Returns
-  A map containing the fields of the completion request.
-  The `:model` field is required.
+
   Example usage:
       iex> _request = OpenaiEx.Completion.new(model: "davinci")
       %{model: "davinci"}
@@ -48,12 +44,7 @@ defmodule OpenaiEx.Completion do
 
   @doc """
   Calls the completion 'create' endpoint.
-  ## Arguments
-  - `openai`: The OpenAI configuration.
-  - `completion`: The completion request, as a map with keys corresponding to the API fields.
-  - `stream: true` : adding this parameter activates response streaming.
-  ## Returns
-  A map containing the API response.
+
   See https://platform.openai.com/docs/api-reference/completions/create for more information.
   """
   def create!(openai = %OpenaiEx{}, completion = %{}, stream: true) do

@@ -13,17 +13,7 @@ defmodule OpenaiEx.Images.Edit do
   ]
 
   @doc """
-  Creates a new image edit request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the image edit request.
-
-  ## Returns
-
-  A map containing the fields of the image edit request.
-
-  The `:image` and `:prompt` fields are required.
+  Creates a new image edit request
   """
   def new(args = [_ | _]) do
     args |> Enum.into(%{}) |> new()

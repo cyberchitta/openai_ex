@@ -17,15 +17,7 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   end
 
   @doc """
-  Creates a new message request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the message request.
-
-  ## Returns
-
-  A map containing the fields of the message request.
+  Creates a new message request
   """
 
   def new(args = [_ | _]) do
@@ -38,15 +30,6 @@ defmodule OpenaiEx.Beta.Threads.Messages do
 
   @doc """
   Calls the message create endpoint.
-
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `params`: A map containing the fields of the message create request.
-
-  ## Returns
-
-  A map containing the fields of the created message object.
 
   https://platform.openai.com/docs/api-reference/messages/createMessage
   """
@@ -62,15 +45,6 @@ defmodule OpenaiEx.Beta.Threads.Messages do
   @doc """
   Calls the message retrieve endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `params`: A map containing the fields of the message retrieve request.
-
-  ## Returns
-
-  A map containing the fields of the specified message object.
-
   https://platform.openai.com/docs/api-reference/messages/getMessage
   """
   def retrieve!(openai = %OpenaiEx{}, params = %{thread_id: _, message_id: _}) do
@@ -83,15 +57,6 @@ defmodule OpenaiEx.Beta.Threads.Messages do
 
   @doc """
   Calls the message update endpoint.
-
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `params`: A map containing the fields of the message update request.
-
-  ## Returns
-
-  A map containing the fields of the message update response.
 
   https://platform.openai.com/docs/api-reference/messages/modifyMessage
   """

@@ -31,17 +31,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   end
 
   @doc """
-  Creates a new run request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the run request.
-
-  ## Returns
-
-  A map containing the fields of the run request.
-
-  The `:thread_id` and `:assistant_id` fields are required.
+  Creates a new run request
 
   Example usage:
 
@@ -59,15 +49,6 @@ defmodule OpenaiEx.Beta.Threads.Runs do
 
   @doc """
   Calls the run create endpoint.
-
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `run`: The run request, as a map with keys corresponding to the API fields.
-
-  ## Returns
-
-  A map containing the API response.
 
   See https://platform.openai.com/docs/api-reference/runs/createRun for more information.
   """
@@ -92,15 +73,6 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   @doc """
   Calls the run retrieve endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `params`: Specification of the run to retrieve.
-
-  ## Returns
-
-  A map containing the fields of the run retrieve response.
-
   https://platform.openai.com/docs/api-reference/runs/getRun
   """
   def retrieve!(openai = %OpenaiEx{}, params = %{thread_id: _, run_id: _}) do
@@ -114,15 +86,6 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   @doc """
   Calls the run update endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `params`: run to update and new field values.
-
-  ## Returns
-
-  A map containing the API response.
-
   See https://platform.openai.com/docs/api-reference/assistants/modifyAssistant for more information.
   """
   def update!(openai = %OpenaiEx{}, params = %{thread_id: _, run_id: _, metadata: _}) do
@@ -135,15 +98,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   end
 
   @doc """
-  Creates a new list runs request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the list runs request.
-
-  ## Returns
-
-  A map containing the fields of the list runs request.
+  Creates a new list runs request
   """
 
   def new_list(args = [_ | _]) do

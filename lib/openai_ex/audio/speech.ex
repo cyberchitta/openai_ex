@@ -13,17 +13,7 @@ defmodule OpenaiEx.Audio.Speech do
   ]
 
   @doc """
-  Creates a new audio speech request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the audio speech request.
-
-  ## Returns
-
-  A map containing the fields of the audio speech request.
-
-  The `:file` and `:model` fields are required.
+  Creates a new audio speech request
   """
   def new(args = [_ | _]) do
     args |> Enum.into(%{}) |> new()
@@ -35,15 +25,6 @@ defmodule OpenaiEx.Audio.Speech do
 
   @doc """
   Calls the audio speech endpoint.
-
-  ## Arguments
-
-  - `openai`: A map containing the OpenAI configuration.
-  - `audio`: A map containing the audio speech request.
-
-  ## Returns
-
-  A map containing the audio speech response.
 
   See https://platform.openai.com/docs/api-reference/audio/createSpeech for more information.
   """

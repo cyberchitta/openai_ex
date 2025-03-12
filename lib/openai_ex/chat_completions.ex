@@ -35,17 +35,7 @@ defmodule OpenaiEx.Chat.Completions do
   ]
 
   @doc """
-  Creates a new chat completion request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the chat completion request.
-
-  ## Returns
-
-  A map containing the fields of the chat completion request.
-
-  The `:model` and `:messages` fields are required. The `:messages` field should be a list of maps with the `OpenaiEx.ChatMessage` structure.
+  Creates a new chat completion request
 
   Example usage:
 
@@ -68,16 +58,6 @@ defmodule OpenaiEx.Chat.Completions do
 
   @doc """
   Calls the chat completion 'create' endpoint.
-
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `chat_completion`: The chat completion request, as a map with keys corresponding to the API fields.
-  - `stream: true` : adding this parameter activates response streaming.
-
-  ## Returns
-
-  A map containing the API response.
 
   See https://platform.openai.com/docs/api-reference/chat/completions/create for more information.
   """

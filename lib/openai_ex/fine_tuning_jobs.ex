@@ -23,15 +23,7 @@ defmodule OpenaiEx.FineTuning.Jobs do
   end
 
   @doc """
-  Creates a new fine-tuning job request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the fine-tuning job request.
-
-  ## Returns
-
-  A map containing the fields of the fine-tuning job request.
+  Creates a new fine-tuning job request
   """
   def new(args = [_ | _]) do
     args |> Enum.into(%{}) |> new()

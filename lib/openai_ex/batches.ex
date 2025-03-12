@@ -21,15 +21,7 @@ defmodule OpenaiEx.Batches do
   end
 
   @doc """
-  Creates a new batch request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the batch request.
-
-  ## Returns
-
-  A map containing the fields of the batch request.
+  Creates a new batch request
   """
   def new(args = [_ | _]) do
     args |> Enum.into(%{}) |> new()

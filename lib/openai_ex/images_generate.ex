@@ -15,17 +15,7 @@ defmodule OpenaiEx.Images.Generate do
   ]
 
   @doc """
-  Creates a new image generation request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the image generation request.
-
-  ## Returns
-
-  A map containing the fields of the image generation request.
-
-  The `:prompt` field is required.
+  Creates a new image generation request
 
   Example usage:
 

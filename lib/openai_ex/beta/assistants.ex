@@ -22,17 +22,7 @@ defmodule OpenaiEx.Beta.Assistants do
   end
 
   @doc """
-  Creates a new assistants request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the assistant request.
-
-  ## Returns
-
-  A map containing the fields of the assistant request.
-
-  The `:model` field is required.
+  Creates a new assistants request
 
   Example usage:
 
@@ -55,15 +45,6 @@ defmodule OpenaiEx.Beta.Assistants do
   @doc """
   Calls the assistant 'create' endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `assistant`: The assistant request, as a map with keys corresponding to the API fields.
-
-  ## Returns
-
-  A map containing the API response.
-
   See https://platform.openai.com/docs/api-reference/assistants/createAssistant for more information.
   """
   def create!(openai = %OpenaiEx{}, assistant = %{}) do
@@ -78,15 +59,6 @@ defmodule OpenaiEx.Beta.Assistants do
   @doc """
   Calls the assistant retrieve endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `assistant_id`: The ID of the assistant to retrieve.
-
-  ## Returns
-
-  A map containing the fields of the file retrieve response.
-
   https://platform.openai.com/docs/api-reference/assistants/getAssistant
   """
   def retrieve!(openai = %OpenaiEx{}, assistant_id) do
@@ -99,16 +71,6 @@ defmodule OpenaiEx.Beta.Assistants do
 
   @doc """
   Calls the assistant update endpoint.
-
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `assistant_id`: The ID of the assistant to update.
-  - `assistant`: The assistant request, as a map with keys corresponding to the API fields.
-
-  ## Returns
-
-  A map containing the API response.
 
   See https://platform.openai.com/docs/api-reference/assistants/modifyAssistant for more information.
   """
@@ -124,15 +86,6 @@ defmodule OpenaiEx.Beta.Assistants do
   @doc """
   Calls the assistant delete endpoint.
 
-  ## Arguments
-
-  - `openai`: The OpenAI configuration.
-  - `assistant_id`: The ID of the file to delete.
-
-  ## Returns
-
-  A map containing the fields of the assistant delete response.
-
   https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
   """
   def delete!(openai = %OpenaiEx{}, assistant_id) do
@@ -144,15 +97,7 @@ defmodule OpenaiEx.Beta.Assistants do
   end
 
   @doc """
-  Creates a new list assistants request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the list assistants request.
-
-  ## Returns
-
-  A map containing the fields of the list assistants request.
+  Creates a new list assistants request
   """
 
   def new_list(args = [_ | _]) do

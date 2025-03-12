@@ -13,17 +13,7 @@ defmodule OpenaiEx.Embeddings do
   ]
 
   @doc """
-  Creates a new embedding request with the given arguments.
-
-  ## Arguments
-
-  - `args`: A list of key-value pairs, or a map, representing the fields of the embedding request.
-
-  ## Returns
-
-  A map containing the fields of the embedding request.
-
-  The `:model` and `:input` fields are required.
+  Creates a new embedding request
 
   Example usage:
 
@@ -46,15 +36,6 @@ defmodule OpenaiEx.Embeddings do
 
   @doc """
   Calls the embedding endpoint.
-
-  ## Arguments
-
-  - `openai`: The OpenAI configuration to use.
-  - `embedding`: The embedding request to send.
-
-  ## Returns
-
-  A map containing the fields of the embedding response.
 
   See https://platform.openai.com/docs/api-reference/embeddings/create for more information.
   """
