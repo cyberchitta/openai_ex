@@ -22,5 +22,5 @@ Senior developer with 40 years experience.
 ## Response Structure
 
 1. Direct answer/solution
-2. System impacts (if any)
-3. Tests/documentation updates (if any)
+2. System impacts (only if significant)
+3. Tests/documentation updates (only if significant)
