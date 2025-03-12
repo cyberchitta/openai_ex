@@ -6,6 +6,16 @@ profiles:
       excluding media and git-related files.
     gitignores:
       full_files:
+      - notebooks/
+      - test/
+      - audio/
+      - beta/
+      - .formatter.exs
+      - .devcontainer
+      - .github
+      - .vscode
+      - openapi/
+      - assets/
       - .git
       - .gitignore
       - .llm-context/
