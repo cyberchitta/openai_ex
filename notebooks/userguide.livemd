@@ -480,6 +480,84 @@ fn_req_2 =
 
 The final response includes the result of the function call integrated into the conversation.
 
+### Storing and Managing Chat Completions
+
+OpenAI allows storing chat completions for later retrieval. This is useful for conversation history, auditing, or analytics purposes.
+
+#### Store a Chat Completion
+
+To store a chat completion, include `store: true` in your request:
+
+```elixir
+stored_chat_req = 
+  Chat.Completions.new(
+    model: "gpt-4o-mini",
+    messages: [
+      ChatMessage.user("Explain quantum computing briefly")
+    ],
+    store: true
+  )
+
+{:ok, stored_completion} = openai |> Chat.Completions.create(stored_chat_req)
+completion_id = stored_completion["id"]
+```
+
+#### Retrieve a Stored Chat Completion
+
+Use [`Chat.Completions.retrieve()`](https://platform.openai.com/docs/api-reference/chat/get) to fetch a previously stored chat completion:
+
+```elixir
+{:ok, retrieved_completion} = openai |> Chat.Completions.retrieve(completion_id: completion_id)
+```
+
+#### Get Messages from a Chat Completion
+
+To access the messages in a stored chat completion, use [`Chat.Completions.messages_list()`](https://platform.openai.com/docs/api-reference/chat/getMessages):
+
+```elixir
+{:ok, messages} = openai |> Chat.Completions.messages_list(completion_id)
+```
+
+#### List Stored Chat Completions
+
+To get a list of all your stored chat completions, use [`Chat.Completions.list()`](https://platform.openai.com/docs/api-reference/chat/list):
+
+```elixir
+{:ok, completions_list} = openai |> Chat.Completions.list()
+```
+
+You can filter by metadata, model, or use pagination parameters:
+
+```elixir
+{:ok, filtered_completions} = openai |> Chat.Completions.list(
+  metadata: %{project: "research"},
+  model: "gpt-4o-mini",
+  limit: 10,
+  order: "desc"
+)
+```
+
+#### Update a Chat Completion
+
+You can update the metadata of a stored chat completion using [`Chat.Completions.update()`](https://platform.openai.com/docs/api-reference/chat/update):
+
+```elixir
+{:ok, updated_completion} = openai |> Chat.Completions.update(
+  completion_id: completion_id,
+  metadata: %{category: "technical", reviewed: "true"}
+)
+```
+
+#### Delete a Chat Completion
+
+To remove a stored chat completion, use [`Chat.Completions.delete()`](https://platform.openai.com/docs/api-reference/chat/delete):
+
+```elixir
+{:ok, delete_result} = openai |> Chat.Completions.delete(completion_id: completion_id)
+```
+
+For more information on managing chat completions, see the [OpenAI API Chat reference](https://platform.openai.com/docs/api-reference/chat).
+
 ## Responses
 
 ```elixir
@@ -520,16 +598,6 @@ response_req2 = %{
 {:ok, response2} = openai |> Responses.create(response_req2)
 ```
 
-### Retrieve a Response
-
-If `store` was set to `true`, you can retrieve the full response object (including conversation history) using [`Responses.retrieve()`](https://platform.openai.com/docs/api-reference/responses/retrieve). Response objects are automatically deleted after 30 days.
-
-```elixir
-response_id = response["id"]
-
-{:ok, retrieved_response} = openai |> Responses.retrieve(response_id: response_id)
-```
-
 ### Streaming Responses
 
 The Responses API supports streaming, activated by passing `stream: true` to the `create` function. This returns the result as a series of semantic events, which can be processed and displayed as they arrive.
@@ -539,7 +607,7 @@ Here's a simple example that prints each event:
 ```elixir
 streaming_req = %{
   model: "gpt-4o-mini",
-  input: "Tell me a long story about a cat.",
+  input: "Tell me a 300 word story about a cat.",
   store: true  # Streaming works with or without storing the response
 }
 
@@ -690,6 +758,55 @@ end)
 ```
 
 This example shows how to handle `response.output_tool_call.*` events to track the progress of tool calls within the stream, specifically for the `web_search_preview` tool.
+
+### Retrieve a Response
+
+If `store` was set to `true`, you can retrieve the full response object (including conversation history) using [`Responses.retrieve()`](https://platform.openai.com/docs/api-reference/responses/get). Response objects are automatically deleted after 30 days.
+
+```elixir
+response_id = response["id"]
+
+{:ok, retrieved_response} = openai |> Responses.retrieve(response_id: response_id)
+```
+
+### List Input Items from a Response
+
+To access the input items from a stored response, use [`Responses.input_items_list()`](https://platform.openai.com/docs/api-reference/responses/input-items):
+
+```elixir
+{:ok, input_items} = openai |> Responses.input_items_list(response_id)
+```
+
+You can paginate through large input lists:
+
+```elixir
+# First get the initial list of items
+{:ok, initial_items} = openai |> Responses.input_items_list(response_id)
+
+# If there are more items and we want to paginate
+if initial_items["has_more"] do
+  # Use the last_id from the first request to get the next page
+  last_id = initial_items["last_id"]
+  
+  {:ok, next_page_items} = openai |> Responses.input_items_list(
+    response_id,
+    limit: 10,
+    after: last_id,
+    order: "desc"
+  )
+  IO.puts(next_page_items)
+end
+```
+
+### Delete a Response
+
+To remove a stored response, use [`Responses.delete()`](https://platform.openai.com/docs/api-reference/responses/delete):
+
+```elixir
+{:ok, delete_result} = openai |> Responses.delete(response_id: response_id)
+```
+
+This allows you to clean up stored responses that are no longer needed.
 
 For more information on the Responses API, see the [OpenAI API Responses Reference](https://platform.openai.com/docs/api-reference/responses).
 
