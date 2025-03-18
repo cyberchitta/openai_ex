@@ -57,6 +57,12 @@ defmodule OpenaiEx.Chat.Completions do
 
   @ep_url "/chat/completions"
 
+  defp ep_url(completion_id \\ nil, action \\ nil) do
+    @ep_url <>
+      if(is_nil(completion_id), do: "", else: "/#{completion_id}") <>
+      if(is_nil(action), do: "", else: "/#{action}")
+  end
+
   @doc """
   Calls the chat completion 'create' endpoint.
 
@@ -80,5 +86,74 @@ defmodule OpenaiEx.Chat.Completions do
   def create(openai = %OpenaiEx{}, chat_completion = %{}) do
     ep = Map.get(openai, :_ep_path_mapping).(@ep_url)
     openai |> Http.post(ep, json: chat_completion |> Map.take(@api_fields))
+  end
+
+  @doc """
+  Retrieves a stored chat completion by ID.
+
+  See https://platform.openai.com/docs/api-reference/chat/get
+  """
+  def retrieve!(openai = %OpenaiEx{}, completion_id: completion_id) do
+    openai |> retrieve(completion_id: completion_id) |> Http.bang_it!()
+  end
+
+  def retrieve(openai = %OpenaiEx{}, completion_id: completion_id) do
+    openai |> Http.get(ep_url(completion_id))
+  end
+
+  @doc """
+  Lists messages from a stored chat completion.
+
+  See https://platform.openai.com/docs/api-reference/chat/getMessages
+  """
+  def messages_list!(openai = %OpenaiEx{}, completion_id, opts \\ []) do
+    openai |> messages_list(completion_id, opts) |> Http.bang_it!()
+  end
+
+  def messages_list(openai = %OpenaiEx{}, completion_id, opts \\ []) do
+    params = opts |> Enum.into(%{}) |> Map.take(OpenaiEx.list_query_fields())
+    openai |> Http.get(ep_url(completion_id, "messages"), params)
+  end
+
+  @doc """
+  Lists stored Chat Completions.
+
+  See https://platform.openai.com/docs/api-reference/chat/list
+  """
+  def list!(openai = %OpenaiEx{}, opts \\ []) do
+    openai |> list(opts) |> Http.bang_it!()
+  end
+
+  def list(openai = %OpenaiEx{}, opts \\ []) do
+    params =
+      opts |> Enum.into(%{}) |> Map.take(OpenaiEx.list_query_fields() ++ [:metadata, :model])
+
+    openai |> Http.get(ep_url(), params)
+  end
+
+  @doc """
+  Updates a stored chat completion.
+
+  See https://platform.openai.com/docs/api-reference/chat/update
+  """
+  def update!(openai = %OpenaiEx{}, completion_id: completion_id, metadata: metadata) do
+    openai |> update(completion_id: completion_id, metadata: metadata) |> Http.bang_it!()
+  end
+
+  def update(openai = %OpenaiEx{}, completion_id: completion_id, metadata: metadata) do
+    openai |> Http.post(ep_url(completion_id), json: %{metadata: metadata})
+  end
+
+  @doc """
+  Deletes a stored chat completion.
+
+  See https://platform.openai.com/docs/api-reference/chat/delete
+  """
+  def delete!(openai = %OpenaiEx{}, completion_id: completion_id) do
+    openai |> delete(completion_id: completion_id) |> Http.bang_it!()
+  end
+
+  def delete(openai = %OpenaiEx{}, completion_id: completion_id) do
+    openai |> Http.delete(ep_url(completion_id))
   end
 end

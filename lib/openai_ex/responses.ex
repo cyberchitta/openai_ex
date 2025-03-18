@@ -8,10 +8,21 @@ defmodule OpenaiEx.Responses do
   @api_fields [
     :model,
     :input,
+    :include,
     :instructions,
-    :tools,
+    :max_output_tokens,
+    :metadata,
+    :parallel_tool_calls,
+    :previous_response_id,
+    :reasoning,
     :store,
-    :previous_response_id
+    :temperature,
+    :text,
+    :tool_choice,
+    :tools,
+    :top_p,
+    :truncation,
+    :user
   ]
 
   defp ep_url(response_id \\ nil) do
@@ -52,5 +63,30 @@ defmodule OpenaiEx.Responses do
 
   def retrieve(openai = %OpenaiEx{}, response_id: response_id) do
     openai |> Http.get(ep_url(response_id))
+  end
+
+  @doc """
+  Deletes a response.
+
+  See https://platform.openai.com/docs/api-reference/responses/delete
+  """
+  def delete!(openai = %OpenaiEx{}, response_id: response_id) do
+    openai |> delete(response_id: response_id) |> Http.bang_it!()
+  end
+
+  def delete(openai = %OpenaiEx{}, response_id: response_id) do
+    openai |> Http.delete(ep_url(response_id))
+  end
+
+  @doc """
+  Lists input items from a response. See https://platform.openai.com/docs/api-reference/responses/input-items
+  """
+  def input_items_list!(openai = %OpenaiEx{}, response_id, opts \\ []) do
+    openai |> input_items_list(response_id, opts) |> Http.bang_it!()
+  end
+
+  def input_items_list(openai = %OpenaiEx{}, response_id, opts \\ []) do
+    params = opts |> Enum.into(%{}) |> Map.take(OpenaiEx.list_query_fields())
+    openai |> Http.get(ep_url(response_id) <> "/input_items", params)
   end
 end
