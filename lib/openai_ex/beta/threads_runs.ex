@@ -64,12 +64,9 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   end
 
   def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}, opts \\ []) do
-    stream = Keyword.get(opts, :stream, false)
+    stream? = Keyword.get(opts, :stream, false)
     query_params = Keyword.get(opts, :query_params, %{})
-
-    json = run |> Map.take(@api_fields)
-    json = if stream, do: Map.put(json, :stream, true), else: json
-
+    json = Map.take(run, @api_fields)
     openai = OpenaiEx.with_assistants_beta(openai)
 
     url =
@@ -77,8 +74,8 @@ defmodule OpenaiEx.Beta.Threads.Runs do
       |> ep_url()
       |> add_query_params_to_url(query_params)
 
-    if stream do
-      HttpSse.post(openai, url, json: json)
+    if stream? do
+      HttpSse.post(openai, url, json: Map.put(json, :stream, true))
     else
       Http.post(openai, url, json: json)
     end
