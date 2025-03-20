@@ -30,6 +30,13 @@ defmodule OpenaiEx.Beta.Threads.Runs do
       if(is_nil(action), do: "", else: "/#{action}")
   end
 
+  defp add_query_params_to_url(url, %{}), do: url
+
+  defp add_query_params_to_url(url, query_params) do
+    query_string = URI.encode_query(query_params)
+    "#{url}?#{query_string}"
+  end
+
   @doc """
   Creates a new run request
 
@@ -52,22 +59,29 @@ defmodule OpenaiEx.Beta.Threads.Runs do
 
   See https://platform.openai.com/docs/api-reference/runs/createRun for more information.
   """
-  def create!(openai = %OpenaiEx{}, run = %{thread_id: _, assistant_id: _}, stream: true) do
-    openai |> create(run, stream: true) |> Http.bang_it!()
+  def create!(openai = %OpenaiEx{}, run = %{thread_id: _, assistant_id: _}, opts \\ []) do
+    openai |> create(run, opts) |> Http.bang_it!()
   end
 
-  def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}, stream: true) do
-    json = run |> Map.take(@api_fields) |> Map.put(:stream, true)
-    openai |> OpenaiEx.with_assistants_beta() |> HttpSse.post(ep_url(thread_id), json: json)
-  end
+  def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}, opts \\ []) do
+    stream = Keyword.get(opts, :stream, false)
+    query_params = Keyword.get(opts, :query_params, %{})
 
-  def create!(openai = %OpenaiEx{}, run = %{thread_id: _, assistant_id: _}) do
-    openai |> create(run) |> Http.bang_it!()
-  end
-
-  def create(openai = %OpenaiEx{}, run = %{thread_id: thread_id, assistant_id: _}) do
     json = run |> Map.take(@api_fields)
-    openai |> OpenaiEx.with_assistants_beta() |> Http.post(ep_url(thread_id), json: json)
+    json = if stream, do: Map.put(json, :stream, true), else: json
+
+    openai = OpenaiEx.with_assistants_beta(openai)
+
+    url =
+      thread_id
+      |> ep_url()
+      |> add_query_params_to_url(query_params)
+
+    if stream do
+      HttpSse.post(openai, url, json: json)
+    else
+      Http.post(openai, url, json: json)
+    end
   end
 
   @doc """
