@@ -19,13 +19,8 @@ defmodule OpenaiEx.Http do
   end
 
   def get(openai = %OpenaiEx{}, base_url, params) do
-    query =
-      base_url
-      |> URI.new!()
-      |> URI.append_query(params |> URI.encode_query())
-      |> URI.to_string()
-
-    openai |> get(query)
+    url = build_url(base_url, params)
+    openai |> get(url)
   end
 
   def get(openai = %OpenaiEx{}, url) do
@@ -66,6 +61,35 @@ defmodule OpenaiEx.Http do
       content ->
         Multipart.Part.file_content_field("", content, k, filename: "")
     end
+  end
+
+  def build_url(base_url, params \\ %{}) do
+    prepared_params = prepare_query_params(params)
+
+    if Enum.empty?(prepared_params) do
+      base_url
+    else
+      base_url
+      |> URI.new!()
+      |> URI.append_query(prepared_params |> URI.encode_query())
+      |> URI.to_string()
+    end
+  end
+
+  def prepare_query_params(params) when is_map(params) do
+    params
+    |> Enum.reduce(%{}, fn
+      {key, values}, acc when is_map(values) and key in [:metadata] ->
+        Enum.reduce(values, acc, fn {k, v}, a ->
+          Map.put(a, "#{key}[#{k}]", v)
+        end)
+
+      {key, values}, acc when is_list(values) and key in [:include] ->
+        Map.put(acc, "#{key}[]", values)
+
+      {key, value}, acc ->
+        Map.put(acc, key, value)
+    end)
   end
 
   defp handle_response(response) do
