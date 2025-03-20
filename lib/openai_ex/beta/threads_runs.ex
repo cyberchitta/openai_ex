@@ -30,12 +30,12 @@ defmodule OpenaiEx.Beta.Threads.Runs do
       if(is_nil(action), do: "", else: "/#{action}")
   end
 
-  defp add_query_params_to_url(url, %{}), do: url
-
-  defp add_query_params_to_url(url, query_params) do
+  defp add_query_params_to_url(url, query_params) when is_map(query_params) do
     query_string = URI.encode_query(query_params)
     "#{url}?#{query_string}"
   end
+
+  defp add_query_params_to_url(url, _), do: url
 
   @doc """
   Creates a new run request
