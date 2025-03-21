@@ -77,18 +77,15 @@ defmodule OpenaiEx.Http do
   end
 
   def prepare_query_params(params) when is_map(params) do
-    params
-    |> Enum.reduce(%{}, fn
-      {key, values}, acc when is_map(values) and key in [:metadata] ->
-        Enum.reduce(values, acc, fn {k, v}, a ->
-          Map.put(a, "#{key}[#{k}]", v)
-        end)
+    Enum.flat_map(params, fn
+      {key, values} when is_map(values) and key in [:metadata] ->
+        Enum.map(values, fn {k, v} -> {"#{key}[#{k}]", v} end)
 
-      {key, values}, acc when is_list(values) and key in [:include] ->
+      {key, values} when is_list(values) and key in [:include] ->
         Enum.map(values, fn v -> {"#{key}[]", v} end)
 
-      {key, value}, acc ->
-        Map.put(acc, key, value)
+      {key, value} ->
+        [{key, value}]
     end)
   end
 
