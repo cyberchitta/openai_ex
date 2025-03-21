@@ -85,7 +85,7 @@ defmodule OpenaiEx.Http do
         end)
 
       {key, values}, acc when is_list(values) and key in [:include] ->
-        Map.put(acc, "#{key}[]", values)
+        Enum.map(values, fn v -> {"#{key}[]", v} end)
 
       {key, value}, acc ->
         Map.put(acc, key, value)
