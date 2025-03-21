@@ -7,6 +7,7 @@ defmodule OpenaiEx.Responses do
 
   @api_fields [
     :model,
+    :include,
     :input,
     :instructions,
     :max_output_tokens,
@@ -43,8 +44,7 @@ defmodule OpenaiEx.Responses do
 
   def create(openai = %OpenaiEx{}, params, stream: true) do
     request_body = params |> Map.take(@api_fields) |> Map.put(:stream, true)
-    url = Http.build_url(ep_url(), params |> Map.take(@query_params))
-    openai |> HttpSse.post(url, json: request_body)
+    openai |> HttpSse.post(ep_url(), json: request_body)
   end
 
   def create!(openai = %OpenaiEx{}, params) do
@@ -53,8 +53,7 @@ defmodule OpenaiEx.Responses do
 
   def create(openai = %OpenaiEx{}, params) do
     request_body = params |> Map.take(@api_fields)
-    url = Http.build_url(ep_url(), params |> Map.take(@query_params))
-    openai |> Http.post(url, json: request_body)
+    openai |> Http.post(ep_url(), json: request_body)
   end
 
   @doc """
