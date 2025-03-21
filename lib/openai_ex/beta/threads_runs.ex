@@ -47,7 +47,7 @@ defmodule OpenaiEx.Beta.Threads.Runs do
   end
 
   def new(args = %{thread_id: _}) do
-    args |> Map.take([:thread_id] ++ [@api_fields] ++ [@query_params])
+    args |> Map.take([:thread_id] ++ @api_fields ++ @query_params)
   end
 
   @doc """
