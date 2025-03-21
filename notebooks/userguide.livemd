@@ -770,7 +770,7 @@ response_id = response["id"]
 # With optional parameters
 {:ok, retrieved_response} = openai |> Responses.retrieve([
   response_id: response_id,
-  include: ["input_items"]
+  include: ["output[*].file_search_call.search_results", "output[*].web_search_call.search_results", "file_search_call.results", "web_search_call.results", "message.input_image.image_url"]
 ])
 ```
 
@@ -792,9 +792,9 @@ You can paginate through large input lists:
 ])
 
 # If there are more items and we want to paginate
-if initial_items["has_more"] do
+if input_items["has_more"] do
   # Use the last_id from the first request to get the next page
-  last_id = initial_items["last_id"]
+  last_id = input_items["last_id"]
   
   {:ok, next_page_items} = openai |> Responses.input_items_list([
     response_id: response_id,
