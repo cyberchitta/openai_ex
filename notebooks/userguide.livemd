@@ -767,6 +767,11 @@ If `store` was set to `true`, you can retrieve the full response object (includi
 response_id = response["id"]
 
 {:ok, retrieved_response} = openai |> Responses.retrieve(response_id: response_id)
+# With optional parameters
+{:ok, retrieved_response} = openai |> Responses.retrieve([
+  response_id: response_id,
+  include: ["input_items"]
+])
 ```
 
 ### List Input Items from a Response
@@ -774,26 +779,29 @@ response_id = response["id"]
 To access the input items from a stored response, use [`Responses.input_items_list()`](https://platform.openai.com/docs/api-reference/responses/input-items):
 
 ```elixir
-{:ok, input_items} = openai |> Responses.input_items_list(response_id)
+{:ok, input_items} = openai |> Responses.input_items_list([
+  response_id: response_id
+])
 ```
 
 You can paginate through large input lists:
 
 ```elixir
-# First get the initial list of items
-{:ok, initial_items} = openai |> Responses.input_items_list(response_id)
+{:ok, input_items} = openai |> Responses.input_items_list([
+  response_id: response_id
+])
 
 # If there are more items and we want to paginate
 if initial_items["has_more"] do
   # Use the last_id from the first request to get the next page
   last_id = initial_items["last_id"]
   
-  {:ok, next_page_items} = openai |> Responses.input_items_list(
-    response_id,
-    limit: 10,
+  {:ok, next_page_items} = openai |> Responses.input_items_list([
+    response_id: response_id,
+    limit: 10, 
     after: last_id,
     order: "desc"
-  )
+  ])
   IO.puts(next_page_items)
 end
 ```
@@ -1626,7 +1634,18 @@ openai
 List the runs belonging to a thread using [`Run.list()`](https://platform.openai.com/docs/api-reference/runs/listRuns)
 
 ```elixir
-openai |> Runs.list(thread_id)
+# Basic usage
+openai |> Runs.list([
+  thread_id: thread_id
+])
+
+# With optional parameters
+openai |> Runs.list([
+  thread_id: thread_id,
+  limit: 10, 
+  order: "desc", 
+  include: ["run_steps"]
+])
 ```
 
 ### Submit tool outputs to a run

@@ -8,7 +8,6 @@ defmodule OpenaiEx.Responses do
   @api_fields [
     :model,
     :input,
-    :include,
     :instructions,
     :max_output_tokens,
     :metadata,
@@ -23,6 +22,10 @@ defmodule OpenaiEx.Responses do
     :top_p,
     :truncation,
     :user
+  ]
+
+  @query_params [
+    :include
   ]
 
   defp ep_url(response_id \\ nil) do
@@ -40,7 +43,8 @@ defmodule OpenaiEx.Responses do
 
   def create(openai = %OpenaiEx{}, params, stream: true) do
     request_body = params |> Map.take(@api_fields) |> Map.put(:stream, true)
-    openai |> HttpSse.post(ep_url(), json: request_body)
+    url = Http.build_url(ep_url(), params |> Map.take(@query_params))
+    openai |> HttpSse.post(url, json: request_body)
   end
 
   def create!(openai = %OpenaiEx{}, params) do
@@ -49,7 +53,8 @@ defmodule OpenaiEx.Responses do
 
   def create(openai = %OpenaiEx{}, params) do
     request_body = params |> Map.take(@api_fields)
-    openai |> Http.post(ep_url(), json: request_body)
+    url = Http.build_url(ep_url(), params |> Map.take(@query_params))
+    openai |> Http.post(url, json: request_body)
   end
 
   @doc """
@@ -57,12 +62,14 @@ defmodule OpenaiEx.Responses do
 
   https://platform.openai.com/docs/api-reference/responses/retrieve
   """
-  def retrieve!(openai = %OpenaiEx{}, response_id: response_id) do
-    openai |> retrieve(response_id: response_id) |> Http.bang_it!()
+  def retrieve!(openai = %OpenaiEx{}, opts) when is_list(opts) do
+    openai |> retrieve(opts) |> Http.bang_it!()
   end
 
-  def retrieve(openai = %OpenaiEx{}, response_id: response_id) do
-    openai |> Http.get(ep_url(response_id))
+  def retrieve(openai = %OpenaiEx{}, opts) when is_list(opts) do
+    response_id = Keyword.fetch!(opts, :response_id)
+    params = opts |> Keyword.drop([:response_id]) |> Enum.into(%{}) |> Map.take(@query_params)
+    openai |> Http.get(ep_url(response_id), params)
   end
 
   @doc """
@@ -81,12 +88,19 @@ defmodule OpenaiEx.Responses do
   @doc """
   Lists input items from a response. See https://platform.openai.com/docs/api-reference/responses/input-items
   """
-  def input_items_list!(openai = %OpenaiEx{}, response_id, opts \\ []) do
-    openai |> input_items_list(response_id, opts) |> Http.bang_it!()
+  def input_items_list!(openai = %OpenaiEx{}, opts) when is_list(opts) do
+    openai |> input_items_list(opts) |> Http.bang_it!()
   end
 
-  def input_items_list(openai = %OpenaiEx{}, response_id, opts \\ []) do
-    params = opts |> Enum.into(%{}) |> Map.take(OpenaiEx.list_query_fields())
-    openai |> Http.get(ep_url(response_id) <> "/input_items", params)
+  def input_items_list(openai = %OpenaiEx{}, opts) when is_list(opts) do
+    response_id = Keyword.fetch!(opts, :response_id)
+
+    p =
+      opts
+      |> Keyword.drop([:response_id])
+      |> Enum.into(%{})
+      |> Map.take(OpenaiEx.list_query_fields())
+
+    openai |> Http.get(ep_url(response_id) <> "/input_items", p)
   end
 end

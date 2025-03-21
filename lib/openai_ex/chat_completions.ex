@@ -125,26 +125,8 @@ defmodule OpenaiEx.Chat.Completions do
   end
 
   def list(openai = %OpenaiEx{}, opts \\ []) do
-    params =
-      opts
-      |> Enum.into(%{})
-      |> Map.take(OpenaiEx.list_query_fields() ++ [:metadata, :model])
-      |> flatten_metadata()
-
-    openai |> Http.get(ep_url(), params)
-  end
-
-  defp flatten_metadata(%{metadata: metadata} = params) when is_map(metadata) do
-    flattened =
-      metadata
-      |> Enum.map(fn {key, value} -> {:"metadata[#{key}]", value} end)
-      |> Enum.into(%{})
-
-    params |> Map.drop([:metadata]) |> Map.merge(flattened)
-  end
-
-  defp flatten_metadata(params) do
-    params
+    p = opts |> Enum.into(%{}) |> Map.take(OpenaiEx.list_query_fields() ++ [:metadata, :model])
+    openai |> Http.get(ep_url(), p)
   end
 
   @doc """
