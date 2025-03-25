@@ -18,7 +18,7 @@ defmodule OpenaiEx.HttpSse do
 
     if status in 200..299 do
       stream_receiver = create_stream_receiver(ref, openai.stream_timeout, task)
-      body_stream = Stream.resource(&init_stream/0, stream_receiver, &end_stream/1)
+      body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
       {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
     else
       body = extract_error(ref, "") |> Jason.decode!()
@@ -79,15 +79,22 @@ defmodule OpenaiEx.HttpSse do
       after
         timeout ->
           Logger.warning("Stream timeout after #{timeout}ms")
-          Task.shutdown(task)
           {:halt, {:exception, :timeout}}
       end
     end
   end
 
-  defp end_stream({:exception, :timeout}), do: raise(Error.sse_timeout_error())
-  defp end_stream({:exception, :canceled}), do: raise(Error.sse_user_cancellation())
-  defp end_stream(_), do: :ok
+  defp end_stream(task) do
+    fn acc ->
+      try do:
+            (case acc do
+               {:exception, :timeout} -> raise(Error.sse_timeout_error())
+               {:exception, :canceled} -> raise(Error.sse_user_cancellation())
+               _ -> :ok
+             end),
+          after: Task.shutdown(task)
+    end
+  end
 
   @double_eol ~r/(\r?\n|\r){2}/
   @double_eol_eos ~r/(\r?\n|\r){2}$/
