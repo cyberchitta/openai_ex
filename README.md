@@ -5,9 +5,11 @@
 
 `OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client.
 
-Portions of this project were developed with assistance from ChatGPT 3.5 and 4, as well as Claude 3 Opus and Claude 3.5 Sonnet. However, every line of code is human curated (by me 😇).
+The main user guide is a livebook, so you should be able to run everything without any setup. The user guide is also the test suite. It is run before every version release, so it is always up to date with the library.
 
-All API endpoints and features (as of May 1, 2024) are supported, including the **Assistants API Beta 2 with Run streaming**, DALL-E-3, Text-To-Speech, the **tools support** in chat completions, and the **streaming version** of the chat completion endpoint. Streaming request **cancellation** is also supported.
+> Portions of this project were developed with assistance from ChatGPT 3.5 and 4, as well as Claude 3 Opus and Claude Sonnets 3.5, 3.6 and 3.7. However, every line of code is human curated (by me, @restlessronin 😇).
+
+All API endpoints and features (as of Mar 16, 2025) are supported, including the most recent Responses API (proposed replacement for Chat Completion).
 
 Configuration of Finch pools and API base url are supported.
 
