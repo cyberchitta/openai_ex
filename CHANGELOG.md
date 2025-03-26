@@ -7,10 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
-## [Unreleased]
+## [0.9.4] - 2025-03-26
 
 ### Added
-- Fix for potential race condition in streaming (42aa402)
+- Added retroactive changelog documenting project history since version 0.8.0 (5c0d501)
+
+### Fixed
+- Fixed potential race condition in streaming implementation (42aa402)
 
 ## [0.9.3] - 2025-03-25
 
