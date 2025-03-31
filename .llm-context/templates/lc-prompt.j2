@@ -1,7 +1,15 @@
 {%- if prompt -%}
 {{ prompt }}
+{%- if rules %}
+
+## Additional Rules
+
+{% for item in rules -%}
+{{ item.content }}
+{% endfor %}
 {%- endif -%}
 {%- if user_notes %}
 
 {{ user_notes }}
 {%- endif -%}
+{%- endif %}
