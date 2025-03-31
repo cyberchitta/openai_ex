@@ -1,7 +1,6 @@
 ---
 base: lc-gitignores
 description: Default rule for software projects, using lc-gitignores base rule.
-name: code
 rules: [elixir.md]
 ---
 
