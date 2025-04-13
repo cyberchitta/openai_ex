@@ -13,17 +13,31 @@ defmodule OpenaiEx.HttpSse do
     me = self()
     ref = make_ref()
     task = Task.async(fn -> finch_stream(openai, url, json, me, ref) end)
-    status = receive(do: ({:chunk, {:status, status}, ^ref} -> status))
-    headers = receive(do: ({:chunk, {:headers, headers}, ^ref} -> headers))
 
-    if status in 200..299 do
-      stream_receiver = create_stream_receiver(ref, openai.stream_timeout)
-      body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
-      {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
+    with {:ok, status} <- receive_with_timeout(ref, :status, openai.receive_timeout),
+         {:ok, headers} <- receive_with_timeout(ref, :headers, openai.receive_timeout) do
+      if status in 200..299 do
+        stream_receiver = create_stream_receiver(ref, openai.stream_timeout)
+        body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
+        {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
+      else
+        body = extract_error(ref, "") |> Jason.decode!()
+        Task.shutdown(task)
+        response = %{status: status, headers: headers, body: body}
+        {:error, Error.status_error(status, response, body)}
+      end
     else
-      body = extract_error(ref, "") |> Jason.decode!()
-      Task.shutdown(task)
-      {:error, Error.status_error(status, %{status: status, headers: headers, body: body}, body)}
+      :error ->
+        Task.shutdown(task)
+        {:error, Error.sse_timeout_error()}
+    end
+  end
+
+  defp receive_with_timeout(ref, type, timeout) do
+    receive do
+      {:chunk, {^type, value}, ^ref} -> {:ok, value}
+    after
+      timeout -> :error
     end
   end
 
