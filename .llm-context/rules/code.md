@@ -1,5 +1,5 @@
 ---
-base: lc-gitignores
+base: code-gitignores
 description: Default rule for software projects, using lc-gitignores base rule.
 rules: [elixir.md]
 ---
