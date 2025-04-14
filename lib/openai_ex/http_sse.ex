@@ -21,10 +21,15 @@ defmodule OpenaiEx.HttpSse do
         body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
         {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
       else
-        body = extract_error(ref, "") |> Jason.decode!()
-        Task.shutdown(task)
-        response = %{status: status, headers: headers, body: body}
-        {:error, Error.status_error(status, response, body)}
+        with {:ok, body} <- extract_error(ref, "", openai.receive_timeout) do
+          Task.shutdown(task)
+          response = %{status: status, headers: headers, body: body}
+          {:error, Error.status_error(status, response, body)}
+        else
+          :error ->
+            Task.shutdown(task)
+            {:error, Error.sse_timeout_error()}
+        end
       end
     else
       :error ->
@@ -173,10 +178,12 @@ defmodule OpenaiEx.HttpSse do
     end
   end
 
-  defp extract_error(ref, acc) do
+  defp extract_error(ref, acc, timeout) do
     receive do
-      {:chunk, {:data, chunk}, ^ref} -> extract_error(ref, acc <> chunk)
-      {:done, ^ref} -> acc
+      {:chunk, {:data, chunk}, ^ref} -> extract_error(ref, acc <> chunk, timeout)
+      {:done, ^ref} -> {:ok, Jason.decode!(acc)}
+    after
+      timeout -> :error
     end
   end
 end
