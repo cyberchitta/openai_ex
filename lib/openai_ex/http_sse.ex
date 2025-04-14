@@ -37,16 +37,16 @@ defmodule OpenaiEx.HttpSse do
     result
   end
 
+  def cancel_request(task_pid) when is_pid(task_pid) do
+    send(task_pid, :cancel_request)
+  end
+
   defp receive_with_timeout(ref, type, timeout) do
     receive do
       {:chunk, {^type, value}, ^ref} -> {:ok, value}
     after
       timeout -> :error
     end
-  end
-
-  def cancel_request(task_pid) when is_pid(task_pid) do
-    send(task_pid, :cancel_request)
   end
 
   defp finch_stream(openai = %OpenaiEx{}, url, json, me, ref) do
