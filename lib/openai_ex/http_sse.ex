@@ -41,14 +41,6 @@ defmodule OpenaiEx.HttpSse do
     send(task_pid, :cancel_request)
   end
 
-  defp receive_with_timeout(ref, type, timeout) do
-    receive do
-      {:chunk, {^type, value}, ^ref} -> {:ok, value}
-    after
-      timeout -> :error
-    end
-  end
-
   defp finch_stream(openai = %OpenaiEx{}, url, json, me, ref) do
     request = Client.build_post(openai, url, json: json)
     send_me_chunk = create_chunk_sender(me, ref)
@@ -70,6 +62,14 @@ defmodule OpenaiEx.HttpSse do
       after
         0 -> send(me, {:chunk, chunk, ref})
       end
+    end
+  end
+
+  defp receive_with_timeout(ref, type, timeout) do
+    receive do
+      {:chunk, {^type, value}, ^ref} -> {:ok, value}
+    after
+      timeout -> :error
     end
   end
 
