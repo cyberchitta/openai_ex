@@ -36,13 +36,14 @@ gitignores:
   - '*.dylib'
   - '*.map'
   full_files:
+  - beta/
+  - notebooks/
+  - test/
   - .github/
   - .devcontainer/
   - .formatter.exs
   - .vscode/
   - assets/
-  - notebooks/
-  - tests/
   - '*.md'
   - '*.scm'
   - '*.yaml'
@@ -78,13 +79,14 @@ gitignores:
   - '*.ttf'
   - '*.map'
   outline_files:
+  - beta/
+  - notebooks/
+  - test/
   - .github/
   - .devcontainer/
   - .formatter.exs
   - .vscode/
   - assets/
-  - notebooks/
-  - tests/
   - '*.md'
   - '*.scm'
   - '*.yaml'
