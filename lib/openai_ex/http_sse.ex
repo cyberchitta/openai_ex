@@ -14,28 +14,27 @@ defmodule OpenaiEx.HttpSse do
     ref = make_ref()
     task = Task.async(fn -> finch_stream(openai, url, json, me, ref) end)
 
-    with {:ok, status} <- receive_with_timeout(ref, :status, openai.receive_timeout),
-         {:ok, headers} <- receive_with_timeout(ref, :headers, openai.receive_timeout) do
-      if status in 200..299 do
-        stream_receiver = create_stream_receiver(ref, openai.stream_timeout)
-        body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
-        {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
-      else
-        with {:ok, body} <- extract_error(ref, "", openai.receive_timeout) do
-          Task.shutdown(task)
-          response = %{status: status, headers: headers, body: body}
-          {:error, Error.status_error(status, response, body)}
+    result =
+      with {:ok, status} <- receive_with_timeout(ref, :status, openai.receive_timeout),
+           {:ok, headers} <- receive_with_timeout(ref, :headers, openai.receive_timeout) do
+        if status in 200..299 do
+          stream_receiver = create_stream_receiver(ref, openai.stream_timeout)
+          body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
+          {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
         else
-          :error ->
-            Task.shutdown(task)
-            {:error, Error.sse_timeout_error()}
+          with {:ok, body} <- extract_error(ref, "", openai.receive_timeout) do
+            response = %{status: status, headers: headers, body: body}
+            {:error, Error.status_error(status, response, body)}
+          else
+            :error -> {:error, Error.sse_timeout_error()}
+          end
         end
+      else
+        :error -> {:error, Error.sse_timeout_error()}
       end
-    else
-      :error ->
-        Task.shutdown(task)
-        {:error, Error.sse_timeout_error()}
-    end
+
+    unless match?({:ok, %{task_pid: _}}, result), do: Task.shutdown(task)
+    result
   end
 
   defp receive_with_timeout(ref, type, timeout) do
