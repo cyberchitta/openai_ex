@@ -49,7 +49,7 @@ defmodule OpenaiEx.Http do
       case v do
         list when is_list(list) ->
           Enum.with_index(list)
-          |> Enum.reduce(acc, fn {item, idx}, inner_acc ->
+          |> Enum.reduce(acc, fn {item, _idx}, inner_acc ->
             field_name = "#{k}[]"
             inner_acc |> Multipart.add_part(to_file_field_part(field_name, item))
           end)
