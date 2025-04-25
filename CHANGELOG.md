@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
+## [0.9.6] - 2025-04-14
+
+### Fixed
+- add new 4o image gen api fields (f2d3d97)
+
 ## [0.9.5] - 2025-04-14
 
 ### Fixed
