@@ -8,7 +8,7 @@
 
 The main user guide is a livebook, so you should be able to run everything without any setup. The user guide is also the test suite. It is run before every version release, so it is always up to date with the library.
 
-> Portions of this project were developed with assistance from ChatGPT 3.5 and 4, as well as Claude 3 Opus and Claude Sonnets 3.5, 3.6 and 3.7. However, every line of code is human curated (by me, @restlessronin 😇).
+> Portions of this project were developed with assistance from ChatGPT 3.5 and 4, as well as Claude 3 Opus and Claude Sonnets 3.5, 3.6 and 3.7. However, every line of code is human curated (by me, @restlessronin 😇). AI collaboration facilitated by [llm-context](https://github.com/cyberchitta/llm-context.py).
 
 ## Features and Benefits
 
