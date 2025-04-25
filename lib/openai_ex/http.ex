@@ -46,7 +46,20 @@ defmodule OpenaiEx.Http do
     req
     |> Map.take(file_fields)
     |> Enum.reduce(mp, fn {k, v}, acc ->
-      acc |> Multipart.add_part(to_file_field_part(k, v))
+      case v do
+        # Handle list of file paths for multiple images
+        list when is_list(list) ->
+          Enum.with_index(list)
+          |> Enum.reduce(acc, fn {item, idx}, inner_acc ->
+            # Use the array notation for form fields: image[]
+            field_name = "#{k}[]"
+            inner_acc |> Multipart.add_part(to_file_field_part(field_name, item))
+          end)
+
+        # Single file/content
+        _ ->
+          acc |> Multipart.add_part(to_file_field_part(k, v))
+      end
     end)
   end
 
