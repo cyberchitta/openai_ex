@@ -9,6 +9,8 @@ defmodule OpenaiEx.Images.Edit do
     :n,
     :size,
     :response_format,
+    :model,
+    :quality,
     :user
   ]
 
