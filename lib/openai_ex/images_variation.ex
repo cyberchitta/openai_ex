@@ -4,9 +4,10 @@ defmodule OpenaiEx.Images.Variation do
   """
   @api_fields [
     :image,
+    :model,
     :n,
-    :size,
     :response_format,
+    :size,
     :user
   ]
 

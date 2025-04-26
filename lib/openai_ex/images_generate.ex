@@ -5,8 +5,12 @@ defmodule OpenaiEx.Images.Generate do
   """
   @api_fields [
     :prompt,
+    :background,
     :model,
+    :moderation,
     :n,
+    :output_compression,
+    :output_format,
     :quality,
     :response_format,
     :size,

@@ -6,11 +6,11 @@ defmodule OpenaiEx.Images.Edit do
     :image,
     :prompt,
     :mask,
-    :n,
-    :size,
-    :response_format,
     :model,
+    :n,
     :quality,
+    :response_format,
+    :size,
     :user
   ]
 
