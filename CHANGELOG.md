@@ -7,7 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
-## [0.9.6] - 2025-04-14
+## [0.9.7] - 2025-04-26
+
+### Added
+- update/sort image endpoint params (7fae56c)
+- add support for multiple input images (e4f2489)
+
+## [0.9.6] - 2025-04-25
 
 ### Fixed
 - add new 4o image gen api fields (f2d3d97)
