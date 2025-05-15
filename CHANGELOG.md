@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
+## [0.9.8] - 2025-05-15
+
+### Fixed
+- handle non-JSON responses from 5xx errors (895666f)
+
 ## [0.9.7] - 2025-04-26
 
 ### Added
