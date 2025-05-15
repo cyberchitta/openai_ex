@@ -1,7 +1,7 @@
 defmodule OpenaiEx.MixProject do
   use Mix.Project
 
-  @version "0.9.8"
+  @version "0.9.9"
   @description "Community maintained Elixir library for OpenAI API"
   @source_url "https://github.com/cyberchitta/openai_ex"
 
