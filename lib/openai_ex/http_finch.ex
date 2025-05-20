@@ -74,18 +74,14 @@ defmodule OpenaiEx.Http.Finch do
     {:ok, %{status: status, headers: headers, body: body, trailers: trailers}}
   end
 
-  defp to_response(r = %Finch.Response{status: status, body: body}) when status >= 500 do
+  defp to_response(r = %Finch.Response{status: status, body: body})
+       when is_integer(status) do
     decoded_body =
       with {:ok, json} <- Jason.decode(body),
            do: json,
            else: ({:error, _} -> %{"error" => %{"message" => "#{inspect(body)}"}})
 
     {:error, Error.status_error(status, r, decoded_body)}
-  end
-
-  defp to_response(r = %Finch.Response{status: status, body: body})
-       when is_integer(status) do
-    {:error, Error.status_error(status, r, Jason.decode!(body))}
   end
 
   def to_error(:timeout, request), do: {:error, Error.api_timeout_error(request)}
