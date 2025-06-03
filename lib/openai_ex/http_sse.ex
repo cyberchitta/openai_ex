@@ -27,13 +27,11 @@ defmodule OpenaiEx.HttpSse do
             response = %{status: status, headers: headers, body: body}
             {:error, Error.status_error(status, response, body)}
           else
-            :error -> {:error, Error.api_timeout_error(request)}
-            {:error, {:stream_error, exception}} -> {:error, Error.stream_error(exception)}
+            error_result -> handle_receive_error(error_result, request)
           end
         end
       else
-        :error -> {:error, Error.api_timeout_error(request)}
-        {:error, {:stream_error, exception}} -> {:error, Error.stream_error(exception)}
+        error_result -> handle_receive_error(error_result, request)
       end
 
     unless match?({:ok, %{task_pid: _}}, result), do: Task.shutdown(task)
@@ -73,6 +71,13 @@ defmodule OpenaiEx.HttpSse do
       {:stream_error, exception, ^ref} -> {:error, {:stream_error, exception}}
     after
       timeout -> :error
+    end
+  end
+
+  defp handle_receive_error(error_result, request) do
+    case error_result do
+      :error -> {:error, Error.api_timeout_error(request)}
+      {:error, {:stream_error, exception}} -> {:error, Error.stream_error(exception)}
     end
   end
 
