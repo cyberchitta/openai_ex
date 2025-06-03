@@ -12,7 +12,8 @@ defmodule OpenaiEx.HttpSse do
   def post(openai = %OpenaiEx{}, url, json: json) do
     me = self()
     ref = make_ref()
-    task = Task.async(fn -> finch_stream(openai, url, json, me, ref) end)
+    request = Client.build_post(openai, url, json: json)
+    task = Task.async(fn -> finch_stream(openai, request, me, ref) end)
 
     result =
       with {:ok, status} <- receive_with_timeout(ref, :status, openai.receive_timeout),
@@ -26,11 +27,11 @@ defmodule OpenaiEx.HttpSse do
             response = %{status: status, headers: headers, body: body}
             {:error, Error.status_error(status, response, body)}
           else
-            :error -> {:error, Error.sse_timeout_error()}
+            :error -> {:error, Error.api_timeout_error(request)}
           end
         end
       else
-        :error -> {:error, Error.sse_timeout_error()}
+        :error -> {:error, Error.api_timeout_error(request)}
       end
 
     unless match?({:ok, %{task_pid: _}}, result), do: Task.shutdown(task)
@@ -41,8 +42,7 @@ defmodule OpenaiEx.HttpSse do
     send(task_pid, :cancel_request)
   end
 
-  defp finch_stream(openai = %OpenaiEx{}, url, json, me, ref) do
-    request = Client.build_post(openai, url, json: json)
+  defp finch_stream(openai = %OpenaiEx{}, request, me, ref) do
     send_me_chunk = create_chunk_sender(me, ref)
 
     try do

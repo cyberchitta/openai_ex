@@ -886,8 +886,8 @@ Set up the image edit request with image, mask and prompt.
 ```elixir
 img_edit_req =
   Images.Edit.new(
-    image: img_to_expmt,
-    mask: star_mask,
+    image: {"dummy_image.png", img_to_expmt},
+    mask: {"dummy_mask.png", star_mask},
     size: "256x256",
     prompt: "Image shows a smiling Otter"
   )
@@ -1670,13 +1670,3 @@ You can cancel a run `in_progress` using [`Run.cancel()`](https://platform.opena
 ```elixir
 openai |> Runs.cancel(%{thread_id: thread_id, run_id: run_id})
 ```
-
-### Create thread and run
-
-Use [`Run.create_and_run()`](https://platform.openai.com/docs/api-reference/runs/createThreadAndRun) to create a thread and run.
-
-```elixir
-
-```
-
-<!-- livebook:{"offset":52921,"stamp":{"token":"XCP.V272Gaja0IOMEhLDHwXpdFURtiYVhw7Ke_yn77aZMPGGdDlMaPFsOOLjArBArJs7t1u0AfN5CX0usNZgt8_7VcUsiDMB387yVZbY6SoZM6TpP2q-cfqO2MQ","version":2}} -->
