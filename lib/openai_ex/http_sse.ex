@@ -45,10 +45,8 @@ defmodule OpenaiEx.HttpSse do
   end
 
   defp finch_stream(openai = %OpenaiEx{}, request, me, ref) do
-    send_me_chunk = create_chunk_sender(me, ref)
-
     try do
-      case Client.stream(request, openai, send_me_chunk) do
+      case Client.stream(request, openai, create_chunk_sender(me, ref)) do
         {:ok, _acc} -> send(me, {:done, ref})
         {:error, exception} -> send(me, {:stream_error, exception, ref})
       end
