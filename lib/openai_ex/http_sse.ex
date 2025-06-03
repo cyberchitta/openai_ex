@@ -14,32 +14,40 @@ defmodule OpenaiEx.HttpSse do
     ref = make_ref()
     request = Client.build_post(openai, url, json: json)
     task = Task.async(fn -> finch_stream(openai, request, me, ref) end)
-
-    result =
-      with {:ok, status} <- receive_with_timeout(ref, :status, openai.receive_timeout),
-           {:ok, headers} <- receive_with_timeout(ref, :headers, openai.receive_timeout) do
-        if status in 200..299 do
-          stream_receiver = create_stream_receiver(ref, openai.stream_timeout)
-          body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
-          {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
-        else
-          with {:ok, body} <- extract_error(ref, "", openai.receive_timeout) do
-            response = %{status: status, headers: headers, body: body}
-            {:error, Error.status_error(status, response, body)}
-          else
-            error_result -> handle_receive_error(error_result, request)
-          end
-        end
-      else
-        error_result -> handle_receive_error(error_result, request)
-      end
-
+    result = build_sse_stream(openai, task, request, ref)
     unless match?({:ok, %{task_pid: _}}, result), do: Task.shutdown(task)
     result
   end
 
   def cancel_request(task_pid) when is_pid(task_pid) do
     send(task_pid, :cancel_request)
+  end
+
+  defp build_sse_stream(openai, task, request, ref) do
+    with {:ok, status} <- receive_with_timeout(ref, :status, openai.receive_timeout),
+         {:ok, headers} <- receive_with_timeout(ref, :headers, openai.receive_timeout) do
+      if status in 200..299 do
+        stream_receiver = create_stream_receiver(ref, openai.stream_timeout)
+        body_stream = Stream.resource(&init_stream/0, stream_receiver, end_stream(task))
+        {:ok, %{status: status, headers: headers, body_stream: body_stream, task_pid: task.pid}}
+      else
+        with {:ok, body} <- extract_error(ref, "", openai.receive_timeout) do
+          response = %{status: status, headers: headers, body: body}
+          {:error, Error.status_error(status, response, body)}
+        else
+          error_result -> handle_receive_error(error_result, request)
+        end
+      end
+    else
+      error_result -> handle_receive_error(error_result, request)
+    end
+  end
+
+  defp handle_receive_error(error_result, request) do
+    case error_result do
+      :error -> {:error, Error.api_timeout_error(request)}
+      {:error, {:stream_error, exception}} -> {:error, Error.stream_error(exception)}
+    end
   end
 
   defp finch_stream(openai = %OpenaiEx{}, request, me, ref) do
@@ -71,13 +79,6 @@ defmodule OpenaiEx.HttpSse do
       {:stream_error, exception, ^ref} -> {:error, {:stream_error, exception}}
     after
       timeout -> :error
-    end
-  end
-
-  defp handle_receive_error(error_result, request) do
-    case error_result do
-      :error -> {:error, Error.api_timeout_error(request)}
-      {:error, {:stream_error, exception}} -> {:error, Error.stream_error(exception)}
     end
   end
 
