@@ -28,10 +28,12 @@ defmodule OpenaiEx.HttpSse do
             {:error, Error.status_error(status, response, body)}
           else
             :error -> {:error, Error.api_timeout_error(request)}
+            {:error, {:stream_error, exception}} -> {:error, Error.stream_error(exception)}
           end
         end
       else
         :error -> {:error, Error.api_timeout_error(request)}
+        {:error, {:stream_error, exception}} -> {:error, Error.stream_error(exception)}
       end
 
     unless match?({:ok, %{task_pid: _}}, result), do: Task.shutdown(task)
@@ -46,8 +48,10 @@ defmodule OpenaiEx.HttpSse do
     send_me_chunk = create_chunk_sender(me, ref)
 
     try do
-      Client.stream(request, openai, send_me_chunk)
-      send(me, {:done, ref})
+      case Client.stream(request, openai, send_me_chunk) do
+        {:ok, _acc} -> send(me, {:done, ref})
+        {:error, exception} -> send(me, {:stream_error, exception, ref})
+      end
     catch
       :throw, :cancel_request -> {:exception, :cancel_request}
     end
@@ -68,6 +72,7 @@ defmodule OpenaiEx.HttpSse do
   defp receive_with_timeout(ref, type, timeout) do
     receive do
       {:chunk, {^type, value}, ^ref} -> {:ok, value}
+      {:stream_error, exception, ^ref} -> {:error, {:stream_error, exception}}
     after
       timeout -> :error
     end
@@ -92,6 +97,10 @@ defmodule OpenaiEx.HttpSse do
         {:done, ^ref} ->
           {:halt, acc}
 
+        {:stream_error, exception, ^ref} ->
+          Logger.warning("Finch stream error: #{inspect(exception)}")
+          {:halt, {:exception, {:stream_error, exception}}}
+
         {:canceled, ^ref} ->
           Logger.info("Request canceled by user")
           {:halt, {:exception, :canceled}}
@@ -109,6 +118,7 @@ defmodule OpenaiEx.HttpSse do
             (case acc do
                {:exception, :timeout} -> raise(Error.sse_timeout_error())
                {:exception, :canceled} -> raise(Error.sse_user_cancellation())
+               {:exception, {:stream_error, exception}} -> raise(Error.stream_error(exception))
                _ -> :ok
              end),
           after: Task.shutdown(task)
@@ -181,6 +191,7 @@ defmodule OpenaiEx.HttpSse do
     receive do
       {:chunk, {:data, chunk}, ^ref} -> extract_error(ref, acc <> chunk, timeout)
       {:done, ^ref} -> {:ok, Jason.decode!(acc)}
+      {:stream_error, exception, ^ref} -> {:error, {:stream_error, exception}}
     after
       timeout -> :error
     end
