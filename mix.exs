@@ -44,7 +44,8 @@ defmodule OpenaiEx.MixProject do
       description: @description,
       licenses: ["Apache-2.0"],
       links: %{
-        "GitHub" => @source_url
+        "GitHub" => @source_url,
+        "Changelog" => "#{@source_url}/blob/main/CHANGELOG.md"
       }
     ]
   end
