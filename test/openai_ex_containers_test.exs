@@ -62,7 +62,7 @@ defmodule OpenaiExContainersTest do
       # Since ep_url is private, we test the module structure instead
       functions = Containers.__info__(:functions)
       function_names = Enum.map(functions, &elem(&1, 0))
-      
+
       # The module should have all expected public functions
       assert :new in function_names
       assert :list in function_names
