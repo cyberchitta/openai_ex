@@ -1091,6 +1091,187 @@ Verify that the file has been deleted by listing files again
 openai |> Files.list()
 ```
 
+## Containers
+
+Containers provide isolated environments for running code via the Code Interpreter tool. The API reference can be found at [OpenAI Containers API](https://platform.openai.com/docs/api-reference/containers).
+
+### List containers
+
+To request all containers that belong to the user organization, call the [`Containers.list()`](https://platform.openai.com/docs/api-reference/containers/list) function
+
+```elixir
+alias OpenaiEx.Containers
+
+openai |> Containers.list()
+```
+
+### Create container
+
+To create a new container, we need to create a container request with a name
+
+```elixir
+container_req = Containers.new(name: "Example Container")
+```
+
+We can also specify expiration settings and attach files during creation
+
+```elixir
+container_req = Containers.new(
+  name: "Advanced Container",
+  expires_after: %{anchor: "last_active_at", minutes: 30},
+  file_ids: []
+)
+```
+
+Then we call the [`Containers.create()`](https://platform.openai.com/docs/api-reference/containers/create) function to create the container
+
+```elixir
+{:ok, container_res} = openai |> Containers.create(container_req)
+```
+
+We can verify that the container has been created by listing containers again
+
+```elixir
+openai |> Containers.list()
+```
+
+We grab the container id from the previous response value to use in the following samples
+
+```elixir
+container_id = container_res["id"]
+```
+
+### Retrieve container
+
+In order to retrieve information on a container, we simply call the [`Containers.retrieve()`](https://platform.openai.com/docs/api-reference/containers/retrieve) function with the given id
+
+```elixir
+openai |> Containers.retrieve(container_id)
+```
+
+### Delete container
+
+Finally, we can delete the container by calling [`Containers.delete()`](https://platform.openai.com/docs/api-reference/containers/delete)
+
+```elixir
+openai |> Containers.delete(container_id)
+```
+
+Verify that the container has been deleted by listing containers again
+
+```elixir
+openai |> Containers.list()
+```
+
+## Container Files
+
+Container Files allow you to create and manage files within OpenAI containers for use with the Code Interpreter tool. Files can be uploaded directly or referenced from existing file IDs. The API reference can be found at [OpenAI Container Files API](https://platform.openai.com/docs/api-reference/container-files).
+
+First, let's create a container to work with for our file examples
+
+```elixir
+alias OpenaiEx.ContainerFiles
+
+# Create a container for our file operations
+container_req = Containers.new(name: "File Demo Container")
+{:ok, container_res} = openai |> Containers.create(container_req)
+demo_container_id = container_res["id"]
+```
+
+### List container files
+
+To request all files in a container, call the [`ContainerFiles.list()`](https://platform.openai.com/docs/api-reference/container-files/list) function
+
+```elixir
+openai |> ContainerFiles.list(demo_container_id)
+```
+
+### Upload file to container
+
+To upload a file directly to a container, we need to create a file upload request
+
+```elixir
+# Create a sample file content
+sample_content = """
+# Sample Python Script
+print("Hello from container!")
+
+def calculate_sum(a, b):
+    return a + b
+
+result = calculate_sum(10, 20)
+print(f"Sum: {result}")
+"""
+
+# Create file upload request
+upload_req = ContainerFiles.new_upload(file: {"hello.py", sample_content})
+```
+
+Then we call the [`ContainerFiles.create()`](https://platform.openai.com/docs/api-reference/container-files/create) function to upload the file
+
+```elixir
+{:ok, upload_res} = openai |> ContainerFiles.create(demo_container_id, upload_req)
+```
+
+We can verify that the file has been uploaded by listing container files
+
+```elixir
+openai |> ContainerFiles.list(demo_container_id)
+```
+
+We grab the file id from the previous response to use in the following samples
+
+```elixir
+container_file_id = upload_res["id"]
+```
+
+### Reference existing file in container
+
+To reference an existing file (that was uploaded via the Files API) in a container, create a reference request
+
+```elixir
+# First upload a file via the Files API (reusing from File section example above)
+# reference_req = ContainerFiles.new_reference(file_id: file_id)
+# {:ok, ref_res} = openai |> ContainerFiles.create(demo_container_id, reference_req)
+```
+
+### Retrieve container file
+
+To retrieve metadata about a container file, call the [`ContainerFiles.retrieve()`](https://platform.openai.com/docs/api-reference/container-files/retrieve) function
+
+```elixir
+openai |> ContainerFiles.retrieve(demo_container_id, container_file_id)
+```
+
+### Get container file content
+
+To download the actual content of a container file, use [`ContainerFiles.content()`](https://platform.openai.com/docs/api-reference/container-files/retrieve-content)
+
+```elixir
+{:ok, file_content} = openai |> ContainerFiles.content(demo_container_id, container_file_id)
+IO.puts(file_content)
+```
+
+### Delete container file
+
+To delete a file from a container, call [`ContainerFiles.delete()`](https://platform.openai.com/docs/api-reference/container-files/delete)
+
+```elixir
+openai |> ContainerFiles.delete(demo_container_id, container_file_id)
+```
+
+Verify that the file has been deleted by listing container files again
+
+```elixir
+openai |> ContainerFiles.list(demo_container_id)
+```
+
+Finally, clean up by deleting the demo container
+
+```elixir
+openai |> Containers.delete(demo_container_id)
+```
+
 ## FineTuning Job
 
 To run a fine-tuning job, we minimally need a training file. We will re-run the file creation request above.
