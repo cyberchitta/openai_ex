@@ -9,4 +9,6 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.MsgContent
   doctest OpenaiEx.Beta.Assistants
   doctest OpenaiEx.Beta.Threads.Runs
+  doctest OpenaiEx.Containers
+  doctest OpenaiEx.ContainerFiles
 end
