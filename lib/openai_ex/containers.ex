@@ -1,9 +1,6 @@
 defmodule OpenaiEx.Containers do
   @moduledoc """
-  This module provides an implementation of the OpenAI Containers API. 
-
-  Containers provide isolated environments for running code via the Code Interpreter tool.
-  The API reference can be found at https://platform.openai.com/docs/api-reference/containers.
+  This module provides an implementation of the OpenAI Containers API. The API reference can be found at https://platform.openai.com/docs/api-reference/containers.
   """
 
   alias OpenaiEx.Http
@@ -45,13 +42,7 @@ defmodule OpenaiEx.Containers do
   @doc """
   Lists all containers that belong to the user's organization.
 
-  ## Query Parameters
-
-  - `limit` - Number of objects to return (1-100, default: 20)
-  - `order` - Sort order by created_at ("asc" or "desc", default: "desc")
-  - `after` - Cursor for pagination
-
-  https://platform.openai.com/docs/api-reference/containers/list
+  See https://platform.openai.com/docs/api-reference/containers/listContainers
   """
   def list!(openai = %OpenaiEx{}, params \\ %{}) do
     openai |> list(params) |> Http.bang_it!()
@@ -65,13 +56,7 @@ defmodule OpenaiEx.Containers do
   @doc """
   Creates a new container.
 
-  ## Parameters
-
-  - `name` (required) - Name of the container
-  - `expires_after` (optional) - Expiration configuration with `anchor` and `minutes` 
-  - `file_ids` (optional) - List of file IDs to copy to the container
-
-  https://platform.openai.com/docs/api-reference/containers/create
+  See https://platform.openai.com/docs/api-reference/containers/createContainers
   """
   def create!(openai = %OpenaiEx{}, request) do
     openai |> create(request) |> Http.bang_it!()
@@ -84,7 +69,7 @@ defmodule OpenaiEx.Containers do
   @doc """
   Retrieves a specific container by ID.
 
-  https://platform.openai.com/docs/api-reference/containers/retrieve
+  See https://platform.openai.com/docs/api-reference/containers/retrieveContainer
   """
   def retrieve!(openai = %OpenaiEx{}, container_id) do
     openai |> retrieve(container_id) |> Http.bang_it!()
@@ -97,7 +82,7 @@ defmodule OpenaiEx.Containers do
   @doc """
   Deletes a container.
 
-  https://platform.openai.com/docs/api-reference/containers/delete
+  See https://platform.openai.com/docs/api-reference/containers/deleteContainer
   """
   def delete!(openai = %OpenaiEx{}, container_id) do
     openai |> delete(container_id) |> Http.bang_it!()

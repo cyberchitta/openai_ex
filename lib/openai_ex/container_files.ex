@@ -1,12 +1,6 @@
 defmodule OpenaiEx.ContainerFiles do
   @moduledoc """
-  This module provides an implementation of the OpenAI Container Files API.
-
-  Container Files allow you to create and manage files within OpenAI containers for use 
-  with the Code Interpreter tool. Files can be uploaded directly or referenced from 
-  existing file IDs.
-
-  The API reference can be found at https://platform.openai.com/docs/api-reference/container-files.
+  This module provides an implementation of the OpenAI Container Files API. The API reference can be found at https://platform.openai.com/docs/api-reference/container-files.
   """
 
   alias OpenaiEx.Http
@@ -47,7 +41,7 @@ defmodule OpenaiEx.ContainerFiles do
   @doc """
   Creates a new file reference request with the given arguments.
 
-  ## Examples
+  Example usage:
 
       iex> OpenaiEx.ContainerFiles.new_reference(file_id: "file-123")
       %{file_id: "file-123"}
@@ -79,13 +73,7 @@ defmodule OpenaiEx.ContainerFiles do
   @doc """
   Lists all files in a container.
 
-  ## Query Parameters
-
-  - `limit` - Number of objects to return (1-100, default: 20)
-  - `order` - Sort order by created_at ("asc" or "desc", default: "desc")
-  - `after` - Cursor for pagination
-
-  https://platform.openai.com/docs/api-reference/container-files/list
+  See https://platform.openai.com/docs/api-reference/container-files/listContainerFiles
   """
   def list!(openai = %OpenaiEx{}, container_id, params \\ %{}) do
     openai |> list(container_id, params) |> Http.bang_it!()
@@ -97,17 +85,9 @@ defmodule OpenaiEx.ContainerFiles do
   end
 
   @doc """
-  Creates a new container file via upload or file reference.
-
-  ## Parameters
-
-  For file uploads:
-  - `file` (required) - The file object to upload
-
-  For file references:
-  - `file_id` (required) - ID of existing file to reference
-
-  https://platform.openai.com/docs/api-reference/container-files/create
+  Creates a new container file via upload or file reference. 
+  
+  See https://platform.openai.com/docs/api-reference/container-files/createContainerFile
   """
   def create!(openai = %OpenaiEx{}, container_id, request) do
     openai |> create(container_id, request) |> Http.bang_it!()
@@ -132,7 +112,7 @@ defmodule OpenaiEx.ContainerFiles do
   @doc """
   Retrieves a specific container file by ID.
 
-  https://platform.openai.com/docs/api-reference/container-files/retrieve
+  See https://platform.openai.com/docs/api-reference/container-files/retrieveContainerFile
   """
   def retrieve!(openai = %OpenaiEx{}, container_id, file_id) do
     openai |> retrieve(container_id, file_id) |> Http.bang_it!()
@@ -145,9 +125,7 @@ defmodule OpenaiEx.ContainerFiles do
   @doc """
   Retrieves the content of a container file.
 
-  Returns the raw binary content of the file.
-
-  https://platform.openai.com/docs/api-reference/container-files/retrieve-content
+  See https://platform.openai.com/docs/api-reference/container-files/retrieveContainerFileContent
   """
   def content!(openai = %OpenaiEx{}, container_id, file_id) do
     openai |> content(container_id, file_id) |> Http.bang_it!()
@@ -160,7 +138,7 @@ defmodule OpenaiEx.ContainerFiles do
   @doc """
   Deletes a container file.
 
-  https://platform.openai.com/docs/api-reference/container-files/delete
+  See https://platform.openai.com/docs/api-reference/container-files/deleteContainerFile
   """
   def delete!(openai = %OpenaiEx{}, container_id, file_id) do
     openai |> delete(container_id, file_id) |> Http.bang_it!()
