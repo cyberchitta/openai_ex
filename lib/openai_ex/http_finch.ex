@@ -34,7 +34,7 @@ defmodule OpenaiEx.Http.Finch do
   def request(request, openai = %OpenaiEx{}) do
     case Finch.request(request, Map.get(openai, :finch_name), request_options(openai)) do
       {:ok, response} -> to_response(response)
-      {:error, %{reason: reason}} -> to_error(reason, request)
+      {:error, error} -> to_error(error, request)
     end
   end
 
@@ -92,17 +92,18 @@ defmodule OpenaiEx.Http.Finch do
   def to_error(:nxdomain, request),
     do: {:error, Error.api_connection_error("Bad address - Non-Existent Domain.", request)}
 
-  def to_error(exception = %{reason: reason}, request) when is_exception(exception),
-    do: to_error(reason, request)
+  def to_error(%{reason: reason}, request), do: to_error(reason, request)
 
-  def to_error(reason, request) do
-    sanitized_request = if request, do: sanitize_request(request), else: nil
+  def to_error(error, request) when is_exception(error) do
+    sanitized = if request, do: sanitize_request(request), else: nil
+    Logger.warning("Unhandled Finch exception: #{inspect(error)}, request: #{inspect(sanitized)}")
+    {:error, Error.api_connection_error(Exception.message(error), sanitized)}
+  end
 
-    Logger.warning(
-      "Unknown Finch error, please report to maintainer: reason: #{inspect(reason)}, request #{inspect(sanitized_request)}"
-    )
-
-    {:error, Error.api_connection_error(reason, sanitized_request)}
+  def to_error(error, request) do
+    sanitized = if request, do: sanitize_request(request), else: nil
+    Logger.warning("Unhandled Finch error: #{inspect(error)}, request #{inspect(sanitized)}")
+    {:error, Error.api_connection_error(error, sanitized)}
   end
 
   def sanitize_request(%Finch.Request{headers: headers} = request) when is_list(headers) do
