@@ -123,10 +123,6 @@ defmodule OpenaiEx.Error do
     )
   end
 
-  def stream_error(exception) do
-    exception
-  end
-
   def sse_timeout_error() do
     exception(kind: :sse_timeout_error, message: "SSE next chunk timed out.")
   end
