@@ -12,11 +12,7 @@ The main user guide is a livebook, so you should be able to run everything witho
 
 ## Features and Benefits
 
-All API endpoints and features (as of Mar 16, 2025) are supported, including:
-- **Containers API**: Create and manage isolated environments for Code Interpreter execution
-- **Container Files API**: Upload, manage, and retrieve files within container environments
-- **Responses API**: Proposed replacement for Chat Completion with enhanced functionality
-- **Complete platform coverage**: All standard endpoints including chat, embeddings, images, audio, files, and more
+All API endpoints and features (as of Mar 16, 2025) are supported, including the most recent Responses API (proposed replacement for Chat Completion). The Containers and ContainerFiles APIs have also been added.
 
 ### Battle-Tested and Production-Ready
 
@@ -55,8 +51,6 @@ There are also Livebook examples for:
 - [Deeplearning.AI Orderbot](https://hexdocs.pm/openai_ex/dlai_orderbot.html) - This notebook is an elixir / Kino translation of the python notebook in [Lesson 8](https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/8/chatbot), of [Deeplearning.AI](https://www.deeplearning.ai/)'s course [ChatGPT Prompt Engineering for Developers](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/).
 - [Completions Chatbot](https://hexdocs.pm/openai_ex/completions.html) - Can be deployed as a Livebook app. The deployed app displays 2 forms, one for normal completions and another for streaming completions.
 - [Image Generation UI](https://hexdocs.pm/openai_ex/images.html) - A simple interface for generating images with DALL-E.
-
-The library also supports the new **Containers API** for managing isolated Code Interpreter environments, and the **Container Files API** for uploading and managing files within containers, enabling secure code execution and file processing workflows.
 
 These are hosted on [hexdocs](https://hexdocs.pm/openai_ex) and can be used as inspiration / starters for your own projects.
 

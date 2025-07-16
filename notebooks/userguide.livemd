@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.9.12"},
+  {:openai_ex, "~> 0.9.13"},
   # {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.15.3"}
 ])
@@ -45,7 +45,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.9.12"}
+    {:openai_ex, "~> 0.9.13"}
   ]
 )
 ```
@@ -59,7 +59,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.9.12"}
+    {:openai_ex, "~> 0.9.13"}
   ]
 end
 ```
@@ -1118,7 +1118,7 @@ We can also specify expiration settings and attach files during creation
 ```elixir
 container_req = Containers.new(
   name: "Advanced Container",
-  expires_after: %{anchor: "last_active_at", minutes: 30},
+  expires_after: %{anchor: "last_active_at", minutes: 20},
   file_ids: []
 )
 ```
@@ -1223,16 +1223,6 @@ We grab the file id from the previous response to use in the following samples
 
 ```elixir
 container_file_id = upload_res["id"]
-```
-
-### Reference existing file in container
-
-To reference an existing file (that was uploaded via the Files API) in a container, create a reference request
-
-```elixir
-# First upload a file via the Files API (reusing from File section example above)
-# reference_req = ContainerFiles.new_reference(file_id: file_id)
-# {:ok, ref_res} = openai |> ContainerFiles.create(demo_container_id, reference_req)
 ```
 
 ### Retrieve container file

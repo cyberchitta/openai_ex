@@ -7,7 +7,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
-## [0.9.12] - 2025-06-03
+## [0.9.13] - 2025-07-16
+
+### BREAKING CHANGE: Stream errors now return OpenaiEx.Error structs instead of raw exceptions
+
+### Feat
+- added Containers and ContainerFiles APIs (49ec7c2)
+
+### Refactor
+- standardize error handling to return OpenaiEx.Error
+
+### Build
+- Updated `finch` from 0.19.0 to 0.20.0
+
+## [0.9.13] - 2025-06-03
 
 ### Fix
 - fix error masking during streaming (356769b)
