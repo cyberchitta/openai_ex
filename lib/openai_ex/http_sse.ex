@@ -54,7 +54,7 @@ defmodule OpenaiEx.HttpSse do
     try do
       case Client.stream(request, openai, create_chunk_sender(me, ref)) do
         {:ok, _acc} -> send(me, {:done, ref})
-        {:error, exception} -> send(me, {:stream_error, exception, ref})
+        {:error, exception, _acc} -> send(me, {:stream_error, exception, ref})
       end
     catch
       :throw, :cancel_request -> {:exception, :cancel_request}
