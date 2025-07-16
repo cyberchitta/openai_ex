@@ -86,7 +86,7 @@ defmodule OpenaiEx.ContainerFiles do
 
   @doc """
   Creates a new container file via upload or file reference. 
-  
+
   See https://platform.openai.com/docs/api-reference/container-files/createContainerFile
   """
   def create!(openai = %OpenaiEx{}, container_id, request) do
