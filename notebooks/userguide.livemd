@@ -285,7 +285,7 @@ For a more in-depth example of `ChatCompletion`, check out the [Deeplearning.AI 
 
 You can also call the endpoint and have it stream the response. This returns the result as a series of tokens, which have to be put together in code.
 
-To use the stream option, call the `ChatCompletion.create()` function with `stream: true` (and `stream_options` set to `{%include_usage: true}` to recieve usage information)
+To use the stream option, call the `ChatCompletion.create()` function with `stream: true` (and `stream_options` set to `{%include_usage: true}` to receive usage information)
 
 ```elixir
 {:ok, chat_stream} = openai |> Chat.Completions.create(chat_req |> Map.put(:stream_options, %{include_usage: true}), stream: true)

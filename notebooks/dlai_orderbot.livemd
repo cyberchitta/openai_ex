@@ -115,8 +115,8 @@ We can automate the collection of user prompts and assistant responses to build 
 context = [
   ChatMessage.system("""
   You are OrderBot, an automated service to collect orders for a pizza restaurant. \
-  You first greet the customer, then collects the order, \
-  and then asks if it's a pickup or delivery. \
+  You first greet the customer, then collect the order, \
+  and then ask if it's a pickup or delivery. \
   You wait to collect the entire order, then summarize it and check for a final \
   time if the customer wants to add anything else. \
   If it's a delivery, you ask for an address. \
@@ -149,7 +149,7 @@ context = [
 append_completion = fn openai, messages, frame ->
   req = DlaiOrderbot.create_chat_req(messages: messages)
   bot_says = openai |> DlaiOrderbot.get_completion(req)
-  Kino.Frame.append(frame, Kino.Text.new("#{bot_says}"))
+  Kino.Frame.append(frame, Kino.Markdown.new("#{bot_says}"))
   bot_says
 end
 
