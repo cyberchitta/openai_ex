@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [0.9.14] - 2025-08-21
 
 ### Feat
-- added additional request parameter fields (859158d)
+- added additional request parameter fields to Responses API (859158d)
 
 ## [0.9.13] - 2025-07-16
 
