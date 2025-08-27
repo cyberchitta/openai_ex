@@ -1,69 +1,15 @@
 {% include 'lc-prompt.j2' %}
+{%- if rules %}
+
+{% for item in rules -%}
+{{ item.content }}
+{% endfor %}
+{%- endif -%}
 {% if project_notes %}
 {{ project_notes }}
 {% endif %}
-# Detailed Repository Content: **{{ project_name }}**
 
-## Instructions for AI: ⚠️ COMPLETE PROJECT CONTEXT PROVIDED - NO NEED TO REQUEST ADDITIONAL CONTEXT ⚠️
-
-## Quick Reference
-- ✓ = Full content included below
-{% if highlights %}
-- ○ = Outline only (structure/definitions)
-{% endif %}
-- ✗ = Excluded (not included)
-
-> Generation timestamp: {{ context_timestamp }}  
-> For updates: Use lc-list-modified-files first to identify changes, then lc-get-files for specific files
-> If tools are unavailable, ask the user to run the "lc-changed" CLI command
-
-This context presents a comprehensive view of the _/{{ project_name }}_ repository.
-
-{% if sample_requested_files %}
-## Instructions for AI: 📂 Before Requesting Any Files
-
-1. **SEARCH THIS DOCUMENT** to check if the file is already included
-2. **CHECK the repository structure** below to confirm file status (✓,{% if highlights %} ○,{% endif %} or ✗)
-3. Only request ✗{% if highlights %} or ○{% endif %} files that are absolutely necessary for your analysis
-
-{% if highlights %}
-**EFFICIENCY TIP:** If you only need specific functions or methods, use lc-get-implementations instead of requesting complete files.
-{% endif %}
-
-### How to Request Missing Files
-
-Check if lc-get-files tool is available in your environment before proceeding to option 2.
-
-1. Using the lc-get-files tool (if available in your environment):
-   **ROOT PATH must be: {{ abs_root_path }}**
-   Example request:
-  ```json
-  {
-    "root_path": "{{ abs_root_path }}",
-    "paths": [{% for file in sample_requested_files %}"{{ file }}"{% if not loop.last %},{% endif %}{% endfor %}]
-  }
-  ```
-
-2. Only if lc-get-files is not available, follow these steps (do NOT use the above root_path):
-    1. Immediately halt your current response.
-    2. Start a new response with a markdown code block (```) on a new line.
-    3. List the root-relative paths of the missing files you need, one per line.
-    4. Close the markdown code block with another ```.
-    5. End your response.
-
-    Example file request:
-    ```
-    {%- for file in sample_requested_files %}
-    {{ file }}
-    {%- endfor %}
-    ```
-    The human will then provide the requested file contents in the next message.
-{% endif %}
-## Repository Structure
-
-```
-{{ folder_structure_diagram }}
-```
+{% include 'lc-overview.j2' %}
 
 {% if files %}
 ## Complete File Contents
@@ -80,25 +26,27 @@ Instructions for AI:: The following outlines show definition declarations in fil
 
 > **Note:** Implementation retrieval doesn't support C/C++ files.
 
-1. Using the lc-get-implementations tool:
-   ```json
-   {
-     "root_path": "{{ abs_root_path }}",
-     "queries": [
-       {% for path, name in sample_definitions %}
-       ["{{ path }}", "{{ name }}"]{% if not loop.last %},{% endif %}
-       {% endfor %}
-     ]
-   }
-   ```
-
-2. Without tools: Copy these references to clipboard:
-   ```
-   {% for path, name in sample_definitions %}
-   {{ path }}:{{ name }}
-   {% endfor %}
-   ```
-   Then ask the human to run `lc-clip-implementations`
+{% if tools_available %}
+Using the lc-get-implementations tool:
+```json
+{
+  "root_path": "{{ abs_root_path }}",
+  "queries": [
+    {% for path, name in sample_definitions %}
+    ["{{ path }}", "{{ name }}"]{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+```
+{% else %}
+Copy these references to clipboard:
+```
+{% for path, name in sample_definitions %}
+{{ path }}:{{ name }}
+{% endfor %}
+```
+Then ask the human to run `lc-clip-implementations`
+{% endif %}
 
 NOTE: Prefer requesting specific implementations rather than entire files when possible.
 {% endif %}
@@ -107,4 +55,18 @@ NOTE: Prefer requesting specific implementations rather than entire files when p
 {% endif %}
 ## FINAL REMINDER
 
-Instructions for AI: ⚠️ DO NOT REQUEST ADDITIONAL CONTEXT. This document already contains complete project context. Use the content provided here for your analysis.
+{% if overview_mode == "focused" -%}
+{% if tools_available -%}
+Instructions for AI: ⚠️ This document contains focused project context. Use the available tools (lc-get-files, lc-list-modified-files, lc-get-implementations) to retrieve additional files as needed for your analysis. Check the repository structure above to see file status before requesting.
+{%- else -%}
+Instructions for AI: ⚠️ This document contains focused project context. Additional files can be requested by following the file request instructions in the repository structure section above.
+{%- endif %}
+{%- else -%}
+{% if tools_available -%}
+Instructions for AI: ⚠️ DO NOT REQUEST ADDITIONAL CONTEXT OR FILES ALREADY INCLUDED ABOVE. This document contains complete project context. Only request files that have been modified since context generation (using lc-list-modified-files) or specific files marked as excluded (✗) that are necessary for your analysis.
+{%- else -%}
+Instructions for AI: ⚠️ DO NOT REQUEST ADDITIONAL CONTEXT OR FILES ALREADY INCLUDED ABOVE. This document contains complete project context. Additional files can be requested by following the file request instructions in the repository structure section above.
+{%- endif %}
+{%- endif %}
+
+{% include 'lc-end-prompt.j2' %}
