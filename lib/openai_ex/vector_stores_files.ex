@@ -27,7 +27,7 @@ defmodule OpenaiEx.VectorStores.Files do
   def create(openai = %OpenaiEx{}, vector_store_id, file_id, params \\ %{}) do
     json =
       %{file_id: file_id}
-      |> Map.merge(params |> Map.take([:metadata]))
+      |> Map.merge(params |> Map.take([:attributes]))
 
     openai |> Http.post(ep_url(vector_store_id), json: json)
   end
