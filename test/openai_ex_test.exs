@@ -11,4 +11,5 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Beta.Threads.Runs
   doctest OpenaiEx.Containers
   doctest OpenaiEx.ContainerFiles
+  doctest OpenaiEx.VectorStores
 end

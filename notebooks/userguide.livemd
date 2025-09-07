@@ -1522,9 +1522,9 @@ assts = openai |> Assistants.list()
 ## Vector Stores
 
 ```elixir
-alias OpenaiEx.Beta.VectorStores
-alias OpenaiEx.Beta.VectorStores.Files
-alias OpenaiEx.Beta.VectorStores.File.Batches
+alias OpenaiEx.VectorStores
+alias OpenaiEx.VectorStores.Files
+alias OpenaiEx.VectorStores.File.Batches
 ```
 
 ### Create vector store
@@ -1586,6 +1586,24 @@ then attach the file id from earlier
 ```elixir
 vector_store_id = vector_store["id"]
 {:ok, vs_file} = openai |> VectorStores.Files.create(vector_store_id, file_id)
+```
+
+### Create vector store file with attributes
+
+The new stable API supports adding attributes (metadata) to vector store files:
+
+```elixir
+# Create a file with attributes for better organization
+file_params = %{
+  attributes: %{
+    "source" => "hr_documentation",
+    "category" => "policies",
+    "priority" => "high",
+    "last_updated" => "2024-01-15"
+  }
+}
+
+{:ok, vs_file_with_attrs} = openai |> VectorStores.Files.create(vector_store_id, file_id, file_params)
 ```
 
 ### Retrieve vector store file
