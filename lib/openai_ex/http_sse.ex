@@ -120,10 +120,19 @@ defmodule OpenaiEx.HttpSse do
     fn acc ->
       try do:
             (case acc do
-               {:exception, :timeout} -> raise(Error.sse_timeout_error())
-               {:exception, :canceled} -> raise(Error.sse_user_cancellation())
-               {:exception, {:stream_error, exception}} -> raise(Client.to_error(exception, nil))
-               _ -> :ok
+               {:exception, :timeout} ->
+                 raise(Error.sse_timeout_error())
+
+               {:exception, :canceled} ->
+                 raise(Error.sse_user_cancellation())
+
+               {:exception, {:stream_error, exception}} ->
+                 case Client.to_error(exception, nil) do
+                   {:error, exception} -> raise(exception)
+                 end
+
+               _ ->
+                 :ok
              end),
           after: Task.shutdown(task)
     end
