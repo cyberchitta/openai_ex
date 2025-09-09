@@ -1,6 +1,6 @@
 services:
   livebook:
-    image: ghcr.io/livebook-dev/livebook:0.15.5
+    image: ghcr.io/livebook-dev/livebook:0.17.1
     environment:
       # secrets - values are set in '.env'. It's not in version control, but look at 'env'
       LIVEBOOK_PASSWORD: ${LIVEBOOK_PASSWORD}
