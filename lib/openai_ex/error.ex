@@ -118,8 +118,7 @@ defmodule OpenaiEx.Error do
       response: response,
       body: error,
       status_code: status_code,
-      request_id:
-        get_in(response.headers, [Access.filter(&(elem(&1, 0) == "x-request-id")), Access.elem(1)])
+      request_id: get_in(response.headers, [Access.filter(&(elem(&1, 0) == "x-request-id")), Access.elem(1)])
     )
   end
 
