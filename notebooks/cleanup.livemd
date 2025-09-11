@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.9.14"},
+  {:openai_ex, "~> 0.9.15"},
 ])
 ```
 
@@ -42,12 +42,12 @@ OpenaiEx.Beta.Assistants.list!(openai)
 ## Vector Stores cleanup
 
 ```elixir
-(openai |> OpenaiEx.Beta.VectorStores.list!())["data"]
-|> Enum.each(fn vs -> openai |> OpenaiEx.Beta.VectorStores.delete!(vs["id"]) end)
+(openai |> OpenaiEx.VectorStores.list!())["data"]
+|> Enum.each(fn vs -> openai |> OpenaiEx.VectorStores.delete!(vs["id"]) end)
 ```
 
 ```elixir
-openai |> OpenaiEx.Beta.VectorStores.list!()
+openai |> OpenaiEx.VectorStores.list!()
 ```
 
-<!-- livebook:{"offset":923,"stamp":{"token":"XCP.6es526vamsWq1YfmVRYCLjbAl1MiRGivAp8ZJ6G4bANpBuLsXzyJSshNtzk76mm9fE2kZXUQ7uKVyZ5RGB4IQccvocUjYN6cGtEfGWe0RVt8jwHOonreylI","version":2}} -->
+<!-- livebook:{"offset":908,"stamp":{"token":"XCP.rVD_RfWMNo30ksluFnMvhR13L8d9SxgiWM6LkeVm5E03FzDIP7F8ci6SeeDuUcNBy_ifxLnRSEIlPAQTzp2B1VD-MUGr1-awmSasSGZkNk5cWlHRp2aNE7Q","version":2}} -->

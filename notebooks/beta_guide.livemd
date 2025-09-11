@@ -1,0 +1,318 @@
+# OpenaiEx Beta API User Guide
+
+```elixir
+Mix.install([
+  {:openai_ex, "~> 0.9.15"},
+  {:kino, "~> 0.17.0"}
+])
+```
+
+## Introduction
+
+This guide covers the beta APIs in OpenaiEx. These APIs are subject to change and may not be stable. The beta APIs include Assistants, Threads and Runs, and related functionality.
+
+```elixir
+apikey = System.fetch_env!("LB_OPENAI_API_KEY")
+openai = OpenaiEx.new(apikey)
+```
+
+## Assistant
+
+```elixir
+alias OpenaiEx.Beta.Assistants
+```
+
+### Create Assistant
+
+To create an assistant with model and instructions, call the [`Assistant.create()`](https://platform.openai.com/docs/api-reference/assistants/createAssistant) function.
+
+First, we setup the create request parameters. This request sets up an Assistant with a code interpreter tool.
+
+```elixir
+hr_assistant_req =
+  Assistants.new(
+    instructions:
+      "You are an HR bot, and you have access to files to answer employee questions about company policies.",
+    name: "HR Helper",
+    tools: [%{type: "file_search"}],
+    model: "gpt-4o-mini"
+  )
+```
+
+Then we call the create function
+
+```elixir
+{:ok, asst} = openai |> Assistants.create(hr_assistant_req)
+```
+
+### Retrieve Assistant
+
+Extract the id field for the assistant
+
+```elixir
+assistant_id = asst["id"]
+```
+
+which can then be used to retrieve the Assistant fields, using the [`Assistant.retrieve()`](https://platform.openai.com/docs/api-reference/assistants/getAssistant) function.
+
+```elixir
+openai |> Assistants.retrieve(assistant_id)
+```
+
+### Modify Assistant
+
+Once created, an assistant can be modified using the [`Assistant.update()`](https://platform.openai.com/docs/api-reference/assistants/modifyAssistant) function.
+
+Now we will show an example assistant request using the retrieval tool with a set of files. First we set up the files (in this case a sample HR document) by uploading using the `File` API.
+
+```elixir
+fetch_blob = fn url ->
+  Finch.build(:get, url) |> Finch.request!(OpenaiEx.Finch) |> Map.get(:body)
+end
+```
+
+```elixir
+alias OpenaiEx.Files
+
+# hr_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/cyberdyne.txt"))
+hrf_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/cyberdyne.txt"
+hr_file = OpenaiEx.new_file(name: hrf_url, content: fetch_blob.(hrf_url))
+
+hr_upload_req = Files.new_upload(file: hr_file, purpose: "assistants")
+{:ok, hr_upload_res} = openai |> Files.create(hr_upload_req)
+```
+
+```elixir
+file_id = hr_upload_res["id"]
+```
+
+Next we create the update request
+
+```elixir
+math_assistant_req =
+  Assistants.new(
+    instructions:
+      "You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
+    name: "Math Tutor",
+    tools: [%{type: "code_interpreter"}],
+    model: "gpt-4o-mini",
+    tool_resources: %{code_interpreter: %{file_ids: [file_id]}}
+  )
+```
+
+Finally we call the endpoint to modify the `Assistant`
+
+```elixir
+{:ok, asst} = openai |> Assistants.update(assistant_id, math_assistant_req)
+```
+
+### Delete Assistant
+
+Finally we can delete assistants using the [`Assistant.delete()`](https://platform.openai.com/docs/api-reference/assistants/deleteAssistant) function
+
+```elixir
+openai |> Assistants.delete(assistant_id)
+```
+
+### List Assistants
+
+We use [`Assistant.list()`](https://platform.openai.com/docs/api-reference/assistants/listAssistants) to get a list of assistants
+
+```elixir
+assts = openai |> Assistants.list()
+```
+
+## Thread
+
+```elixir
+alias OpenaiEx.Beta.Threads
+alias OpenaiEx.Beta.Threads.Messages
+```
+
+### Create thread
+
+Use the [`Thread.create()`] function to create threads. A thread can be created empty or with messages.
+
+```elixir
+{:ok, empty_thread} = openai |> Threads.create()
+
+msg_hr =
+  Messages.new(
+    role: "user",
+    content: "What company do we work at?",
+    attachments: [%{file_id: file_id, tools: [%{type: "file_search"}]}]
+  )
+
+msg_ai = Messages.new(role: "user", content: "How does AI work? Explain it in simple terms.")
+
+thrd_req = Threads.new(messages: [msg_hr, msg_ai])
+
+{:ok, thread} = openai |> Threads.create(thrd_req)
+```
+
+### Retrieve thread
+
+[`Thread.retrieve()`](https://platform.openai.com/docs/api-reference/threads/getThread) can be used to get the thread parameters given the id.
+
+```elixir
+thread_id = thread["id"]
+openai |> Threads.retrieve(thread_id)
+```
+
+### Modify thread
+
+The metadata for a thread can be modified using [`Thread.update()`](https://platform.openai.com/docs/api-reference/threads/modifyThread)
+
+```elixir
+openai |> Threads.update(thread_id, %{metadata: %{modified: "true", user: "abc123"}})
+```
+
+### Delete thread
+
+Use [`Thread.delete()`](https://platform.openai.com/docs/api-reference/threads/deleteThread) to delete a thread
+
+```elixir
+openai |> Threads.delete(thread_id)
+```
+
+Verify deletion
+
+```elixir
+openai |> Threads.retrieve(thread_id)
+```
+
+## Messages
+
+### Create message
+
+You can create a single message for a thread using [`Message.create()`](https://platform.openai.com/docs/api-reference/messages/createMessage)
+
+```elixir
+thread_id = empty_thread["id"]
+
+{:ok, message} = openai |> Threads.Messages.create(thread_id, msg_hr)
+```
+
+### Retrieve message
+
+Use [`Message.retrieve()`] to retrieve a message
+
+```elixir
+message_id = message["id"]
+openai |> Threads.Messages.retrieve(%{thread_id: thread_id, message_id: message_id})
+```
+
+### Modify message
+
+The metadata for a message can be modified by [`Message.update()`]
+
+```elixir
+metadata = %{modified: "true", user: "abc123"}
+
+upd_msg_req =
+  Threads.Messages.new(thread_id: thread_id, message_id: message_id, metadata: metadata)
+
+{:ok, message} = openai |> Threads.Messages.update(upd_msg_req)
+```
+
+### List messages
+
+Use [`Message.list()`] to get all the messages for a given thread
+
+```elixir
+openai |> Threads.Messages.list(thread_id)
+```
+
+## Runs
+
+```elixir
+alias OpenaiEx.Beta.Threads.Runs
+```
+
+### Create run
+
+A run represents an execution on a thread. Use to [`Run.create()`](https://platform.openai.com/docs/api-reference/runs/createRun) with an assistant on a thread
+
+```elixir
+{:ok, math_assistant} = openai |> Assistants.create(math_assistant_req)
+math_assistant_id = math_assistant["id"]
+
+run_req = Runs.new(thread_id: thread_id, assistant_id: math_assistant_id)
+
+{:ok, run} = openai |> Runs.create(run_req)
+```
+
+#### Streaming
+
+It is possible to stream the result of executing a run or resuming a run after submitting tool outputs. To accomplish this, pass `stream: true` to the `create`, `create_thread_and_run` and `submit_tool_outputs` functions.
+
+```elixir
+{:ok, run_stream} = openai |> Runs.create(run_req, stream: true)
+IO.puts(inspect(run_stream))
+IO.puts(inspect(run_stream.task_pid))
+run_stream.body_stream |> Stream.flat_map(& &1) |> Enum.each(fn x -> IO.puts(inspect(x)) end)
+```
+
+### Retrieve run
+
+Retrieve a run using [`Run.retrieve()`](https://platform.openai.com/docs/api-reference/runs/getRun)
+
+```elixir
+run_id = run["id"]
+openai |> Runs.retrieve(%{thread_id: thread_id, run_id: run_id})
+```
+
+### Modify run
+
+The run metadata can be modified using the [`Run.update()`](https://platform.openai.com/docs/api-reference/runs/modifyRun) function
+
+```elixir
+openai
+|> Runs.update(%{
+  thread_id: thread_id,
+  run_id: run_id,
+  metadata: %{user_id: "user_zmVY6FvuBDDwIqM4KgH"}
+})
+```
+
+### List runs
+
+List the runs belonging to a thread using [`Run.list()`](https://platform.openai.com/docs/api-reference/runs/listRuns)
+
+```elixir
+# Basic usage
+openai |> Runs.list([
+  thread_id: thread_id
+])
+
+# With optional parameters
+openai |> Runs.list([
+  thread_id: thread_id,
+  limit: 10,
+  order: "desc",
+  include: ["run_steps"]
+])
+```
+
+### Submit tool outputs to a run
+
+When a run has the `status`: "requires_action" and `required_action.type` is `submit_tool_outputs`, the [`Run.submit_tool_outputs()`](https://platform.openai.com/docs/api-reference/runs/submitToolOutputs) can be used to submit the outputs from the tool calls once they're all completed. All outputs must be submitted in a single request.
+
+```elixir
+openai
+|> Runs.submit_tool_outputs(%{
+  thread_id: thread_id,
+  run_id: run_id,
+  tool_outputs: [%{tool_call_id: "foobar", output: "28C"}]
+})
+```
+
+### Cancel a run
+
+You can cancel a run `in_progress` using [`Run.cancel()`](https://platform.openai.com/docs/api-reference/runs/cancelRun)
+
+```elixir
+openai |> Runs.cancel(%{thread_id: thread_id, run_id: run_id})
+```
+
+<!-- livebook:{"offset":8367,"stamp":{"token":"XCP.XHOcffHk1vrk0L1idSqQy4XMLbwXZABDhl0BrfdY-p0SqaBmvmM5ouTrNXeRmBc-TxqPJkwCU9NdElVJlSVDg3yGO_9pCPNJTgWFkK5HJe2svisYCBbmG5s","version":2}} -->

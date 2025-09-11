@@ -1,7 +1,7 @@
 defmodule OpenaiEx.MixProject do
   use Mix.Project
 
-  @version "0.9.14"
+  @version "0.9.15"
   @description "Community maintained Elixir library for OpenAI API"
   @source_url "https://github.com/cyberchitta/openai_ex"
 
@@ -60,6 +60,7 @@ defmodule OpenaiEx.MixProject do
       extra_section: "Livebooks",
       extras: [
         "notebooks/userguide.livemd",
+        "notebooks/beta_guide.livemd",
         "notebooks/streaming_orderbot.livemd",
         "notebooks/dlai_orderbot.livemd",
         "notebooks/images.livemd"
