@@ -1,4 +1,4 @@
-defmodule OpenaiEx.Http.Finch do
+defmodule OpenaiEx.HttpFinch do
   @moduledoc false
   require Logger
   alias OpenaiEx.Error
@@ -82,6 +82,12 @@ defmodule OpenaiEx.Http.Finch do
            else: ({:error, _} -> %{"error" => %{"message" => "#{inspect(body)}"}})
 
     {:error, Error.status_error(status, r, decoded_body)}
+  end
+
+  def to_error!(error, request) do
+    case to_error(error, request) do
+      {:error, exception} -> exception
+    end
   end
 
   def to_error(:timeout, request), do: {:error, Error.api_timeout_error(request)}

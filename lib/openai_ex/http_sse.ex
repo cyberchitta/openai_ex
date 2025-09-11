@@ -1,6 +1,6 @@
 defmodule OpenaiEx.HttpSse do
   @moduledoc false
-  alias OpenaiEx.Http.Finch, as: Client
+  alias OpenaiEx.HttpFinch
   alias OpenaiEx.Error
   require Logger
 
@@ -12,7 +12,7 @@ defmodule OpenaiEx.HttpSse do
   def post(openai = %OpenaiEx{}, url, json: json) do
     me = self()
     ref = make_ref()
-    request = Client.build_post(openai, url, json: json)
+    request = HttpFinch.build_post(openai, url, json: json)
     task = Task.async(fn -> finch_stream(openai, request, me, ref) end)
     result = build_sse_stream(openai, task, request, ref)
     unless match?({:ok, %{task_pid: _}}, result), do: Task.shutdown(task)
@@ -46,13 +46,13 @@ defmodule OpenaiEx.HttpSse do
   defp handle_receive_error(error_result, request) do
     case error_result do
       :error -> {:error, Error.api_timeout_error(request)}
-      {:error, {:stream_error, exception}} -> Client.to_error(exception, request)
+      {:error, {:stream_error, exception}} -> HttpFinch.to_error(exception, request)
     end
   end
 
   defp finch_stream(openai = %OpenaiEx{}, request, me, ref) do
     try do
-      case Client.stream(request, openai, create_chunk_sender(me, ref)) do
+      case HttpFinch.stream(request, openai, create_chunk_sender(me, ref)) do
         {:ok, _acc} -> send(me, {:done, ref})
         {:error, exception, _acc} -> send(me, {:stream_error, exception, ref})
       end
@@ -120,19 +120,10 @@ defmodule OpenaiEx.HttpSse do
     fn acc ->
       try do:
             (case acc do
-               {:exception, :timeout} ->
-                 raise(Error.sse_timeout_error())
-
-               {:exception, :canceled} ->
-                 raise(Error.sse_user_cancellation())
-
-               {:exception, {:stream_error, exception}} ->
-                 case Client.to_error(exception, nil) do
-                   {:error, exception} -> raise(exception)
-                 end
-
-               _ ->
-                 :ok
+               {:exception, :timeout} -> raise(Error.sse_timeout_error())
+               {:exception, :canceled} -> raise(Error.sse_user_cancellation())
+               {:exception, {:stream_error, exception}} -> raise(HttpFinch.to_error!(exception, nil))
+               _ -> :ok
              end),
           after: Task.shutdown(task)
     end

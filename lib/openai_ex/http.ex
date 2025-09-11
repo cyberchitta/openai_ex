@@ -1,21 +1,21 @@
 defmodule OpenaiEx.Http do
   @moduledoc false
-  alias OpenaiEx.Http.Finch, as: Client
+  alias OpenaiEx.HttpFinch
 
   def post(openai = %OpenaiEx{}, url) do
     post(openai, url, json: %{})
   end
 
   def post(openai = %OpenaiEx{}, url, multipart: multipart) do
-    Client.post(openai, url, multipart: multipart) |> handle_response()
+    HttpFinch.post(openai, url, multipart: multipart) |> handle_response()
   end
 
   def post(openai = %OpenaiEx{}, url, json: json) do
-    Client.post(openai, url, json: json) |> handle_response()
+    HttpFinch.post(openai, url, json: json) |> handle_response()
   end
 
   def post_no_decode(openai = %OpenaiEx{}, url, json: json) do
-    Client.post(openai, url, json: json) |> extract_body()
+    HttpFinch.post(openai, url, json: json) |> extract_body()
   end
 
   def get(openai = %OpenaiEx{}, base_url, params) do
@@ -24,15 +24,15 @@ defmodule OpenaiEx.Http do
   end
 
   def get(openai = %OpenaiEx{}, url) do
-    Client.get(openai, url) |> handle_response()
+    HttpFinch.get(openai, url) |> handle_response()
   end
 
   def get_no_decode(openai = %OpenaiEx{}, url) do
-    Client.get(openai, url) |> extract_body()
+    HttpFinch.get(openai, url) |> extract_body()
   end
 
   def delete(openai = %OpenaiEx{}, url) do
-    Client.delete(openai, url) |> handle_response()
+    HttpFinch.delete(openai, url) |> handle_response()
   end
 
   def to_multi_part_form_data(req, file_fields) do
