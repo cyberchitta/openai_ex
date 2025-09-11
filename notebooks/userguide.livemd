@@ -2,8 +2,8 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.9.15"},
-  # {:openai_ex, path: Path.join(__DIR__, "..")},
+  # {:openai_ex, "~> 0.9.16"},
+  {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.17.0"}
 ])
 ```
@@ -45,7 +45,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.9.15"}
+    {:openai_ex, "~> 0.9.16"}
   ]
 )
 ```
@@ -59,7 +59,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.9.15"}
+    {:openai_ex, "~> 0.9.16"}
   ]
 end
 ```
@@ -1796,3 +1796,4 @@ Use [`VectorStores.File.Batches.list()`](https://platform.openai.com/docs/api-re
 openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
 ```
 
+<!-- livebook:{"offset":57214,"stamp":{"token":"XCP.z1axmAf9dYEDyxHpTqwYNb9xsKxtQ0e34aXPGNlDLYdNMj9M14VTz11dtMfMehvDhZ2oY8qJqKWQvkI0g3a4Szxl1HgB2a00a9aJkpsHgAW-po9xI8_PSxw","version":2}} -->

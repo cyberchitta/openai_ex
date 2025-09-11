@@ -7,7 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
-## [0.9.15] - 2025-08-21
+## [0.9.16] - 2025-09-11
+
+### Fix
+- fixed error logging on raise (67e12b7)
+
+## [0.9.15] - 2025-09-11
 
 ### Feat
 - added Evals endpoints (67e1df0)

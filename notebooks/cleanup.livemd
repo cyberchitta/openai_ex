@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.9.15"},
+  {:openai_ex, "~> 0.9.16"},
 ])
 ```
 
@@ -49,5 +49,3 @@ OpenaiEx.Beta.Assistants.list!(openai)
 ```elixir
 openai |> OpenaiEx.VectorStores.list!()
 ```
-
-<!-- livebook:{"offset":908,"stamp":{"token":"XCP.rVD_RfWMNo30ksluFnMvhR13L8d9SxgiWM6LkeVm5E03FzDIP7F8ci6SeeDuUcNBy_ifxLnRSEIlPAQTzp2B1VD-MUGr1-awmSasSGZkNk5cWlHRp2aNE7Q","version":2}} -->
