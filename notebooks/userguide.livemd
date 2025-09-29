@@ -820,6 +820,167 @@ This allows you to clean up stored responses that are no longer needed.
 
 For more information on the Responses API, see the [OpenAI API Responses Reference](https://platform.openai.com/docs/api-reference/responses).
 
+## Conversations
+
+```elixir
+alias OpenaiEx.Conversations
+alias OpenaiEx.ConversationItems
+```
+
+Create and manage conversations to store and retrieve conversation state across Response API calls. The API reference can be found at [OpenAI Conversations API](https://platform.openai.com/docs/api-reference/conversations).
+
+### Create Conversation
+
+To create a conversation, call the [`Conversations.create()`](https://platform.openai.com/docs/api-reference/conversations/create) function with metadata and initial items:
+
+```elixir
+conv_req = Conversations.new(
+  metadata: %{"topic" => "demo"},
+  items: [
+    %{
+      type: "message",
+      role: "user",
+      content: [%{type: "input_text", text: "Hello!"}]
+    }
+  ]
+)
+
+{:ok, conversation} = openai |> Conversations.create(conv_req)
+conversation_id = conversation["id"]
+```
+
+### Retrieve Conversation
+
+Use [`Conversations.retrieve()`](https://platform.openai.com/docs/api-reference/conversations/retrieve) to get details about a specific conversation:
+
+```elixir
+{:ok, retrieved_conversation} = openai |> Conversations.retrieve(conversation_id)
+```
+
+### Update Conversation
+
+Use [`Conversations.update()`](https://platform.openai.com/docs/api-reference/conversations/update) to update a conversation's metadata:
+
+```elixir
+update_req = Conversations.new(metadata: %{"topic" => "project-x"})
+{:ok, updated_conversation} = openai |> Conversations.update(conversation_id, update_req)
+```
+
+### Delete Conversation
+
+Delete conversations using the [`Conversations.delete()`](https://platform.openai.com/docs/api-reference/conversations/delete) function:
+
+```elixir
+{:ok, delete_result} = openai |> Conversations.delete(conversation_id)
+```
+
+## Conversation Items
+
+Conversation items represent individual messages, function calls, or other content within a conversation.
+
+### Create a new conversation for items testing
+
+```elixir
+{:ok, items_conversation} = openai |> Conversations.create()
+items_conv_id = items_conversation["id"]
+```
+
+### Create Conversation Items
+
+Use [`ConversationItems.create()`](https://platform.openai.com/docs/api-reference/conversations/createItem) to add multiple items at once:
+
+```elixir
+items_req = ConversationItems.new(
+  items: [
+    %{
+      type: "message",
+      role: "user",
+      content: [%{type: "input_text", text: "Hello!"}]
+    },
+    %{
+      type: "message",
+      role: "user",
+      content: [%{type: "input_text", text: "How are you?"}]
+    }
+  ]
+)
+
+{:ok, created_items} = openai |> ConversationItems.create(items_conv_id, items_req)
+item_id = created_items["data"] |> List.first() |> Map.get("id")
+```
+
+### List Conversation Items
+
+Use [`ConversationItems.list()`](https://platform.openai.com/docs/api-reference/conversations/listItems) with pagination:
+
+```elixir
+{:ok, items} = openai |> ConversationItems.list(items_conv_id, %{limit: 10})
+```
+
+### Retrieve and Delete Item
+
+Retrieve a specific item:
+
+```elixir
+{:ok, retrieved_item} = openai |> ConversationItems.retrieve(items_conv_id, item_id)
+```
+
+Delete an item:
+
+```elixir
+{:ok, delete_item_result} = openai |> ConversationItems.delete(items_conv_id, item_id)
+```
+
+### Cleanup
+
+```elixir
+{:ok, _} = openai |> Conversations.delete(items_conv_id)
+```
+
+## Complete Example: Multi-turn Conversation
+
+```elixir
+# Create conversation with initial message
+chat_conv = Conversations.new(
+  metadata: %{"purpose" => "demo", "topic" => "elixir"},
+  items: [
+    %{
+      type: "message",
+      role: "user",
+      content: [%{type: "input_text", text: "What is Elixir?"}]
+    }
+  ]
+)
+
+{:ok, created_chat} = openai |> Conversations.create(chat_conv)
+chat_conv_id = created_chat["id"]
+
+# Add more messages
+{:ok, _} = openai |> ConversationItems.create(chat_conv_id, ConversationItems.new(
+  items: [
+    %{
+      type: "message",
+      role: "assistant",
+      content: [%{type: "output_text", text: "Elixir is a functional programming language that runs on the Erlang VM."}]
+    },
+    %{
+      type: "message",
+      role: "user",
+      content: [%{type: "input_text", text: "What are its main features?"}]
+    }
+  ]
+))
+
+# List conversation history
+{:ok, conversation_history} = openai |> ConversationItems.list(chat_conv_id)
+IO.inspect(conversation_history, label: "Conversation History")
+
+# Cleanup
+{:ok, _} = openai |> Conversations.delete(chat_conv_id)
+```
+
+For more information on the Conversations API, see the [OpenAI API Conversations Reference](https://platform.openai.com/docs/api-reference/conversations).
+
 ## Image
 
 ### Generate Image
