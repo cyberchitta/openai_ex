@@ -16,7 +16,7 @@ gitignores:
     - '*.md'
     - '*.scm'
     - '*.yaml'
-  outline-files:
+  excerpted-files:
     - beta/
     - notebooks/
     - test/
