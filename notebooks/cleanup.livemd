@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.9.16"},
+  {:openai_ex, "~> 0.9.17"},
 ])
 ```
 
