@@ -8,6 +8,7 @@ defmodule OpenaiEx.Responses do
   @api_fields [
     :model,
     :background,
+    :conversation,
     :include,
     :input,
     :instructions,
