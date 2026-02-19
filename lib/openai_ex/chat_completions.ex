@@ -34,6 +34,7 @@ defmodule OpenaiEx.Chat.Completions do
     :tools,
     :tool_choice,
     :user,
+    :verbosity,
     :web_search_options
   ]
 
