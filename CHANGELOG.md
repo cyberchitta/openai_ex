@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
+## [0.9.19] - 2026-02-19
+
+### Feat
+- added 'verbosity' param to chat completion endpoint (9330844)
+- added 'prompt_cache_key' and 'prompt_cache_retention' and params to chat completion endpoint (54f7b66)
+
 ## [0.9.18] - 2025-10-12
 
 ### Feat
