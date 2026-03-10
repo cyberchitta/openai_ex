@@ -7,7 +7,8 @@ defmodule OpenaiEx.ChatMessage do
     :content,
     :role,
     :name,
-    :tool_call_id
+    :tool_call_id,
+    :tool_calls
   ]
 
   defp new(args = [_ | _]), do: args |> Enum.into(%{}) |> new()
@@ -56,8 +57,12 @@ defmodule OpenaiEx.ChatMessage do
 
       iex> _message = OpenaiEx.ChatMessage.assistant("Hello, world!")
       %{content: "Hello, world!", role: "assistant"}
+
+      iex> _message = OpenaiEx.ChatMessage.assistant("Hello, world!", [%{id: "call_123", function: %{name: "test", arguments: "{}"}}])
+      %{content: "Hello, world!", role: "assistant", tool_calls: [%{id: "call_123", function: %{name: "test", arguments: "{}"}}]}
   """
-  def assistant(content), do: new(role: "assistant", content: content)
+  def assistant(content, tool_calls \\ nil),
+    do: new(role: "assistant", content: content, tool_calls: tool_calls)
 
   @doc """
   Create a `ChatMessage` map with role `function`.
