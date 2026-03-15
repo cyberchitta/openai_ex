@@ -441,7 +441,9 @@ We extract the function call from the response and call the appropriate function
 
 ```elixir
 fn_message = fn_response["choices"] |> Enum.at(0) |> Map.get("message")
-tool_call = fn_message |> Map.get("tool_calls") |> List.first()
+fn_content = fn_message |> Map.get("content")
+fn_tool_calls = fn_message |> Map.get("tool_calls")
+tool_call = fn_tool_calls |> List.first()
 tool_id = tool_call |> Map.get("id")
 fn_call = tool_call |> Map.get("function")
 
@@ -469,7 +471,11 @@ fn_value = functions[fn_name].(location, unit)
 We then pass the returned value back to the ChatCompletion endpoint with the conversation history to that point to get the final response.
 
 ```elixir
-latest_msgs = [ChatMessage.tool(tool_id, fn_name, fn_value) | [fn_message | rev_msgs]]
+latest_msgs = [
+  ChatMessage.tool(tool_id, fn_name, fn_value),
+  ChatMessage.assistant(fn_content, fn_tool_calls)
+  | rev_msgs
+]
 
 fn_req_2 =
   Chat.Completions.new(
