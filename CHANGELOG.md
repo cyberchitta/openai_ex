@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
+## [0.9.20] - 2026-03-17
+
+### Fixed
+- added tool_calls support to ChatMessage & fix string/atom key inconsistency (5b982fe)
+
+### Changed
+- Commented out Image.variation example in user guide (10274b5)
+
 ## [0.9.19] - 2026-02-19
 
 ### Feat

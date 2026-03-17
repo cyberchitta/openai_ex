@@ -1,7 +1,7 @@
 defmodule OpenaiEx.MixProject do
   use Mix.Project
 
-  @version "0.9.19"
+  @version "0.9.20"
   @description "Community maintained Elixir library for OpenAI API"
   @source_url "https://github.com/cyberchitta/openai_ex"
 
@@ -31,9 +31,9 @@ defmodule OpenaiEx.MixProject do
 
   defp deps do
     [
-      {:finch, "~> 0.20"},
+      {:finch, "~> 0.21"},
       {:jason, "~> 1.4"},
-      {:multipart, "~> 0.4"},
+      {:multipart, "~> 0.6"},
       {:ex_doc, ">= 0.0.0", only: :docs},
       {:credo, "~> 1.7", only: :dev, runtime: false},
       {:dialyxir, "~> 1.4", only: :dev, runtime: false}
