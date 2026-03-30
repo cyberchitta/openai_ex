@@ -2,7 +2,7 @@
 
 ```elixir
 Mix.install([
-  # {:openai_ex, "~> 0.9.18"},
+  # {:openai_ex, "~> 0.9.20"},
   {:openai_ex, path: Path.join(__DIR__, "..")},
   {:kino, "~> 0.17.0"}
 ])
@@ -45,7 +45,7 @@ Add the following code to the first connection cell:
 ```elixir
 Mix.install(
   [
-    {:openai_ex, "~> 0.9.18"}
+    {:openai_ex, "~> 0.9.20"}
   ]
 )
 ```
@@ -59,7 +59,7 @@ Add the following to your mix.exs file:
 ```elixir
 def deps do
   [
-    {:openai_ex, "~> 0.9.18"}
+    {:openai_ex, "~> 0.9.20"}
   ]
 end
 ```
@@ -116,11 +116,11 @@ You can use this instance of Finch (instead of the default `OpenaiEx.Finch`) by 
 openai_with_custom_finch = openai |> with_finch_name(MyConfiguredFinch)
 ```
 
-<!-- livebook:{"break_markdown":true} -->
-
 ### Base Url
 
 There are times, such as when using a local LLM (like Ollama) with an OpenAI proxy, when you need to reset the base url of the API. This is generally only applicable for chat and chat completion endpoints and can be accomplished by
+
+<!-- livebook:{"force_markdown":true} -->
 
 ```elixir
 # in this example, our development livebook server is running in a docker dev container while 
@@ -441,7 +441,9 @@ We extract the function call from the response and call the appropriate function
 
 ```elixir
 fn_message = fn_response["choices"] |> Enum.at(0) |> Map.get("message")
-tool_call = fn_message |> Map.get("tool_calls") |> List.first()
+fn_content = fn_message |> Map.get("content")
+fn_tool_calls = fn_message |> Map.get("tool_calls")
+tool_call = fn_tool_calls |> List.first()
 tool_id = tool_call |> Map.get("id")
 fn_call = tool_call |> Map.get("function")
 
@@ -469,7 +471,11 @@ fn_value = functions[fn_name].(location, unit)
 We then pass the returned value back to the ChatCompletion endpoint with the conversation history to that point to get the final response.
 
 ```elixir
-latest_msgs = [ChatMessage.tool(tool_id, fn_name, fn_value) | [fn_message | rev_msgs]]
+latest_msgs = [
+  ChatMessage.tool(tool_id, fn_name, fn_value),
+  ChatMessage.assistant(fn_content, fn_tool_calls)
+  | rev_msgs
+]
 
 fn_req_2 =
   Chat.Completions.new(
@@ -990,7 +996,7 @@ We define the image creation request structure using the `Image.new` function
 ```elixir
 alias OpenaiEx.Images
 
-img_req = Images.Generate.new(prompt: "An adorable baby sea otter", size: "256x256", n: 1)
+img_req = Images.Generate.new(model: "dall-e-2", prompt: "An adorable baby sea otter", size: "256x256", n: 1)
 ```
 
 Then call the [`Image.create()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the images.
@@ -1047,6 +1053,7 @@ Set up the image edit request with image, mask and prompt.
 ```elixir
 img_edit_req =
   Images.Edit.new(
+    model: "dall-e-2",
     image: {"dummy_image.png", img_to_expmt},
     mask: {"dummy_mask.png", star_mask},
     size: "256x256",
@@ -1069,21 +1076,23 @@ img_edit_response["data"]
 
 ### Image Variations
 
-We define an image variation request structure using the `Images.Variation.new()` function. This function requires an image.
+> **Note:** As of March 2026, the `/v1/images/variations` endpoint returns 404 with no body, even though it is still listed in the OpenAI API reference. The cells below are commented out until this is resolved.
+
+<!-- livebook:{"force_markdown":true} -->
 
 ```elixir
-img_var_req = Images.Variation.new(image: img_to_expmt, size: "256x256")
+img_var_req = Images.Variation.new(model: "dall-e-2", image: {"image.png", img_to_expmt}, size: "256x256")
 ```
 
 Then call the [`Image.create_variation()`](https://platform.openai.com/docs/api-reference/images/create-variation) function to generate the images.
 
-<!-- livebook:{"break_markdown":true} -->
-
-###
+<!-- livebook:{"force_markdown":true} -->
 
 ```elixir
 {:ok, img_var_response} = openai |> Images.create_variation(img_var_req)
 ```
+
+<!-- livebook:{"force_markdown":true} -->
 
 ```elixir
 img_var_response["data"]
@@ -1956,5 +1965,3 @@ Use [`VectorStores.File.Batches.list()`](https://platform.openai.com/docs/api-re
 ```elixir
 openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
 ```
-
-<!-- livebook:{"offset":57214,"stamp":{"token":"XCP.z1axmAf9dYEDyxHpTqwYNb9xsKxtQ0e34aXPGNlDLYdNMj9M14VTz11dtMfMehvDhZ2oY8qJqKWQvkI0g3a4Szxl1HgB2a00a9aJkpsHgAW-po9xI8_PSxw","version":2}} -->
