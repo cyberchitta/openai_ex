@@ -19,6 +19,7 @@ defmodule OpenaiEx.Responses do
     :previous_response_id,
     :prompt,
     :prompt_cache_key,
+    :prompt_cache_retention,
     :reasoning,
     :safety_identifier,
     :service_tier,
