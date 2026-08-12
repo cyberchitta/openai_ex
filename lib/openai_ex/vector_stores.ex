@@ -13,9 +13,18 @@ defmodule OpenaiEx.VectorStores do
     :metadata
   ]
 
-  defp ep_url(vector_store_id \\ nil) do
+  @search_fields [
+    :query,
+    :filters,
+    :max_num_results,
+    :ranking_options,
+    :rewrite_query
+  ]
+
+  defp ep_url(vector_store_id \\ nil, action \\ nil) do
     "/vector_stores" <>
-      if(is_nil(vector_store_id), do: "", else: "/#{vector_store_id}")
+      if(is_nil(vector_store_id), do: "", else: "/#{vector_store_id}") <>
+      if(is_nil(action), do: "", else: "/#{action}")
   end
 
   @doc """
@@ -69,6 +78,20 @@ defmodule OpenaiEx.VectorStores do
   def update(openai = %OpenaiEx{}, vector_store_id, params \\ %{}) do
     json = params |> Map.take([:name, :expires_after, :metadata])
     openai |> Http.post(ep_url(vector_store_id), json: json)
+  end
+
+  @doc """
+  Searches a vector store for relevant chunks.
+
+  See https://platform.openai.com/docs/api-reference/vector-stores/search
+  """
+  def search!(openai = %OpenaiEx{}, vector_store_id, params \\ %{}) do
+    openai |> search(vector_store_id, params) |> Http.bang_it!()
+  end
+
+  def search(openai = %OpenaiEx{}, vector_store_id, params \\ %{}) do
+    json = params |> Map.take(@search_fields)
+    openai |> Http.post(ep_url(vector_store_id, "search"), json: json)
   end
 
   def delete!(openai = %OpenaiEx{}, vector_store_id) do
