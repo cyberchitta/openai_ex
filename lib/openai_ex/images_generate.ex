@@ -11,6 +11,7 @@ defmodule OpenaiEx.Images.Generate do
     :n,
     :output_compression,
     :output_format,
+    :partial_images,
     :quality,
     :response_format,
     :size,

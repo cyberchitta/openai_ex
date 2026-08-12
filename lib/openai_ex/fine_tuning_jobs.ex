@@ -8,6 +8,8 @@ defmodule OpenaiEx.FineTuning.Jobs do
     :model,
     :hyperparameters,
     :integrations,
+    :metadata,
+    :method,
     :suffix,
     :seed,
     :training_file,

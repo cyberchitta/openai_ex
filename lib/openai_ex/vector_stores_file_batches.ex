@@ -22,13 +22,18 @@ defmodule OpenaiEx.VectorStores.File.Batches do
     openai |> Http.get(url, qry_params)
   end
 
-  def create!(openai = %OpenaiEx{}, vector_store_id, file_ids) do
-    openai |> create(vector_store_id, file_ids) |> Http.bang_it!()
+  def create!(openai = %OpenaiEx{}, vector_store_id, file_ids, params \\ %{}) do
+    openai |> create(vector_store_id, file_ids, params) |> Http.bang_it!()
   end
 
-  def create(openai = %OpenaiEx{}, vector_store_id, file_ids) do
+  def create(openai = %OpenaiEx{}, vector_store_id, file_ids, params \\ %{}) do
     url = ep_url(vector_store_id)
-    openai |> Http.post(url, json: %{file_ids: file_ids})
+
+    json =
+      %{file_ids: file_ids}
+      |> Map.merge(params |> Map.take([:attributes, :chunking_strategy, :files]))
+
+    openai |> Http.post(url, json: json)
   end
 
   def retrieve!(openai = %OpenaiEx{}, vector_store_id, batch_id) do

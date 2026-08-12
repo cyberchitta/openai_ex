@@ -10,6 +10,7 @@ defmodule OpenaiEx.Batches do
     :completion_window,
     :endpoint,
     :metadata,
+    :output_expires_after,
     :after,
     :limit
   ]

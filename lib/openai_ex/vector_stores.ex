@@ -7,7 +7,9 @@ defmodule OpenaiEx.VectorStores do
   @api_fields [
     :file_ids,
     :name,
+    :description,
     :expires_after,
+    :chunking_strategy,
     :metadata
   ]
 

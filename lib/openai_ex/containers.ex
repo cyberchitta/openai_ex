@@ -9,6 +9,9 @@ defmodule OpenaiEx.Containers do
     :name,
     :expires_after,
     :file_ids,
+    :memory_limit,
+    :network_policy,
+    :skills,
     :container_id
   ]
 

@@ -8,8 +8,10 @@ defmodule OpenaiEx.Audio.Speech do
     :input,
     :model,
     :voice,
+    :instructions,
     :response_format,
-    :speed
+    :speed,
+    :stream_format
   ]
 
   @doc """
