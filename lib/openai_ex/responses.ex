@@ -38,12 +38,40 @@ defmodule OpenaiEx.Responses do
     :user
   ]
 
+  @compact_fields [
+    :model,
+    :input,
+    :instructions,
+    :previous_response_id,
+    :prompt_cache_key,
+    :prompt_cache_options,
+    :prompt_cache_retention,
+    :service_tier
+  ]
+
+  @input_tokens_fields [
+    :model,
+    :conversation,
+    :input,
+    :instructions,
+    :parallel_tool_calls,
+    :personality,
+    :previous_response_id,
+    :reasoning,
+    :text,
+    :tool_choice,
+    :tools,
+    :truncation
+  ]
+
   @query_params [
     :include
   ]
 
-  defp ep_url(response_id \\ nil) do
-    "/responses" <> if(is_nil(response_id), do: "", else: "/#{response_id}")
+  defp ep_url(response_id \\ nil, action \\ nil) do
+    "/responses" <>
+      if(is_nil(response_id), do: "", else: "/#{response_id}") <>
+      if(is_nil(action), do: "", else: "/#{action}")
   end
 
   @doc """
@@ -98,6 +126,49 @@ defmodule OpenaiEx.Responses do
   end
 
   @doc """
+  Cancels a background response.
+
+  Only responses created with `background: true` can be cancelled.
+
+  https://platform.openai.com/docs/api-reference/responses/cancel
+  """
+  def cancel!(openai = %OpenaiEx{}, response_id: response_id) do
+    openai |> cancel(response_id: response_id) |> Http.bang_it!()
+  end
+
+  def cancel(openai = %OpenaiEx{}, response_id: response_id) do
+    openai |> Http.post(ep_url(response_id, "cancel"))
+  end
+
+  @doc """
+  Compacts a response, carrying prior state forward in fewer tokens.
+
+  https://platform.openai.com/docs/api-reference/responses/compact
+  """
+  def compact!(openai = %OpenaiEx{}, params) do
+    openai |> compact(params) |> Http.bang_it!()
+  end
+
+  def compact(openai = %OpenaiEx{}, params) do
+    request_body = params |> Map.take(@compact_fields)
+    openai |> Http.post(ep_url(nil, "compact"), json: request_body)
+  end
+
+  @doc """
+  Returns the input token counts for a hypothetical response.
+
+  https://platform.openai.com/docs/api-reference/responses/input_tokens
+  """
+  def input_tokens!(openai = %OpenaiEx{}, params) do
+    openai |> input_tokens(params) |> Http.bang_it!()
+  end
+
+  def input_tokens(openai = %OpenaiEx{}, params) do
+    request_body = params |> Map.take(@input_tokens_fields)
+    openai |> Http.post(ep_url(nil, "input_tokens"), json: request_body)
+  end
+
+  @doc """
   Lists input items from a response. See https://platform.openai.com/docs/api-reference/responses/input-items
   """
   def input_items_list!(openai = %OpenaiEx{}, opts) when is_list(opts) do
@@ -113,6 +184,6 @@ defmodule OpenaiEx.Responses do
       |> Enum.into(%{})
       |> Map.take(OpenaiEx.list_query_fields())
 
-    openai |> Http.get(ep_url(response_id) <> "/input_items", p)
+    openai |> Http.get(ep_url(response_id, "input_items"), p)
   end
 end
