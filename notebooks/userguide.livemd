@@ -95,6 +95,16 @@ The default receive timeout is 15 seconds. If you are seeing longer latencies, y
 openai = OpenaiEx.new(apikey) |> OpenaiEx.with_receive_timeout(45_000)
 ```
 
+### Fetching sample assets
+
+Several sections below pull sample files (audio, training data, documents) from GitHub. We define the fetcher once here.
+
+```elixir
+fetch_blob = fn url ->
+  Finch.build(:get, url) |> Finch.request!(OpenaiEx.Finch) |> Map.get(:body)
+end
+```
+
 ### Finch Instance
 
 In production scenarios where you want to explicitly tweak the Finch pool, you can create a new Finch instance using
@@ -123,7 +133,7 @@ There are times, such as when using a local LLM (like Ollama) with an OpenAI pro
 <!-- livebook:{"force_markdown":true} -->
 
 ```elixir
-# in this example, our development livebook server is running in a docker dev container while 
+# in this example, our development livebook server is running in a docker dev container while
 # the local llm is running on the host machine
 proxy_openai =
   OpenaiEx.new(apikey) |> OpenaiEx.with_base_url("http://host.docker.internal:8000/v1")
@@ -141,8 +151,8 @@ For example, to configure your client for openai using the portkey gateway, you 
 openai_api_key = "an-openai-api-key"
 portkey_api_key = "a-portkey-api-key"
 
-OpenaiEx.new(openai_api_key) 
-  |> OpenaiEx.with_base_url("https://api.portkey.ai/v1") 
+OpenaiEx.new(openai_api_key)
+  |> OpenaiEx.with_base_url("https://api.portkey.ai/v1")
   |> OpenaiEx.with_additional_headers(%{"x-portkey-api-key"=>portkey_api_key, "x-portkey-provider"=>"openai"})
 ```
 
@@ -151,8 +161,8 @@ similarly, for Anthropic, you would do this:
 ```elixir
 anthropic_api_key = "some-anthropic-api-key"
 
-OpenaiEx.new(anthropic_api_key) 
-  |> OpenaiEx.with_base_url("https://api.portkey.ai/v1") 
+OpenaiEx.new(anthropic_api_key)
+  |> OpenaiEx.with_base_url("https://api.portkey.ai/v1")
   |> OpenaiEx.with_additional_headers(%{"x-portkey-api-key"=>portkey_api_key, "x-portkey-provider"=>"anthropic"})
 ```
 
@@ -331,7 +341,7 @@ alias OpenaiEx.Error
 
 process_stream = fn openai, request ->
   response = Chat.Completions.create!(openai, request, stream: true)
-  
+
   try do
     response.body_stream
     |> Stream.flat_map(& &1)
@@ -342,13 +352,13 @@ process_stream = fn openai, request ->
   rescue
     e in OpenaiEx.Error ->
       case e do
-        %{kind: :sse_cancellation} -> 
+        %{kind: :sse_cancellation} ->
           IO.puts("Stream was canceled")
           {:error, :canceled, e.message}
-        %{kind: :sse_timeout_error} -> 
+        %{kind: :sse_timeout_error} ->
           IO.puts("Timeout on SSE stream")
           {:error, :timeout, e.message}
-        _ -> 
+        _ ->
           IO.puts("Unknown error occurred")
           {:error, :unknown, e.message}
       end
@@ -497,7 +507,7 @@ OpenAI allows storing chat completions for later retrieval. This is useful for c
 To store a chat completion, include `store: true` in your request:
 
 ```elixir
-stored_chat_req = 
+stored_chat_req =
   Chat.Completions.new(
     model: "gpt-4o-mini",
     messages: [
@@ -778,7 +788,7 @@ response_id = response["id"]
 # With optional parameters
 {:ok, retrieved_response} = openai |> Responses.retrieve([
   response_id: response_id,
-  include: ["output[*].file_search_call.search_results", "output[*].web_search_call.search_results", "file_search_call.results", "web_search_call.results", "message.input_image.image_url"]
+  include: ["file_search_call.results", "web_search_call.results", "message.input_image.image_url"]
 ])
 ```
 
@@ -803,16 +813,81 @@ You can paginate through large input lists:
 if input_items["has_more"] do
   # Use the last_id from the first request to get the next page
   last_id = input_items["last_id"]
-  
+
   {:ok, next_page_items} = openai |> Responses.input_items_list([
     response_id: response_id,
-    limit: 10, 
+    limit: 10,
     after: last_id,
     order: "desc"
   ])
   IO.puts(next_page_items)
 end
 ```
+
+### Cancel a Background Response
+
+Responses created with `background: true` run asynchronously. Use [`Responses.cancel()`](https://platform.openai.com/docs/api-reference/responses/cancel) to stop one before it finishes. Background responses require `store: true`.
+
+```elixir
+background_req = %{
+  model: "gpt-4o-mini",
+  input: "Write a detailed 2000 word essay on the history of computing.",
+  background: true,
+  store: true
+}
+
+{:ok, background_response} = openai |> Responses.create(background_req)
+background_response["status"]
+```
+
+Only responses that are still `queued` or `in_progress` can be cancelled. If the model finishes first, the call returns an error instead.
+
+```elixir
+{:ok, cancelled_response} = openai |> Responses.cancel(response_id: background_response["id"])
+cancelled_response["status"]
+```
+
+### Compact a Response
+
+Long conversations eventually exhaust the context window. [`Responses.compact()`](https://platform.openai.com/docs/api-reference/responses/compact) asks the server to carry prior state forward in fewer tokens, returning an opaque compaction item that is not meant to be read directly.
+
+This is the explicit counterpart to the `context_management` parameter on `create`, which lets the server compact automatically once a token threshold is crossed:
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+%{
+  model: "gpt-4o-mini",
+  input: input,
+  context_management: [%{type: "compaction", compact_threshold: 200_000}]
+}
+```
+
+Compaction targets long-running conversations on newer models, so this call may reject older ones:
+
+```elixir
+compact_req = %{
+  model: "gpt-4o-mini",
+  previous_response_id: response_id
+}
+
+{:ok, compacted_response} = openai |> Responses.compact(compact_req)
+```
+
+### Input Token Counts
+
+Use [`Responses.input_tokens()`](https://platform.openai.com/docs/api-reference/responses/input_tokens) to find out how many input tokens a request would consume, without actually generating a response.
+
+```elixir
+input_tokens_req = %{
+  model: "gpt-4o-mini",
+  input: "How many input tokens does this prompt consume?"
+}
+
+{:ok, input_token_counts} = openai |> Responses.input_tokens(input_tokens_req)
+```
+
+This accepts most of the fields that shape the input side of a request — `instructions`, `tools`, `tool_choice`, `conversation`, `previous_response_id`, `reasoning`, `text` and `truncation` — so you can measure the real cost of a configured request before sending it.
 
 ### Delete a Response
 
@@ -989,117 +1064,167 @@ For more information on the Conversations API, see the [OpenAI API Conversations
 
 ## Image
 
-### Generate Image
+The GPT image models (`gpt-image-1` and later) have replaced the DALL·E models. Three differences affect every cell in this section:
 
-We define the image creation request structure using the `Image.new` function
+* **Responses are base64.** GPT image models always populate `b64_json` and never `url`. The `response_format` parameter is not supported for them at all — it only ever applied to `dall-e-2` and `dall-e-3`.
+* **Sizes have changed.** The old `256x256` and `512x512` sizes were DALL·E-only. `gpt-image-1` accepts `1024x1024`, `1536x1024`, `1024x1536` and `auto`; `gpt-image-2` accepts any size whose edges are multiples of 16, up to a 3840px maximum edge and a 3:1 ratio.
+* **Requests are slow.** Generating or editing a 1024x1024 image regularly exceeds the 15 second default receive timeout, so we use a client configured with a longer one.
 
 ```elixir
 alias OpenaiEx.Images
 
-img_req = Images.Generate.new(model: "dall-e-2", prompt: "An adorable baby sea otter", size: "256x256", n: 1)
+openai_img = openai |> OpenaiEx.with_receive_timeout(120_000)
 ```
 
-Then call the [`Image.create()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the images.
+### Generate Images
+
+We define the image creation request structure using the `Images.Generate.new()` function
 
 ```elixir
-{:ok, img_response} = openai |> Images.generate(img_req)
+img_req = Images.Generate.new(model: "gpt-image-1", prompt: "An adorable baby sea otter", size: "1024x1024", n: 1)
 ```
 
-For more information on generating images, see the [OpenAI API Image reference](https://platform.openai.com/docs/api-reference/images).
-
-#### Fetch the generated images
-
-With the information in the image response, we can fetch the images from their URLs
+Then call the [`Images.generate()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the images.
 
 ```elixir
-fetch_blob = fn url ->
-  Finch.build(:get, url) |> Finch.request!(OpenaiEx.Finch) |> Map.get(:body)
-end
+{:ok, img_response} = openai_img |> Images.generate(img_req)
 ```
+
+The image bytes arrive inline as base64, so there is nothing to download.
 
 ```elixir
-fetched_images = img_response["data"] |> Enum.map(fn i -> i["url"] |> fetch_blob.() end)
+decoded_images = img_response["data"] |> Enum.map(fn i -> i["b64_json"] |> Base.decode64!() end)
 ```
-
-#### View the generated images
 
 Finally, we can render the images using Kino
 
 ```elixir
-fetched_images
+decoded_images
 |> Enum.map(fn r -> r |> Kino.Image.new("image/png") |> Kino.render() end)
 ```
 
 ```elixir
-img_to_expmt = fetched_images |> List.first()
+img_to_expmt = decoded_images |> List.first()
 ```
 
-### Edit Image
+### Edit Images
 
-We define an image edit request structure using the `Images.Edit.new()` function. This function requires an image and a mask. For the image, we will use the one that we received. Let's load the mask from a URL.
+We define an image edit request structure using the `Images.Edit.new()` function. It takes an image and, optionally, a mask.
+
+#### Edit an image using a mask
+
+A mask is a PNG with **exactly the same dimensions as the image**, whose fully transparent pixels mark the region to be edited.
+
+Note that masking with the GPT image models is entirely prompt-based: the model treats the mask as guidance and may not follow its exact shape precisely. This is a change from the DALL·E models, where the mask was applied literally.
+
+Since the usable image size now depends on the model, we generate a mask to match rather than fetching a fixed-size one. This needs only `:zlib` and `:erlang.crc32`, both of which ship with OTP.
 
 ```elixir
-# if you're having problems downloading raw github content, you may need to manually set your DNS server to "8.8.8.8" (google)
-star_mask =
-  fetch_blob.(
-    "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/images/starmask.png"
-  )
+edit_mask =
+  (fn size ->
+     r = div(size, 3)
+     c = div(size, 2)
 
-# star_mask = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/images/starmask.png"))
+     raw =
+       for y <- 0..(size - 1), into: <<>> do
+         row =
+           for x <- 0..(size - 1), into: <<>> do
+             dx = x - c
+             dy = y - c
+             if dx * dx + dy * dy < r * r, do: <<0, 0, 0, 0>>, else: <<0, 0, 0, 255>>
+           end
+
+         <<0>> <> row
+       end
+
+     chunk = fn type, data ->
+       <<byte_size(data)::32, type::binary, data::binary, :erlang.crc32(type <> data)::32>>
+     end
+
+     <<137, 80, 78, 71, 13, 10, 26, 10>> <>
+       chunk.("IHDR", <<size::32, size::32, 8, 6, 0, 0, 0>>) <>
+       chunk.("IDAT", :zlib.compress(raw)) <>
+       chunk.("IEND", "")
+   end).(1024)
 ```
 
-Set up the image edit request with image, mask and prompt.
+Set up the image edit request with image, mask and prompt. `input_fidelity: "high"` asks the model to stay closer to the original outside the edited region.
 
 ```elixir
 img_edit_req =
   Images.Edit.new(
-    model: "dall-e-2",
+    model: "gpt-image-1",
     image: {"dummy_image.png", img_to_expmt},
-    mask: {"dummy_mask.png", star_mask},
-    size: "256x256",
+    mask: {"dummy_mask.png", edit_mask},
+    size: "1024x1024",
+    input_fidelity: "high",
     prompt: "Image shows a smiling Otter"
   )
 ```
 
-We then call the [`Image.create_edit()`]() function
+We then call the [`Images.edit()`](https://platform.openai.com/docs/api-reference/images/createEdit) function
 
 ```elixir
-{:ok, img_edit_response} = openai |> Images.edit(img_edit_req)
+{:ok, img_edit_response} = openai_img |> Images.edit(img_edit_req)
 ```
 
 and view the result
 
 ```elixir
 img_edit_response["data"]
-|> Enum.map(fn i -> i["url"] |> fetch_blob.() |> Kino.Image.new("image/png") |> Kino.render() end)
+|> Enum.map(fn i -> i["b64_json"] |> Base.decode64!() |> Kino.Image.new("image/png") |> Kino.render() end)
 ```
 
-### Image Variations
+### Customize Image Output
 
-> **Note:** As of March 2026, the `/v1/images/variations` endpoint returns 404 with no body, even though it is still listed in the OpenAI API reference. The cells below are commented out until this is resolved.
-
-<!-- livebook:{"force_markdown":true} -->
+Both endpoints accept the same output controls. `background: "transparent"` requires an `output_format` of `png` or `webp`; `output_compression` applies only to `webp` and `jpeg`.
 
 ```elixir
-img_var_req = Images.Variation.new(model: "dall-e-2", image: {"image.png", img_to_expmt}, size: "256x256")
+img_opts_req =
+  Images.Generate.new(
+    model: "gpt-image-1",
+    prompt: "A simple line drawing of a sea otter",
+    size: "1024x1024",
+    background: "transparent",
+    output_format: "webp",
+    output_compression: 80,
+    n: 1
+  )
+
+{:ok, img_opts_response} = openai_img |> Images.generate(img_opts_req)
 ```
 
-Then call the [`Image.create_variation()`](https://platform.openai.com/docs/api-reference/images/create-variation) function to generate the images.
-
-<!-- livebook:{"force_markdown":true} -->
+Note that the rendered mime type has to match the requested `output_format`.
 
 ```elixir
-{:ok, img_var_response} = openai |> Images.create_variation(img_var_req)
+img_opts_response["data"]
+|> Enum.map(fn i -> i["b64_json"] |> Base.decode64!() |> Kino.Image.new("image/webp") |> Kino.render() end)
 ```
 
-<!-- livebook:{"force_markdown":true} -->
+There is also a `partial_images` parameter, which emits partial images as generation progresses. It requires a streaming request, which this library does not yet support for the image endpoints.
+
+### Limitations
+
+**Content moderation.** All prompts and generated images are filtered according to OpenAI's content policy. The `moderation` parameter selects the level for the GPT image models: `auto` (the default) or `low` for less restrictive filtering.
 
 ```elixir
-img_var_response["data"]
-|> Enum.map(fn i -> i["url"] |> fetch_blob.() |> Kino.Image.new("image/png") |> Kino.render() end)
+img_mod_req =
+  Images.Generate.new(
+    model: "gpt-image-1",
+    prompt: "An adorable baby sea otter wearing a tiny hat",
+    size: "1024x1024",
+    moderation: "low",
+    n: 1
+  )
+
+{:ok, _img_mod_response} = openai_img |> Images.generate(img_mod_req)
 ```
 
-For more information on images variations, see the [OpenAI API Image Variations reference](https://platform.openai.com/docs/api-reference/images/create-variation).
+A blocked request returns a `400` with a `moderation_blocked` code, which surfaces as an `OpenaiEx.Error`, so match on `{:error, ...}` rather than assuming success in production code.
+
+**Organization verification.** The GPT image models may require [API Organization Verification](https://help.openai.com/en/articles/10910291-api-organization-verification) before they can be used. If these cells fail with a model access error, that is the first thing to check.
+
+**Image variations are no longer available.** The `/v1/images/variations` endpoint has returned 404 since March 2026, and it only ever supported `dall-e-2`, which has since been retired. `OpenaiEx.Images.Variation` and `Images.create_variation()` remain in the library for older API proxies, but there is no OpenAI model left to call them with.
 
 ## Embedding
 
@@ -1873,7 +1998,7 @@ First we recreate the vector store above
 
 ```elixir
 vsf_url = "https://raw.githubusercontent.com/restlessronin/openai_ex/main/assets/cyberdyne.txt"
-vector_store_file = OpenaiEx.new_file(name: vsf_url, content: fetch_blob.(ftf_url))
+vector_store_file = OpenaiEx.new_file(name: vsf_url, content: fetch_blob.(vsf_url))
 #vector_store_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/cyberdyne.txt"))
 upload_req = OpenaiEx.Files.new_upload(file: vector_store_file, purpose: "assistants")
 {:ok, upload_res} = openai |> OpenaiEx.Files.create(upload_req)
@@ -1911,6 +2036,31 @@ Retrieve a vector store file using the [`VectorStores.Files.retrieve()`](https:/
 
 ```elixir
 openai |> VectorStores.Files.retrieve(vector_store_id, file_id)
+```
+
+### Search vector store
+
+Use [`VectorStores.search()`](https://platform.openai.com/docs/api-reference/vector-stores/search) to retrieve the chunks most relevant to a query. Note that file indexing is asynchronous, so a file attached moments ago may not be searchable yet — an empty result here usually means indexing is still in progress rather than no match.
+
+```elixir
+{:ok, search_results} = openai |> VectorStores.search(vector_store_id, %{
+  query: "What does the company do?"
+})
+```
+
+The search can be tuned with `max_num_results`, a `filters` expression over the file attributes set above, and `ranking_options`. Setting `rewrite_query: true` lets the model rewrite the query for better semantic matching:
+
+```elixir
+{:ok, filtered_results} = openai |> VectorStores.search(vector_store_id, %{
+  query: "What does the company do?",
+  max_num_results: 3,
+  rewrite_query: true,
+  filters: %{
+    type: "eq",
+    key: "category",
+    value: "policies"
+  }
+})
 ```
 
 ### Delete vector store file
@@ -1965,3 +2115,5 @@ Use [`VectorStores.File.Batches.list()`](https://platform.openai.com/docs/api-re
 ```elixir
 openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
 ```
+
+<!-- livebook:{"offset":66167,"stamp":{"token":"XCP.IquaJp152n0sWAhyhcG4-Z6qE-CdMycghJagtzxvScMJjbm7RoQT0aB7TZhfEYJSjaUchwe1-GOTn5AsAU7nW8R_-L3iYyPPEeeUAoqY365uPIQkOwDRzrw","version":2}} -->
