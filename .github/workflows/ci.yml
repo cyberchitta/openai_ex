@@ -13,15 +13,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-#          - pair:
-#              elixir: "1.12"
-#              otp: "24.3.4.10"
-#          - pair:
-#              elixir: "1.13"
-#              otp: "25.1"
+          # 1.16 is the floor mix.lock permits: multipart requires ~> 1.16.
+          # The library itself still supports older, but is not tested there.
           - pair:
-              elixir: "1.14"
-              otp: "25.3"
+              elixir: "1.16"
+              otp: "26.2"
+          - pair:
+              elixir: "1.19"
+              otp: "28.1"
             lint: lint
     steps:
       - uses: actions/checkout@v3
@@ -30,7 +29,6 @@ jobs:
         with:
           otp-version: ${{matrix.pair.otp}}
           elixir-version: ${{matrix.pair.elixir}}
-          version-type: strict
 
       - uses: actions/cache@v3
         with:
