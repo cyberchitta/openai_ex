@@ -15,8 +15,13 @@ defmodule OpenaiEx.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
-      docs: docs(),
-      preferred_cli_env: [
+      docs: docs()
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [
         docs: :docs,
         "hex.publish": :docs
       ]

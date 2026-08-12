@@ -4,7 +4,7 @@
 Mix.install([
   # {:openai_ex, "~> 0.9.21"},
   {:openai_ex, path: Path.join(__DIR__, "..")},
-  {:kino, "~> 0.17.0"}
+  {:kino, "~> 0.19.0"}
 ])
 ```
 
@@ -2116,4 +2116,4 @@ Use [`VectorStores.File.Batches.list()`](https://platform.openai.com/docs/api-re
 openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
 ```
 
-<!-- livebook:{"offset":66167,"stamp":{"token":"XCP.IquaJp152n0sWAhyhcG4-Z6qE-CdMycghJagtzxvScMJjbm7RoQT0aB7TZhfEYJSjaUchwe1-GOTn5AsAU7nW8R_-L3iYyPPEeeUAoqY365uPIQkOwDRzrw","version":2}} -->
+<!-- livebook:{"offset":68501,"stamp":{"token":"XCP.Aec5rqYQxABnctYkC5MXHOOe1ty7gm_-YmgjXPs51dxqj7TQ3NEkF_T_yoV1kyPdxj1M4h8wN2QKbt054yGWX6Es619Kl47BmfwTmXoWw8X9AyPiqKNcUFs","version":2}} -->
