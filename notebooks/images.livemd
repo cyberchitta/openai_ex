@@ -14,19 +14,21 @@ alias OpenaiEx.Images
 
 ## Simple Kino UI
 
+Image generation regularly exceeds the 15 second default receive timeout, so we raise it.
+
 ```elixir
-openai = System.fetch_env!("LB_OPENAI_API_KEY") |> OpenaiEx.new()
+openai =
+  System.fetch_env!("LB_OPENAI_API_KEY")
+  |> OpenaiEx.new()
+  |> OpenaiEx.with_receive_timeout(120_000)
 ```
 
-set default parameters for image generation, and define a function to fetch generated images from a URL.
+Set default parameters for image generation. The GPT image models return base64 image data directly, so there is nothing to download.
 
 ```elixir
-size = "256x256"
-n = 4
-
-fetch_blob = fn url ->
-  Finch.build(:get, url) |> Finch.request!(OpenaiEx.Finch) |> Map.get(:body)
-end
+model = "gpt-image-1"
+size = "1024x1024"
+n = 2
 ```
 
 ### Prompt / Response UI
@@ -40,19 +42,20 @@ frame = Kino.Frame.new()
 Kino.listen(form, fn %{data: %{text: prompt}} ->
   Kino.Frame.render(frame, Kino.Text.new("Running..."))
 
-  res_urls =
+  images =
     openai
     |> Images.generate!(%{
+      model: model,
       prompt: prompt,
       n: n,
       size: size
     })
     #   |> IO.inspect()
     |> Map.get("data")
-    |> Enum.map(fn x -> x["url"] end)
+    |> Enum.map(fn x -> x["b64_json"] |> Base.decode64!() end)
 
-  res_urls
-  |> Enum.map(fn x -> x |> fetch_blob.() |> Kino.Image.new("image/png") end)
+  images
+  |> Enum.map(fn x -> x |> Kino.Image.new("image/png") end)
   |> Kino.Layout.grid(columns: 2)
   |> then(&Kino.Frame.render(frame, &1))
 end)
