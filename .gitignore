@@ -30,3 +30,6 @@ openai_ex-*.tar
 
 # secrets used by .devcontainer docker compose
 /.devcontainer/.env
+
+# working notes — symlink into the private working-notes repo
+/_notes
