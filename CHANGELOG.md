@@ -11,16 +11,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Feat
 - added 'context_management' to responses endpoint (90653d4)
-- added 'moderation' and 'prompt_cache_options' to responses and chat completion endpoints
-- added 'safety_identifier' to chat completion endpoint
-- added 'cancel', 'compact' and 'input_tokens' to responses endpoint
-- added 'search' to vector stores endpoint
-- added missing request params across audio, images, batches, containers, vector stores and fine-tuning
+- added 'moderation' and 'prompt_cache_options' to responses endpoint (211cbf4)
+- added 'moderation', 'prompt_cache_options' and 'safety_identifier' to chat completion endpoint (15ca99c)
+- added missing request params across audio, images, batches, containers, vector stores and fine-tuning endpoints (a43875a)
+- added 'cancel', 'compact' and 'input_tokens' to responses endpoint (6fdfe0b)
+- added 'search' to vector stores endpoint (acc876f)
 
 ### Changed
-- rewrote the user guide image section for the gpt image models, which return base64 rather than urls
-- bumped livebook dev container image to 0.19.9 and kino to 0.19
-- moved 'preferred_cli_env' to 'def cli', deprecated in elixir 1.19
+- bumped dependencies, notably finch to 0.23 and mint to 1.9 (42bbabd)
+- rewrote the user guide image section for the gpt image models, which return base64 rather than urls (2c34c9f)
+- updated the image kino app for the gpt image models (47ee986)
+- bumped livebook dev container image to 0.19.9 and kino to 0.19 (6c93df6)
+- moved 'preferred_cli_env' to 'def cli', deprecated in elixir 1.19 (6c93df6)
 
 ## [0.9.21] - 2026-04-03
 
