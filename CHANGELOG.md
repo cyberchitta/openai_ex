@@ -7,6 +7,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
+## [0.9.22] - 2026-08-12
+
+### Feat
+- added 'context_management' to responses endpoint (90653d4)
+- added 'moderation' and 'prompt_cache_options' to responses and chat completion endpoints
+- added 'safety_identifier' to chat completion endpoint
+- added 'cancel', 'compact' and 'input_tokens' to responses endpoint
+- added 'search' to vector stores endpoint
+- added missing request params across audio, images, batches, containers, vector stores and fine-tuning
+
+### Changed
+- rewrote the user guide image section for the gpt image models, which return base64 rather than urls
+- bumped livebook dev container image to 0.19.9 and kino to 0.19
+- moved 'preferred_cli_env' to 'def cli', deprecated in elixir 1.19
+
 ## [0.9.21] - 2026-04-03
 
 ### Feat
