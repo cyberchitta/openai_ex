@@ -1306,6 +1306,23 @@ We then call the [`Audio.Transcription.create()`](https://platform.openai.com/do
 {:ok, transcription_response} = openai |> Audio.Transcription.create(transcription_req)
 ```
 
+`timestamp_granularities` returns word or segment timestamps. `response_format` must be `verbose_json`.
+
+```elixir
+{:ok, %{"words" => words}} =
+  openai
+  |> Audio.Transcription.create(
+    Audio.Transcription.new(
+      file: audio_file,
+      model: "whisper-1",
+      response_format: "verbose_json",
+      timestamp_granularities: ["word"]
+    )
+  )
+
+words
+```
+
 ### Create translation
 
 The translation call uses practically the same request structure, but calls the [`Audio.Translation.create()`](https://platform.openai.com/docs/api-reference/audio/createTranslation) endpoint

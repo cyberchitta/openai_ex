@@ -7,7 +7,13 @@ defmodule OpenaiEx.Audio.Transcription do
   @api_fields [
     :file,
     :model,
+    :chunking_strategy,
+    :include,
+    :keywords,
+    :known_speaker_names,
+    :known_speaker_references,
     :language,
+    :languages,
     :prompt,
     :response_format,
     :temperature,

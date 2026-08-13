@@ -40,7 +40,15 @@ defmodule OpenaiEx.Http do
       req
       |> Map.drop(file_fields)
       |> Enum.reduce(Multipart.new(), fn {k, v}, acc ->
-        acc |> Multipart.add_part(Multipart.Part.text_field(v, k))
+        case v do
+          list when is_list(list) ->
+            Enum.reduce(list, acc, fn item, inner_acc ->
+              inner_acc |> Multipart.add_part(Multipart.Part.text_field(item, "#{k}[]"))
+            end)
+
+          _ ->
+            acc |> Multipart.add_part(Multipart.Part.text_field(v, k))
+        end
       end)
 
     req
