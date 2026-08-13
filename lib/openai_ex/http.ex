@@ -43,11 +43,16 @@ defmodule OpenaiEx.Http do
         case v do
           list when is_list(list) ->
             Enum.reduce(list, acc, fn item, inner_acc ->
-              inner_acc |> Multipart.add_part(Multipart.Part.text_field(item, "#{k}[]"))
+              inner_acc |> add_text_field("#{k}[]", item)
+            end)
+
+          map when is_map(map) and not is_struct(map) ->
+            Enum.reduce(map, acc, fn {sub, item}, inner_acc ->
+              inner_acc |> add_text_field("#{k}[#{sub}]", item)
             end)
 
           _ ->
-            acc |> Multipart.add_part(Multipart.Part.text_field(v, k))
+            acc |> add_text_field(k, v)
         end
       end)
 
@@ -64,6 +69,10 @@ defmodule OpenaiEx.Http do
           acc |> Multipart.add_part(to_file_field_part(k, v))
       end
     end)
+  end
+
+  defp add_text_field(acc, name, value) do
+    acc |> Multipart.add_part(Multipart.Part.text_field(to_string(value), name))
   end
 
   defp to_file_field_part(k, v) do

@@ -7,6 +7,7 @@ defmodule OpenaiEx.Files do
   @api_fields [
     :file,
     :purpose,
+    :expires_after,
     :file_id
   ]
 
