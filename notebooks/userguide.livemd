@@ -1457,13 +1457,22 @@ fine_tune_file = OpenaiEx.new_file(name: ftf_url, content: fetch_blob.(ftf_url))
 
 # fine_tune_file = OpenaiEx.new_file(path: Path.join(__DIR__, "../assets/fine-tune.jsonl"))
 
-upload_req = Files.new_upload(file: fine_tune_file, purpose: "fine-tune")
+upload_req =
+  Files.new_upload(
+    file: fine_tune_file,
+    purpose: "fine-tune",
+    expires_after: %{anchor: "created_at", seconds: 3600}
+  )
 ```
+
+`expires_after` is optional. It is sent as the form fields `expires_after[anchor]` and `expires_after[seconds]`.
 
 Then we call the [`File.create()`](https://platform.openai.com/docs/api-reference/files/upload) function to upload the file
 
 ```elixir
 {:ok, upload_res} = openai |> Files.create(upload_req)
+true = upload_res["expires_at"] == upload_res["created_at"] + 3600
+upload_res
 ```
 
 We can verify that the file has been uploaded by calling
