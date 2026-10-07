@@ -7,9 +7,12 @@ defmodule OpenaiEx.Responses do
 
   @api_fields [
     :model,
+    :access_programs,
     :background,
+    :comparison_response_id,
     :context_management,
     :conversation,
+    :cyber,
     :include,
     :input,
     :instructions,
@@ -18,6 +21,7 @@ defmodule OpenaiEx.Responses do
     :metadata,
     :moderation,
     :parallel_tool_calls,
+    :prewarm,
     :previous_response_id,
     :prompt,
     :prompt_cache_key,
