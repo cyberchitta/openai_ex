@@ -70,6 +70,14 @@ defmodule OpenaiEx do
     |> elem(1)
   end
 
+  @agents_beta_string "agents=v1"
+  @doc false
+  def with_agents_beta(openai = %OpenaiEx{}) do
+    openai
+    |> Map.put(:beta, @agents_beta_string)
+    |> Map.update!(:_http_headers, &(&1 ++ [{"OpenAI-Beta", @agents_beta_string}]))
+  end
+
   # Globals to allow slight changes to API
   # Not public, and with no guarantee that they will continue to be supported.
 

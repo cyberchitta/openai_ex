@@ -11,6 +11,8 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Containers
   doctest OpenaiEx.ContainerFiles
   doctest OpenaiEx.VectorStores
+  doctest OpenaiEx.Beta.Agents
+  doctest OpenaiEx.Beta.Agents.Sessions
 
   test "errors redact credential headers on the attached request" do
     request =

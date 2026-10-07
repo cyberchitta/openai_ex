@@ -10,9 +10,16 @@ defmodule OpenaiEx.HttpSse do
   # https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream
 
   def post(openai = %OpenaiEx{}, url, json: json) do
+    openai |> stream_request(HttpFinch.build_post(openai, url, json: json))
+  end
+
+  def get(openai = %OpenaiEx{}, url) do
+    openai |> stream_request(HttpFinch.build_get(openai, url))
+  end
+
+  defp stream_request(openai, request) do
     me = self()
     ref = make_ref()
-    request = HttpFinch.build_post(openai, url, json: json)
     task = Task.async(fn -> finch_stream(openai, request, me, ref) end)
     result = build_sse_stream(openai, task, request, ref)
     unless match?({:ok, %{task_pid: _}}, result), do: Task.shutdown(task)

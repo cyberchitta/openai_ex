@@ -1098,6 +1098,79 @@ answers
 
 For more information, see the [OpenAI API Decisions Reference](https://platform.openai.com/docs/api-reference/decisions).
 
+## Agents (beta)
+
+```elixir
+alias OpenaiEx.Beta.Agents
+```
+
+The Agents API runs an agent in a managed harness. OpenAI handles the session, its turns and context compaction. The modules mirror the Python SDK's `client.beta.agents` namespace.
+
+### Create an agent
+
+```elixir
+{:ok, agent} =
+  openai
+  |> Agents.create(
+    Agents.new(model: "gpt-6-luna", name: "openai_ex guide", instructions: "Reply in one word.")
+  )
+```
+
+### Run a session
+
+A session runs the agent against an input. With `stream: true`, the session's events arrive as they happen, and the stream closes when the session goes idle. `environment: %{type: "none"}` runs the agent without an execution environment.
+
+```elixir
+session_req =
+  Agents.Sessions.new(environment: %{type: "none"}, agent_id: agent["id"], input: "Say pong.")
+
+{:ok, stream} = openai |> Agents.Sessions.create(session_req, stream: true)
+
+events = stream.body_stream |> Stream.flat_map(& &1) |> Enum.to_list()
+events |> Enum.map(& &1.data["type"])
+```
+
+The first event carries the session, so we can inspect its turns and items afterwards.
+
+```elixir
+%{data: %{"session" => %{"id" => session_id}}} = List.first(events)
+
+{:ok, %{"data" => [turn | _]}} = openai |> Agents.Sessions.Turns.list(session_id)
+{:ok, items} = openai |> Agents.Sessions.Turns.Items.list(session_id, turn["id"])
+items["data"] |> Enum.map(& &1["type"])
+```
+
+### Send more input
+
+`Sessions.Events.create` sends input to an existing session. `Sessions.Events.stream` follows the session's events. It stays open while the session is idle, so this cell sets a stream timeout to stop reading.
+
+```elixir
+{:ok, follow} =
+  openai |> OpenaiEx.with_stream_timeout(15_000) |> Agents.Sessions.Events.stream(session_id)
+
+message = %{
+  type: "agent.session.input.message",
+  input: [%{role: "user", content: [%{type: "input_text", text: "Say ping."}]}]
+}
+
+{:ok, nil} = openai |> Agents.Sessions.Events.create(session_id, [message])
+
+try do
+  follow.body_stream |> Stream.flat_map(& &1) |> Enum.each(&IO.puts(&1.data["type"]))
+rescue
+  e in OpenaiEx.Error -> IO.puts("stopped: #{e.kind}")
+end
+```
+
+### Cleanup
+
+```elixir
+{:ok, _} = openai |> Agents.Sessions.delete(session_id)
+{:ok, _} = openai |> Agents.delete(agent["id"])
+```
+
+For more information, see the [OpenAI Agents API Reference](https://developers.openai.com/api/reference/agents).
+
 ## Image
 
 The GPT image models (`gpt-image-1` and later) have replaced the DALL·E models. Three differences affect every cell in this section:

@@ -42,6 +42,8 @@ defmodule OpenaiEx.HttpFinch do
     Finch.build(method, openai.base_url <> url, headers(openai))
   end
 
+  def build_get(openai = %OpenaiEx{}, url), do: build_req(:get, openai, url)
+
   def build_post(openai = %OpenaiEx{}, url, json: json) do
     Finch.build(
       :post,
