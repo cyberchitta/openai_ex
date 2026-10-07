@@ -1112,7 +1112,7 @@ The Agents API runs an agent in a managed harness. OpenAI handles the session, i
 {:ok, agent} =
   openai
   |> Agents.create(
-    Agents.new(model: "gpt-6-luna", name: "openai_ex guide", instructions: "Reply in one word.")
+    Agents.new(model: "gpt-5.2", name: "openai_ex guide", instructions: "Reply in one word.")
   )
 ```
 
@@ -1190,7 +1190,7 @@ openai_img = openai |> OpenaiEx.with_receive_timeout(120_000)
 We define the image creation request structure using the `Images.Generate.new()` function
 
 ```elixir
-img_req = Images.Generate.new(model: "gpt-image-1", prompt: "An adorable baby sea otter", size: "1024x1024", n: 1)
+img_req = Images.Generate.new(model: "gpt-image-2", prompt: "An adorable baby sea otter", size: "1024x1024", n: 1)
 ```
 
 Then call the [`Images.generate()`](https://platform.openai.com/docs/api-reference/images/create) function to generate the images.
@@ -1257,16 +1257,15 @@ edit_mask =
    end).(1024)
 ```
 
-Set up the image edit request with image, mask and prompt. `input_fidelity: "high"` asks the model to stay closer to the original outside the edited region.
+Set up the image edit request with image, mask and prompt.
 
 ```elixir
 img_edit_req =
   Images.Edit.new(
-    model: "gpt-image-1",
+    model: "gpt-image-2",
     image: {"dummy_image.png", img_to_expmt},
     mask: {"dummy_mask.png", edit_mask},
     size: "1024x1024",
-    input_fidelity: "high",
     prompt: "Image shows a smiling Otter"
   )
 ```
@@ -1291,7 +1290,7 @@ Both endpoints accept the same output controls. `background: "transparent"` requ
 ```elixir
 img_opts_req =
   Images.Generate.new(
-    model: "gpt-image-1",
+    model: "gpt-image-2.5-flare",
     prompt: "A simple line drawing of a sea otter",
     size: "1024x1024",
     background: "transparent",
@@ -1319,7 +1318,7 @@ There is also a `partial_images` parameter, which emits partial images as genera
 ```elixir
 img_mod_req =
   Images.Generate.new(
-    model: "gpt-image-1",
+    model: "gpt-image-2",
     prompt: "An adorable baby sea otter wearing a tiny hat",
     size: "1024x1024",
     moderation: "low",
@@ -1406,7 +1405,7 @@ audio_file = OpenaiEx.new_file(name: audio_url, content: fetch_blob.(audio_url))
 The file parameter is used to create the Audio.Transcription request structure
 
 ```elixir
-transcription_req = Audio.Transcription.new(file: audio_file, model: "whisper-1")
+transcription_req = Audio.Transcription.new(file: audio_file, model: "gpt-transcribe")
 ```
 
 We then call the [`Audio.Transcription.create()`](https://platform.openai.com/docs/api-reference/audio/createTranscription) function to create a transcription.
@@ -1415,7 +1414,7 @@ We then call the [`Audio.Transcription.create()`](https://platform.openai.com/do
 {:ok, transcription_response} = openai |> Audio.Transcription.create(transcription_req)
 ```
 
-`timestamp_granularities` returns word or segment timestamps. `response_format` must be `verbose_json`.
+`timestamp_granularities` returns word or segment timestamps. `response_format` must be `verbose_json`, which only `whisper-1` supports.
 
 ```elixir
 {:ok, %{"words" => words}} =
@@ -1874,7 +1873,7 @@ eval_req = Evals.new(
   testing_criteria: [
     %{
       type: "label_model",
-      model: "o3-mini",
+      model: "gpt-4o-mini",
       input: [
         %{
           role: "developer",
