@@ -1062,6 +1062,42 @@ IO.inspect(conversation_history, label: "Conversation History")
 
 For more information on the Conversations API, see the [OpenAI API Conversations Reference](https://platform.openai.com/docs/api-reference/conversations).
 
+## Decisions
+
+```elixir
+alias OpenaiEx.Decisions
+```
+
+The Decisions API turns text and images into typed answers. Each question is a `predicate` (a probability), a `choice` (one of a fixed set of values) or a `score` (one of an ordered set of levels).
+
+```elixir
+decision_req =
+  Decisions.new(
+    model: "gpt-6-luna",
+    input: "The package arrived two weeks late and the box was crushed, but the product works fine.",
+    questions: [
+      %{type: "predicate", name: "late", instructions: "Did the delivery arrive late?"},
+      %{
+        type: "choice",
+        name: "sentiment",
+        instructions: "Overall customer sentiment",
+        choices: [%{value: "positive"}, %{value: "mixed"}, %{value: "negative"}]
+      },
+      %{
+        type: "score",
+        name: "severity",
+        instructions: "How severe is the complaint?",
+        levels: [%{label: "minor"}, %{label: "moderate"}, %{label: "major"}]
+      }
+    ]
+  )
+
+{:ok, %{"answers" => answers}} = openai |> Decisions.create(decision_req)
+answers
+```
+
+For more information, see the [OpenAI API Decisions Reference](https://platform.openai.com/docs/api-reference/decisions).
+
 ## Image
 
 The GPT image models (`gpt-image-1` and later) have replaced the DALL·E models. Three differences affect every cell in this section:
@@ -1326,6 +1362,14 @@ words
 ### Create translation
 
 The translation call uses practically the same request structure, but calls the [`Audio.Translation.create()`](https://platform.openai.com/docs/api-reference/audio/createTranslation) endpoint
+
+### Create a custom voice
+
+[`Audio.Voices.create()`](https://platform.openai.com/docs/api-reference/audio/createVoice) creates a custom voice, either from a recorded `audio_sample` plus a `consent` id, or from a text description with `type: "prompt"`. There is no cell here because a created voice cannot be deleted through the API.
+
+```
+Audio.Voices.new(name: "narrator", type: "prompt", prompt: "A warm, calm baritone")
+```
 
 For more information on the audio endpoints see the [Openai API Audio Reference](https://platform.openai.com/docs/api-reference/audio)
 

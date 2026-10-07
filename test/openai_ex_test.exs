@@ -6,6 +6,7 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Embeddings
   doctest OpenaiEx.Images.Generate
   doctest OpenaiEx.Moderations
+  doctest OpenaiEx.Decisions
   doctest OpenaiEx.MsgContent
   doctest OpenaiEx.Beta.Assistants
   doctest OpenaiEx.Beta.Threads.Runs
