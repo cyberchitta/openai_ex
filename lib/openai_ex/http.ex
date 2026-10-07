@@ -127,6 +127,7 @@ defmodule OpenaiEx.Http do
 
   defp jsonify(response) do
     case response do
+      {:ok, ""} -> {:ok, nil}
       {:ok, response} -> {:ok, Jason.decode!(response)}
       _ -> response
     end
