@@ -19,6 +19,7 @@ Further Livebooks on [hexdocs](https://hexdocs.pm/openai_ex):
 
 - [Streaming Orderbot](https://hexdocs.pm/openai_ex/streaming_orderbot.html) and [Deeplearning.AI Orderbot](https://hexdocs.pm/openai_ex/dlai_orderbot.html): chatbots, streaming and not.
 - [Image Generation UI](https://hexdocs.pm/openai_ex/images.html): a small Kino app for the GPT image models.
+- [Completions Chatbot](https://hexdocs.pm/openai_ex/completions.html): the legacy Completions API, for OpenAI-compatible servers (such as local LLMs) that still offer it. OpenAI itself has retired it.
 
 Discussion and release announcements are on the [Elixir Forum thread](https://elixirforum.com/t/openai-ex-openai-api-client-library/55353).
 

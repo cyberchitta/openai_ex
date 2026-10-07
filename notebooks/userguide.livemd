@@ -10,27 +10,16 @@ Mix.install([
 
 ## Introduction
 
-`OpenaiEx` is an Elixir library that provides a community-maintained OpenAI API client.
+`OpenaiEx` is a community-maintained Elixir client for the OpenAI API.
 
-The main user guide is a livebook, so you should be able to run everything without any setup. The user guide is also the test suite. It is run before every version release, so it is always up to date with the library.
+* **Mirrors the official [Python SDK](https://github.com/openai/openai-python).** `client.beta.agents.sessions` is `OpenaiEx.Beta.Agents.Sessions`, with the same method names, so OpenAI's own docs translate directly. The API reference is linked throughout this guide.
+* **No application config.** You build a client struct and pass it to every call.
+* **Streaming with cancellation**, over [Finch](https://github.com/sneako/finch).
+* **Azure OpenAI and OpenAI-compatible proxies** (local LLMs, gateways) are supported.
 
-> Portions of this project were developed with assistance from ChatGPT 3.5 and 4, as well as Claude 3 Opus and Claude Sonnets 3.5, 3.6 and 3.7. However, every line of code is human curated (by me, @restlessronin 😇). AI collaboration facilitated by [llm-context](https://github.com/cyberchitta/llm-context.py).
+This guide is an executable Livebook with a running example of practically every API call. It is also the test suite, and is run in full before every release. Open it in Livebook to run and modify the examples.
 
-All API endpoints and features (as of Mar 16, 2025) are supported, including the most recent Responses API (proposed replacement for Chat Completion).
-
-Configuration of Finch pools and API base url are supported.
-
-There are some differences compared to other elixir openai wrappers.
-
-* I tried to faithfully mirror the naming/structure of the official python api. For example, content that is already in memory can be uploaded as part of a request, it doesn't have to be read from a file at a local path.
-* I was developing for a livebook use-case, so I don't have any config, only environment variables.
-* Streaming API versions, with request cancellation, are supported.
-* The underlying transport is finch, rather than httpoison
-* 3rd Party (including local) LLMs with an OpenAI proxy, as well as the **Azure OpenAI API**, are considered legitimate use cases.
-
-To learn how to use OpenaiEx, you can refer to the relevant parts of the official OpenAI API reference documentation, which we link to throughout this document.
-
-This file is an executable Livebook, which means you can interactively run and modify the code samples provided. We encourage you to open it in Livebook and try out the code for yourself!
+> This project is developed with substantial AI assistance.
 
 ## Installation
 
