@@ -7,6 +7,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 > Note: This changelog was retroactively created (by Claude 3.7 Sonnet using the git MCP plugin) in March 2025 and covers versions from 0.8.0 forward.
 > Earlier versions do not have detailed change records.
 
+## [0.10.0] - 2026-10-07
+
+### BREAKING
+- removed 'Beta.Assistants' and 'Beta.Threads*', after openai shut down the assistants api on 2026-08-26 (323065b)
+- multipart requests send non-file lists as repeated 'k[]' fields, which changes behaviour for anyone passing 'timestamp_granularities' (b392f90)
+
+### Feat
+- added the agents api (beta) under 'Beta.Agents', mirroring the python sdk's 'beta.agents' namespace (db98bf0)
+- added the decisions endpoint and custom voice creation (936422a)
+- added 'access_programs', 'comparison_response_id', 'cyber' and 'prewarm' to the responses endpoint (75f5850)
+- multipart maps are encoded as 'k[sub]', and files gained 'expires_after' (538c91e)
+- added 'include', 'languages', 'keywords', 'chunking_strategy', 'known_speaker_names' and 'known_speaker_references' to transcription (b392f90)
+
+### Fixed
+- credential headers are redacted on every error that carries the request, including timeouts and the azure 'api-key' (7b34bb0)
+- inspecting the client struct no longer prints the token or headers (1896bd7)
+- an empty response body returns nil instead of crashing (76d7059)
+
+### Changed
+- moved the user guide to the oldest non-deprecated model for each feature (d482a6b)
+- the user guide deletes every resource it creates, and the cleanup notebook sweeps all resource types (fbb0831)
+- bumped the livebook dev container image to 0.19.10 and kino to 0.19.1 (7c706d4)
+- bumped the ci elixir matrix to 1.16 and 1.19; the lock requires 1.16 (1ce889b)
+
 ## [0.9.22] - 2026-08-12
 
 ### Feat
