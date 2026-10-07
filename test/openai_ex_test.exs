@@ -14,6 +14,13 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Beta.Agents
   doctest OpenaiEx.Beta.Agents.Sessions
 
+  test "inspecting the client does not print the token" do
+    inspected = OpenaiEx.new("sk-secret") |> inspect()
+    refute inspected =~ "sk-secret"
+    inspected = OpenaiEx._for_azure("azure-secret", "res", "dep", "2024-01-01") |> inspect()
+    refute inspected =~ "azure-secret"
+  end
+
   test "errors redact credential headers on the attached request" do
     request =
       Finch.build(:get, "https://api.openai.com/v1/models", [

@@ -7,6 +7,7 @@ defmodule OpenaiEx do
   for [Python](https://github.com/openai/openai-python) making it easy to understand
   and reuse existing documentation and code.
   """
+  @derive {Inspect, except: [:token, :_http_headers]}
   defstruct token: nil,
             organization: nil,
             project: nil,
