@@ -582,7 +582,7 @@ For more information on managing chat completions, see the [OpenAI API Chat refe
 alias OpenaiEx.Responses
 ```
 
-The Responses API combines features of Chat Completions and Assistants, providing a streamlined way to interact with OpenAI models. It supports single-turn and multi-turn conversations, tool use (including built-in tools), and optional server-side state management. It is the recommended approach for building applications that would previously have used the Assistants API, which will be sunset in the first half of 2026.
+The Responses API combines features of Chat Completions and Assistants, providing a streamlined way to interact with OpenAI models. It supports single-turn and multi-turn conversations, tool use (including built-in tools), and optional server-side state management. It is the recommended approach for building applications that would previously have used the Assistants API, which was shut down on August 26, 2026.
 
 ### Create a Response
 
