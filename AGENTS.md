@@ -22,7 +22,6 @@ docker compose -p openai_ex exec -w /data livebook mix test
 ```
 
 - Always pass `-p openai_ex`; without it compose starts a second container.
-- **Do not use VS Code's "Reopen in Container".** It replaces the image's entrypoint, so Livebook never starts.
 - **The image sets the Elixir/OTP toolchain.** The image version and the notebooks' `kino` pin move together. After changing the image, delete `_build`.
 - **Livebook prefixes secrets with `LB_`.** Notebooks read `LB_OPENAI_API_KEY`, while the container itself has `OPENAI_API_KEY`.
 - **Livebook owns an open notebook.** It autosaves its in-memory copy over the file, so close a notebook in the UI before editing it on disk.
