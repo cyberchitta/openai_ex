@@ -101,31 +101,14 @@ defmodule OpenaiEx.HttpFinch do
   def to_error(%{reason: reason}, request), do: to_error(reason, request)
 
   def to_error(error, request) when is_exception(error) do
-    sanitized = if request, do: sanitize_request(request), else: nil
+    sanitized = Error.redact_request(request)
     Logger.warning("Unhandled Finch exception: #{inspect(error)}, request: #{inspect(sanitized)}")
     {:error, Error.api_connection_error(Exception.message(error), sanitized)}
   end
 
   def to_error(error, request) do
-    sanitized = if request, do: sanitize_request(request), else: nil
+    sanitized = Error.redact_request(request)
     Logger.warning("Unhandled Finch error: #{inspect(error)}, request #{inspect(sanitized)}")
     {:error, Error.api_connection_error(error, sanitized)}
-  end
-
-  def sanitize_request(%Finch.Request{headers: headers} = request) when is_list(headers) do
-    sanitized_headers =
-      Enum.map(headers, fn
-        {key, value} when is_binary(key) ->
-          if String.downcase(key) == "authorization" and String.starts_with?(value, "Bearer ") do
-            {key, "Bearer [REDACTED]"}
-          else
-            {key, value}
-          end
-
-        other ->
-          other
-      end)
-
-    %{request | headers: sanitized_headers}
   end
 end

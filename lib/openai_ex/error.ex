@@ -41,6 +41,7 @@ defmodule OpenaiEx.Error do
   def exception(attrs) when is_list(attrs) do
     kind = attrs[:kind] || :api_error
     name = @error_names[kind]
+    attrs = Keyword.update(attrs, :request, nil, &redact_request/1)
     error = struct(__MODULE__, [name: name] ++ attrs)
 
     if is_map(error.body) do
@@ -54,6 +55,24 @@ defmodule OpenaiEx.Error do
       error
     end
   end
+
+  @credential_headers ["authorization", "api-key"]
+
+  @doc false
+  def redact_request(request = %{headers: headers}) when is_list(headers) do
+    redacted =
+      Enum.map(headers, fn
+        {key, _value} = header when is_binary(key) ->
+          if String.downcase(key) in @credential_headers, do: {key, "[REDACTED]"}, else: header
+
+        other ->
+          other
+      end)
+
+    %{request | headers: redacted}
+  end
+
+  def redact_request(request), do: request
 
   @impl true
   def message(error = %__MODULE__{}) do

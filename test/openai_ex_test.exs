@@ -13,4 +13,21 @@ defmodule OpenaiExTest do
   doctest OpenaiEx.Containers
   doctest OpenaiEx.ContainerFiles
   doctest OpenaiEx.VectorStores
+
+  test "errors redact credential headers on the attached request" do
+    request =
+      Finch.build(:get, "https://api.openai.com/v1/models", [
+        {"Authorization", "Bearer sk-secret"},
+        {"api-key", "azure-secret"},
+        {"OpenAI-Beta", "assistants=v2"}
+      ])
+
+    error = OpenaiEx.Error.api_timeout_error(request)
+
+    assert error.request.headers == [
+             {"Authorization", "[REDACTED]"},
+             {"api-key", "[REDACTED]"},
+             {"OpenAI-Beta", "assistants=v2"}
+           ]
+  end
 end
