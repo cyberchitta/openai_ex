@@ -2,36 +2,106 @@
 
 ```elixir
 Mix.install([
-  {:openai_ex, "~> 0.9.22"},
+  # {:openai_ex, "~> 0.9.22"},
+  {:openai_ex, path: Path.join(__DIR__, "..")}
 ])
 ```
 
-## Files cleanup
+## Setup
+
+Every cell below deletes **all** resources of one type in the project the API key belongs to, not only the ones the user guide created. Run it only against a test project.
 
 ```elixir
 apikey = System.fetch_env!("LB_OPENAI_API_KEY")
-openai = OpenaiEx.new(apikey)
+openai = OpenaiEx.new(apikey) |> OpenaiEx.with_receive_timeout(60_000)
 ```
 
-```elixir
-all_files = openai |> OpenaiEx.Files.list!()
-```
+`sweep` lists a resource type, deletes what it finds, and repeats until the list is empty. A list can still show a deleted item for a few seconds, so a failed delete stops the sweep instead of looping.
 
 ```elixir
-Enum.each(all_files["data"], fn file -> OpenaiEx.Files.delete!(openai, file["id"]) end)
+sweep = fn list, delete ->
+  Stream.repeatedly(fn ->
+    {:ok, %{"data" => items}} = list.()
+    Enum.map(items, &(&1["id"] |> delete.() |> elem(0)))
+  end)
+  |> Enum.reduce_while(%{ok: 0, error: 0}, fn
+    [], acc -> {:halt, acc}
+    results, acc ->
+      acc = Enum.reduce(results, acc, &Map.update!(&2, &1, fn n -> n + 1 end))
+      if Enum.any?(results, &(&1 == :ok)), do: {:cont, acc}, else: {:halt, acc}
+  end)
+end
 ```
 
+## Agents cleanup
+
 ```elixir
-OpenaiEx.Files.list!(openai)
+alias OpenaiEx.Beta.Agents
+
+%{
+  sessions: sweep.(fn -> Agents.Sessions.list(openai, %{limit: 100}) end, &Agents.Sessions.delete(openai, &1)),
+  agents: sweep.(fn -> Agents.list(openai, %{limit: 100}) end, &Agents.delete(openai, &1)),
+  vaults: sweep.(fn -> Agents.Vaults.list(openai, %{limit: 100}) end, &Agents.Vaults.delete(openai, &1)),
+  templates:
+    sweep.(
+      fn -> Agents.Environments.Templates.list(openai, %{limit: 100}) end,
+      &Agents.Environments.Templates.delete(openai, &1)
+    )
+}
+```
+
+## Evals cleanup
+
+```elixir
+sweep.(fn -> OpenaiEx.Evals.list(openai, %{limit: 100}) end, &OpenaiEx.Evals.delete(openai, &1))
+```
+
+## Containers cleanup
+
+Containers created by the Responses code interpreter tool stay listed as `expired` until they are deleted.
+
+```elixir
+sweep.(fn -> OpenaiEx.Containers.list(openai, %{limit: 100}) end, &OpenaiEx.Containers.delete(openai, &1))
 ```
 
 ## Vector Stores cleanup
 
 ```elixir
-(openai |> OpenaiEx.VectorStores.list!())["data"]
-|> Enum.each(fn vs -> openai |> OpenaiEx.VectorStores.delete!(vs["id"]) end)
+sweep.(fn -> OpenaiEx.VectorStores.list(openai) end, &OpenaiEx.VectorStores.delete(openai, &1))
 ```
 
+## Files cleanup
+
 ```elixir
-openai |> OpenaiEx.VectorStores.list!()
+sweep.(fn -> OpenaiEx.Files.list(openai) end, &OpenaiEx.Files.delete(openai, &1))
+```
+
+## Stored Chat Completions cleanup
+
+```elixir
+sweep.(
+  fn -> OpenaiEx.Chat.Completions.list(openai, limit: 100) end,
+  &OpenaiEx.Chat.Completions.delete(openai, completion_id: &1)
+)
+```
+
+## Check
+
+Each list should now be empty. A deleted item can linger in a list for a few seconds, so re-run this cell if one is not.
+
+```elixir
+for {name, list} <- [
+      agent_sessions: fn -> Agents.Sessions.list(openai) end,
+      agents: fn -> Agents.list(openai) end,
+      vaults: fn -> Agents.Vaults.list(openai) end,
+      evals: fn -> OpenaiEx.Evals.list(openai) end,
+      containers: fn -> OpenaiEx.Containers.list(openai) end,
+      vector_stores: fn -> OpenaiEx.VectorStores.list(openai) end,
+      files: fn -> OpenaiEx.Files.list(openai) end,
+      chat_completions: fn -> OpenaiEx.Chat.Completions.list(openai) end
+    ],
+    into: %{} do
+  {:ok, %{"data" => items}} = list.()
+  {name, length(items)}
+end
 ```

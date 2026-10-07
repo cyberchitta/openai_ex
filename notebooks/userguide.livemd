@@ -1747,6 +1747,12 @@ unless is_nil(ft_model) do
 end
 ```
 
+Finally, delete the training file, which is no longer needed once the job is cancelled.
+
+```elixir
+{:ok, _} = openai |> Files.delete(upload_res["id"])
+```
+
 For more information on the fine tune endpoints see the [Openai API Moderation Reference](https://platform.openai.com/docs/api-reference/fine-tunes)
 
 ## Batch
@@ -1825,6 +1831,15 @@ Use the [`Batch.list()`](https://platform.openai.com/docs/api-reference/batch/li
 
 ```elixir
 openai |> Batches.list()
+```
+
+Finally, delete the files the batch used: the uploaded input, and the output and error files the batch created.
+
+```elixir
+for file_id <- [batch_upload_res["id"], batch_job["output_file_id"], batch_job["error_file_id"]],
+    file_id != nil do
+  {:ok, _} = openai |> Files.delete(file_id)
+end
 ```
 
 For more information on the Batch API, see the [OpenAI API Batch Reference](https://platform.openai.com/docs/api-reference/batch).
@@ -2067,6 +2082,14 @@ output_item_id = "some_output_item_id"
 {:ok, output_item} = openai |> Evals.get_run_output_item(eval_id, run_id, output_item_id)
 ```
 
+### Cleanup
+
+Delete the evaluation created for the runs above. The run examples do not execute, so `eval_id` still refers to the evaluation deleted earlier; this one is `eval`.
+
+```elixir
+{:ok, _} = openai |> Evals.delete(eval["id"])
+```
+
 ## Vector Stores
 
 ```elixir
@@ -2247,6 +2270,15 @@ Use [`VectorStores.File.Batches.list()`](https://platform.openai.com/docs/api-re
 
 ```elixir
 openai |> VectorStores.File.Batches.list(vector_store_id, vsf_batch_id)
+```
+
+## Cleanup
+
+Delete the vector store and the file uploaded to it. `Files` is aliased to `VectorStores.Files` in this section, so the file is deleted through `OpenaiEx.Files`.
+
+```elixir
+{:ok, _} = openai |> VectorStores.delete(vector_store_id)
+{:ok, _} = openai |> OpenaiEx.Files.delete(file_id)
 ```
 
 <!-- livebook:{"offset":68501,"stamp":{"token":"XCP.Aec5rqYQxABnctYkC5MXHOOe1ty7gm_-YmgjXPs51dxqj7TQ3NEkF_T_yoV1kyPdxj1M4h8wN2QKbt054yGWX6Es619Kl47BmfwTmXoWw8X9AyPiqKNcUFs","version":2}} -->
